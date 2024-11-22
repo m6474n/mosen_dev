@@ -44,7 +44,7 @@ import { HoverBorderGradient } from "./ui/hover-border-gradient";
 
 export function Nav() {
   return (
-<div className="flex mx-auto items-center justify-center">
+<div className="sm:flex hidden mx-auto items-center justify-center">
 <HoverBorderGradient className={'p-0  flex items-center '}> <Navbar className={'top-0 relative flex items-center justify-center'}/></HoverBorderGradient>
 
 </div>
