@@ -1,4 +1,4 @@
-'use client'
+
 import Link from "next/link";
 import { BackgroundBeamsWithCollision } from "./ui/background-beams-with-collision";
 import CodeDisplay from "./ui/codeDisplay";
@@ -8,9 +8,9 @@ import { Button } from "./ui/button";
 
 export default function Hero() {
   return (
-    <section className="w-sceen h-[88vh]  " id="home">
+    <section className="w-sceen h-[92vh] py-32 sm:py-0  " id="home">
       <BackgroundBeamsWithCollision>
-        <main className="max-w-7xl w-screen m-auto sm:px-14 px-4 h-full flex flex-row items-center justify-center space-y-10">
+        <main className="max-w-7xl w-screen m-auto sm:px-14 px-4 h-full min-h-96  flex flex-row items-center justify-center space-y-10">
           <div className="details  w-full z-10 lg:text-start text-center">
             <p className="text-sm font-thin ">Hi all, I am</p>
             <h2 className="sm:text-6xl  text-5xl font-sans font-black "> Muhammad Mohsin</h2>
@@ -43,7 +43,7 @@ export default function Hero() {
             </div>
           </div>
 
-          <div className="img relative  lg:h-[88vh]  lg:w-full">
+          <div className="img relative  lg:h-[88vh] z-20 lg:w-full">
             <div className="absolute top-20 left-20 h-[350px] w-[350px] bg-purple-500 blur-3xl opacity-35" />
             <div className="absolute top-40 right-0 h-[350px] w-[350px] bg-violet-500 blur-3xl opacity-35" />
             <div className="absolute bottom-60 right-52 h-[350px] w-[350px] bg-pink-500 blur-3xl opacity-35" />

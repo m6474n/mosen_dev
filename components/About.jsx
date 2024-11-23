@@ -1,60 +1,34 @@
-import React from "react";
+import Image from 'next/image'
+import React from 'react'
+import { Button } from './ui/button'
+import { MdArrowOutward } from "react-icons/md";
+import { FaLocationArrow } from "react-icons/fa6";
 
-import {
-  IconClipboardCopy,
-  IconFileBroken,
-  IconSignature,
-  IconTableColumn,
-} from "@tabler/icons-react";
-import { BentoGrid, BentoGridItem } from "./ui/bento-grid";
 
-export function About() {
+export default function About() {
   return (
-    (<BentoGrid className="max-w-7xl mx-auto md:auto-rows-[20rem]">
-      {items.map((item, i) => (
-        <BentoGridItem
-          key={i}
-          title={item.title}
-          description={item.description}
-          header={item.header}
-          className={item.className}
-          icon={item.icon} />
-      ))}
-    </BentoGrid>)
-  );
+    <section className="w-sceen pb-24 " id="home">
+        <main className="max-w-7xl w-screen m-auto sm:px-14 px-4 h-full  gap-10  flex flex-row items-start ">
+          <div className="Img">
+            {/* <div className='bg-gradient-to-r from-purple-500 via-violet-500 to-pink-500 p-[2px] rounded-2xl'> */}
+            <div className="relative h-96 w-80 rounded-2xl overflow-hidden">
+                <Image src={'/profile-pic.png'} alt='moden_profile' fill className='onject-center object-cover'/></div>    
+            
+            {/* </div> */}
+          </div>
+
+          <div className="detail space-y-3 ">
+           
+          <p className="text-base text-orange-400">Introduction</p>
+          <h2 className="sm:text-6xl  text-5xl font-sans font-black pb-2 ">About Me</h2>
+          <p className='pb-6 text-slate-300 font-thin'>I specialize in transforming your vision into beautifully crafted, high-performing apps and websites. With over 3 years of experience as a  <span className='text-violet-400  font-black' >Full Stack Developer & Designer</span>, I blend design, functionality, and cutting-edge technology to create digital solutions that not only look great but deliver results. From <span className='text-cyan-500 font-black' >Flutter</span> to <span className='text-green-500 font-black'  >WordPress</span>, <span className='text-orange-400 font-black' >Next.js</span> to <span className='text-red-600 font-black' >Ruby on Rails</span>, I handle every step of the process to ensure your project exceeds expectations. Let’s collaborate to bring your ideas to life and build something extraordinary together!</p>
+        
+        <Button className={`rounded-full px-8 py-8 text-xl hover:bg-violet-400 hover:text-white`}> Let's Connect <FaLocationArrow  className='text-2xl h-10 w-10'/>
+        </Button>
+          </div>
+
+        </main>
+     
+    </section>
+  )
 }
-const Skeleton = () => (
-  <div
-    className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl   dark:bg-dot-white/[0.2] bg-dot-black/[0.2] [mask-image:radial-gradient(ellipse_at_center,white,transparent)]  border border-transparent dark:border-white/[0.2] bg-neutral-100 dark:bg-black"></div>
-);
-const items = [
-  {
-    title: "The Dawn of Innovation",
-    description: "Explore the birth of groundbreaking ideas and inventions.",
-    header: <Skeleton />,
-    className: "md:col-span-2",
-    icon: <IconClipboardCopy className="h-4 w-4 text-neutral-500" />,
-  },
-  {
-    title: "The Digital Revolution",
-    description: "Dive into the transformative power of technology.",
-    header: <Skeleton />,
-    className: "md:col-span-1",
-    icon: <IconFileBroken className="h-4 w-4 text-neutral-500" />,
-  },
-  {
-    title: "The Art of Design",
-    description: "Discover the beauty of thoughtful and functional design.",
-    header: <Skeleton />,
-    className: "md:col-span-1",
-    icon: <IconSignature className="h-4 w-4 text-neutral-500" />,
-  },
-  {
-    title: "The Power of Communication",
-    description:
-      "Understand the impact of effective communication in our lives.",
-    header: <Skeleton />,
-    className: "md:col-span-2",
-    icon: <IconTableColumn className="h-4 w-4 text-neutral-500" />,
-  },
-];
