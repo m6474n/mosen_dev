@@ -7,19 +7,18 @@
 // const Navbar = () => {
 //   return (
 
-
 //     <MenuItem />
 //     // <div className='flex flex-row justify-between items-center'>
-      
+
 //     //   <div className="group ">
 //     //     <Link href="/" className="text-4xl font-bold">
 //     //       Mosen<span className="text-7xl leading-3 text-[#1ebafc]">.</span>
 //     //     </Link>
 //     //     <div className="line h-1 group-hover:w-full w-0 bg-[#1ebafc] transition-all "></div>
 //     //   </div>
-     
+
 //     //   <div className="flex flex-row items-center justify-end">
-       
+
 //     //    <a href='#contact'>
 //     //    <HoverBorderGradient>
 //     //    <p> Get In Touch</p>
@@ -32,39 +31,46 @@
 
 // export default Navbar
 
-
-
-
-
 "use client";
 import React, { useState } from "react";
-import { HoveredLink, Menu, MenuItem, ProductItem } from "../components/ui/navbar-menu";
+import {
+  HoveredLink,
+  Menu,
+  MenuItem,
+  ProductItem,
+} from "../ui/navbar-menu";
 import { cn } from "@/lib/utils";
-import { HoverBorderGradient } from "./ui/hover-border-gradient";
+import { HoverBorderGradient } from "../ui/hover-border-gradient";
 
 export function Nav() {
   return (
-<div className="sm:flex hidden mx-auto items-center justify-center">
-<HoverBorderGradient className={'p-0  flex items-center '}> <Navbar className={'top-0 relative flex items-center justify-center'}/></HoverBorderGradient>
-
-</div>
+    <div className="sm:flex hidden mx-auto items-center justify-center">
+      <HoverBorderGradient className={"p-0  flex items-center "}>
+        {" "}
+        <Navbar className={"top-0 relative flex items-center justify-center"} />
+      </HoverBorderGradient>
+    </div>
   );
 }
 
-function Navbar({
-  className
-}) {
+function Navbar1({ className }) {
   const [active, setActive] = useState(null);
   return (
-    (<div
-      className={cn("fixed top-10 inset-x-0 max-w-2xl mx-auto z-50", className)}>
+    <div
+      className={cn("fixed top-10 inset-x-0 max-w-2xl mx-auto z-50", className)}
+    >
       <Menu setActive={setActive}>
-      <MenuItem setActive={setActive} active={null} item="Home"></MenuItem>
-      <MenuItem setActive={setActive} active={null} item="About"></MenuItem>
-      <MenuItem setActive={setActive} active={null} item="Service"></MenuItem>
-      <MenuItem setActive={setActive} active={null} item="Portfolio"></MenuItem>
-      <MenuItem setActive={setActive} active={null} item="Blog"></MenuItem>
-      <MenuItem setActive={setActive} active={null} item="Contact"></MenuItem>
+        <MenuItem setActive={setActive} active={null} item="Home"></MenuItem>
+        <MenuItem setActive={setActive} active={null} item="About"></MenuItem>
+        <MenuItem setActive={setActive} active={null} item="Service"></MenuItem>
+        <MenuItem
+          setActive={setActive}
+          active={null}
+          item="Portfolio"
+        ></MenuItem>
+        <MenuItem setActive={setActive} active={null} item="Blog"></MenuItem>
+        <MenuItem setActive={setActive} active={null} item="Contact"></MenuItem>
+        {/* <MenuItem setActive={setActive} active={null} item="Login"></MenuItem> */}
         {/*  <MenuItem setActive={setActive} active={active} item="Services">
           <div className="flex flex-col space-y-4 text-sm">
             <HoveredLink href="/web-dev">Web Development</HoveredLink>
@@ -106,6 +112,6 @@ function Navbar({
           </div>
         </MenuItem> */}
       </Menu>
-    </div>)
+    </div>
   );
 }
