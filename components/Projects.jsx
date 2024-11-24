@@ -10,7 +10,7 @@ export default function Projects() {
   return (
 
 
-<div className="py-20">
+<div className="py-20" id='projects'>
 <div className='lg:flex hidden h-[18rem] w-full   flex-col text-center justify-between items-center]'>
    <TextHoverEffect text={"PROJECTS"}/>
 
@@ -30,7 +30,7 @@ export default function Projects() {
     >
       <PinContainer
         title="/ui.aceternity.com"
-        href="https://twitter.com/mannupaaji"
+        href="https://github.com/m6474n"
       >
         <div className="relative flex items-center justify-center sm:w-96 w-[80vw] overflow-hidden h-[20vh] lg:h-[30vh] mb-10">
           <div

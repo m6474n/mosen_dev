@@ -41,7 +41,7 @@ export default function Menu() {
 
   return (
     <div>
-      <div className="w-screen border-[1px] border-slate-800 flex flex-row justify-between fixed backdrop-blur-md z-50">
+      <div className="w-screen border-[1px] border-slate-800 flex flex-row justify-between fixed backdrop-blur-md z-[99]">
         <div className="logo p-4 md:w-80 w-screen md:border-r flex justify-between border-slate-800">
           <Link href={`/`} className="group">
             <h1 className="text-slate-300 text-sm font-thin group-hover:bg-clip-text group-hover:text-transparent group-hover:bg-no-repeat group-hover:bg-gradient-to-r group-hover:from-purple-500 group-hover:via-violet-500 group-hover:to-pink-500">
