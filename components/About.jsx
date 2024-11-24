@@ -7,14 +7,14 @@ import { FaLocationArrow } from "react-icons/fa6";
 
 export default function About() {
   return (
-    <section className="w-sceen mb-[500px] lg:mb-0  sm:mb-80" id="about">
-        <main className="max-w-7xl w-screen m-auto lg:px-14 px-0 lg:h-full h-screen  pt-24 lg:gap-10  flex lg:flex-row flex-col items-start ">
+    <section className="w-sceen z-10" id="about">
+        <main className="max-w-7xl w-screen m-auto lg:px-14 px-0 lg:h-full min-h-[60vh]  pt-24 lg:gap-10  flex lg:flex-row flex-col items-center ">
           <div className="Img ">
             {/* <div className='bg-gradient-to-r from-purple-500 via-violet-500 to-pink-500 p-[2px] rounded-2xl'> */}
-            <div className='flex relative  w-screen lg:h-[450px]  h-80 lg:w-96 justify-center items-center'>
+            <div className='flex relative  w-screen lg:h-[450px]  sm:h-80 h-60 lg:w-96 justify-center items-center'>
             <div className='absolute lg:w-[360px] lg:h-[450px]  h-80 w-80 lg:block hidden  border -top-10 -left-7 rounded-lg border-pink-400'/>
            
-            <div className="absolute lg:h-[450px] lg:w-[360px] h-80 w-80 lg:rounded-2xl rounded-full overflow-hidden">
+            <div className="absolute lg:h-[450px] lg:w-[360px] sm:h-80 sm:w-80 w-52 h-52 lg:rounded-2xl rounded-full overflow-hidden">
                 <Image src={'/profile-pic.png'} alt='moden_profile' fill className='onject-center object-cover'/></div>    
             
             {/* </div> */}

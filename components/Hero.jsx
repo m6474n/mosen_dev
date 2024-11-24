@@ -8,7 +8,7 @@ import { Button } from "./ui/button";
 
 export default function Hero() {
   return (
-    <section className="w-sceen h-[92vh] " id="home">
+    <section className="w-sceen min-h-[92vh] " id="home">
       <BackgroundBeamsWithCollision>
         <main className="max-w-7xl w-screen m-auto sm:px-14 px-4 h-full min-h-96  flex flex-row items-center justify-center space-y-10">
           <div className="details  w-full z-10 lg:text-start text-center">

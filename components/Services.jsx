@@ -16,8 +16,8 @@ import CodeDisplay from "./ui/codeDisplay";
 
 export function Services() {
   return (
-    <section className="py-12" id="services">
-        <main className=" lg:h-full h-screen  lg:gap-10  flex lg:flex-row flex-col ">
+    <section className="py-12 z-10  " id="services">
+        <main className=" lg:h-full min-h-[60vh]  lg:gap-10  flex lg:flex-row flex-col ">
       <BentoGrid className="max-w-7xl mx-auto md:auto-rows-[20rem] relative px-6">
       {items.map((item, i) => (
         <BentoGridItem
