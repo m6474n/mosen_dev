@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"; // Assuming you have a utility function for cl
 export const InfiniteMovingCards = ({
   items,
   direction = "left",
-  speed = "fast",
+  speed = "slow",
   pauseOnHover = true,
   className,
 }) => {
@@ -96,7 +96,7 @@ export const InfiniteMovingCards = ({
                 className="user-select-none -z-1 pointer-events-none absolute -left-0.5 -top-0.5 h-[calc(100%_+_4px)] w-[calc(100%_+_4px)]"
               ></div>
               {/* Text styles */}
-              <span className="relative z-20 text-sm md:text-lg  leading-[1.6] text-white font-normal">
+              <span className="relative z-20 text-sm md:text-lg  font-sans leading-[1.6] text-white font-normal">
                 {item.quote}
               </span>
               <div className="relative z-20 mt-6 flex flex-row items-center">

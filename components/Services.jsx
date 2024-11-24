@@ -162,7 +162,7 @@ const SkeletonTwo = ({ items }) => {
     >
      
       {items.map((item, i) => (
-         <div className="grid grid-cols-5 gap-8 ">
+         <div  key={i} className="grid grid-cols-5 gap-8 ">
           <div className="col-span-2">
 
           <p>{item.name}</p>

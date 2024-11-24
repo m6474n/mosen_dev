@@ -4,6 +4,8 @@ import { Services } from "@/components/Services";
 
 import Projects from "@/components/Projects";
 import Clients, { Testimonials } from "@/components/Testimonials";
+import { BeforeFooter } from "@/components/BeforeFooter";
+import Footer from "@/components/Footer";
 
 
 export default function Home() {
@@ -18,6 +20,8 @@ export default function Home() {
 
 <Projects/>
 <Clients/>
+<BeforeFooter/>
+<Footer/>
 {/* <Testimonials/> */}
     </main>
   );
