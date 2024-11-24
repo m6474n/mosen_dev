@@ -56,7 +56,7 @@ export default function Menu() {
         </div>
         <div className="max-w-7xl md:flex hidden w-full border-slate-800">
           {navMenu.map((e, index) => (
-            <Link href={e.link} key={e.title}>
+            <Link href={e.link} key={index}>
               <button
                 className={cn(
                   "px-4 group border-r border-slate-800 p-4 hover:border-b-2 transition-all hover:border-violet-500",
