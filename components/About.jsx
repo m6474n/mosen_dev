@@ -26,7 +26,7 @@ export default function About() {
           <h2 className="sm:text-6xl  text-5xl font-sans font-black pb-2 ">About Me</h2>
           <p className='pb-6 text-slate-300 font-thin'>I specialize in transforming your vision into beautifully crafted, high-performing apps and websites. With over 3 years of experience as a  <span className='text-violet-400  font-black' >Full Stack Developer & Designer</span>, I blend design, functionality, and cutting-edge technology to create digital solutions that not only look great but deliver results. From <span className='text-cyan-500 font-black' >Flutter</span> to <span className='text-green-500 font-black'  >WordPress</span>, <span className='text-orange-400 font-black' >Next.js</span> to <span className='text-red-600 font-black' >Ruby on Rails</span>, I handle every step of the process to ensure your project exceeds expectations. Let’s collaborate to bring your ideas to life and build something extraordinary together!</p>
         
-        <Button className={`rounded-full md:p-8 p-6 md:text-xl  hover:bg-violet-400 hover:text-white`}> Let's Connect <FaLocationArrow  className='text-2xl h-10 w-10'/>
+        <Button className={`rounded-full md:p-8 p-6 md:text-xl  hover:bg-violet-400 hover:text-white`}> Let&apos;s Connect <FaLocationArrow  className='text-2xl h-10 w-10'/>
         </Button>
           </div>
 

@@ -47,7 +47,7 @@ export function Nav() {
     <div className="sm:flex hidden mx-auto items-center justify-center">
       <HoverBorderGradient className={"p-0  flex items-center "}>
         {" "}
-        <Navbar className={"top-0 relative flex items-center justify-center"} />
+        <Navbar1 className={"top-0 relative flex items-center justify-center"} />
       </HoverBorderGradient>
     </div>
   );

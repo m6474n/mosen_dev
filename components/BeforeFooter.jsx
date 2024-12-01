@@ -14,10 +14,10 @@ export function BeforeFooter() {
       </h2>
       <p
         className="text-base md:text-lg mt-4  text-white font-normal inter-var text-center">
-        Reach out to me today and let's discuss how I can help you to achieve your goal.
+        Reach out to me today and let&apos;s discuss how I can help you to achieve your goal.
       </p>
 
-      <Button variant="outline" className={`bg-transparent border-white hover:bg-black hover:border-black rounded-full text-xl p-8 my-8 mb-32`}>Let's get in touch today!</Button>
+      <Button variant="outline" className={`bg-transparent border-white hover:bg-black hover:border-black rounded-full text-xl p-8 my-8 mb-32`}>Let&apos;s get in touch today!</Button>
 
     </WavyBackground>
  </div>

@@ -8,7 +8,7 @@ import { InfiniteMovingCards } from "./ui/infinite-moving-cards";
 const Clients = () => {
   return (
     <section id="testimonials" className=" md:min-h-screen h-full flex flex-col items-center justify-center">
-    <div className="flex items-center justify-center text-center ">
+    <div className="flex items-center justify-center text-center pb-16">
     <h2 className="sm:text-6xl  text-4xl font-sans font-black pb-2 px-6 leading-10">  Kind words from
     <span className="bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-500 via-violet-500 to-pink-500"> Satisfied Clients</span></h2>
     
@@ -25,7 +25,7 @@ const Clients = () => {
             speed="slow"
           />
         </div>
-
+{/* 
         <div className="flex flex-wrap items-center justify-center gap-4 md:gap-16 max-lg:mt-10">
           {companies.map((company) => (
             <React.Fragment key={company.name+ company.id}>
@@ -44,7 +44,7 @@ const Clients = () => {
               </div>
             </React.Fragment>
           ))}
-        </div>
+        </div> */}
       </div>
     </section>
   );

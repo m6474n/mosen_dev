@@ -38,7 +38,7 @@ export function FeaturesSectionDemo() {
       title: "Deploy in seconds",
       description:
         "With our blazing fast, state of the art, cutting edge, we are so back cloud servies (read AWS) - you can deploy your model in seconds.",
-      skeleton: <SkeletonFour />,
+      skeleton: <SkeletonFour1 />,
       className: "col-span-1 lg:col-span-3 border-b lg:border-none",
     },
   ];

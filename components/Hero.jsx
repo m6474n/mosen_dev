@@ -9,7 +9,7 @@ import { Button } from "./ui/button";
 export default function Hero() {
   return (
     <section className="w-sceen min-h-[92vh] " id="home">
-      <BackgroundBeamsWithCollision>
+      {/* <BackgroundBeamsWithCollision> */}
         <main className="max-w-7xl w-screen m-auto sm:px-14 px-4 h-full min-h-96  flex flex-row items-center justify-center space-y-10">
           <div className="details  w-full z-10 lg:text-start text-center">
             <p className="text-sm font-thin ">Hi all, I am</p>
@@ -22,9 +22,9 @@ export default function Hero() {
             </h3>
 
             <div className="comments pt-12">
-              <p className="text-gray-500"> // complete the game to continue</p>
+              <p className="text-gray-500"> {"// complete the game to continue"}</p>
               <p className="text-gray-500">
-                // you can also see it on my Github page
+               {" // you can also see it on my Github page"}
               </p>
               <p>
                 <span className=" text-blue-500">const</span>
@@ -79,7 +79,7 @@ setTimeout(() => {
             </div>
           </div>
         </main>
-      </BackgroundBeamsWithCollision>
+      {/* </BackgroundBeamsWithCollision> */}
     </section>
   );
 }

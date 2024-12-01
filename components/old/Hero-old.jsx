@@ -13,7 +13,7 @@ export default function Hero1() {
       </h2>
       <h3 className='bg-clip-text text-transparent text-center bg-gradient-to-b from-neutral-900 to-neutral-700 dark:from-neutral-600 dark:to-white text-xl md:text-2xl lg:text-4xl   py-2 relative z-20 font-thin tracking-wider'>Full-stack Web & Mobile App Developer.</h3>
       <p className="max-w-xl mx-auto text-sm md:text-lg text-neutral-700 dark:text-neutral-400 text-center">
-       Let's collaborate to bring your ideas to life and build something extra ordinary.
+       Let&apos;s collaborate to bring your ideas to life and build something extra ordinary.
       </p>
     <div className='flex py-6 items-center justify-center gap-2'>
 <HoverBorderGradient className={`font-light md:text-lg text-base md:px-8`} > Download CV </HoverBorderGradient>

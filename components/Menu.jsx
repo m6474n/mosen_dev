@@ -11,6 +11,7 @@ export default function Menu() {
     { title: "_about-me", link: "#about", isActive: false, sectionId: "about" },
     { title: "_services", link: "#services", isActive: false, sectionId: "services" },
     { title: "_projects", link: "#projects", isActive: false, sectionId: "projects" },
+    { title: "_testimonials", link: "#testimonials", isActive: false, sectionId: "testimonials" },
   ]);
 
   useEffect(() => {
