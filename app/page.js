@@ -21,7 +21,7 @@ export default function Home() {
 <Projects/>
 <Clients/>
 <BeforeFooter/>
-<Footer/>
+{/* <Footer/> */}
 {/* <Testimonials/> */}
     </main>
   );

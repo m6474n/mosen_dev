@@ -4,8 +4,10 @@ import React, { useState, useEffect } from "react";
 import { CiMenuFries } from "react-icons/ci";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from "@clerk/nextjs";
 
 export default function Menu() {
+  const user = useUser();
   const [navMenu, setNavMenu] = useState([
     { title: "_hello", link: "#home", isActive: true, sectionId: "home" },
     { title: "_about-me", link: "#about", isActive: false, sectionId: "about" },
@@ -72,16 +74,22 @@ export default function Menu() {
                   )}
                 >
                   {e.title}
-                </h2>
+              </h2>
               </button>
             </Link>
           ))}
         </div>
 
-        <div className="Contact p-4 w-56 md:flex hidden border-l items-center justify-center border-slate-800">
-          <Link href={`/`} className="group">
+        <div className={`Contact w-56 md:flex hidden border-l items-center justify-center border-slate-800 ${user&& "pt-2"}`}>
+        <Link href={`/`} className="group">
             <h1 className="text-slate-300 text-sm font-thin group-hover:bg-clip-text group-hover:text-transparent group-hover:bg-no-repeat group-hover:bg-gradient-to-r group-hover:from-purple-500 group-hover:via-violet-500 group-hover:to-pink-500">
-              _contact-me
+            <SignedOut>
+            <SignInButton />
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
+
             </h1>
             <div className="w-0 group-hover:w-full h-[1px] mt-[1px] bg-gradient-to-r from-purple-500 via-violet-500 to-pink-500 transition-all" />
           </Link>

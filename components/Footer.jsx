@@ -19,8 +19,8 @@ export default function Footer() {
        </div>
         <div className="social flex flex-row">
 
-      <div className=" border-l  border-slate-800 p-4">  <FaLinkedinIn className="hover:text-violet-500 transition-all" /></div>
-      <div className=" border-l  border-slate-800 p-4">  <FaFacebookF className="hover:text-violet-500 transition-all"  /></div>
+      <div className=" border-l  border-slate-800 p-4">  <Link href={'https://www.linkedin.com/in/muhammad-mohsin-133886261/'}><FaLinkedinIn className="hover:text-violet-500 transition-all" /></Link></div>
+      <div className=" border-l  border-slate-800 p-4">  <Link href={'https://www.facebook.com/m.mohsin.03/'}><FaFacebookF className="hover:text-violet-500 transition-all"  /></Link></div>
         </div>
 
 
@@ -32,7 +32,7 @@ export default function Footer() {
       </div>
 
       <div className="Contact p-4 w-56 md:flex hidden  border-l  items-center justify-center  border-slate-800 ">
-        <Link href={`/`} className="group"> 
+        <Link href={`https://github.com/m6474n`} className="group"> 
           {" "}
           <div className="flex flex-row items-center justify-center gap-3 ">
           <h1 className="text-slate-300 text-sm font-thin text-center group-hover:bg-clip-text group-hover:text-transparent group-hover:bg-no-repeat group-hover:bg-gradient-to-r group-hover:from-purple-500 group-hover:via-violet-500 group-hover:to-pink-500">

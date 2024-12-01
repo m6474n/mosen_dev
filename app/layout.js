@@ -3,8 +3,15 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 import { Source_Code_Pro } from 'next/font/google'
-import Footer from "@/components/Footer";
 
+import {
+  ClerkProvider,
+  SignInButton,
+  SignedIn,
+  SignedOut,
+  UserButton
+} from '@clerk/nextjs'
+import Footer from "@/components/Footer";
 
 export const metadata = {
   title: "Mosen's Portfolio",
@@ -14,6 +21,7 @@ const code = Source_Code_Pro({ weight: ['400','200','300', '500','600', '700', '
 
 export default function RootLayout({ children }) {
   return (
+    <ClerkProvider>
     <html lang="en"   suppressHydrationWarning>
            <body className={cn("bg-background text-foreground scroll-smooth", code.className)}>
 
@@ -25,16 +33,13 @@ export default function RootLayout({ children }) {
           >
            <Menu/>     
          
-            {/* <main className="max-w-7xl m-auto p-10 space-y-10"> */}
-
       
             
             {children}
-
-            {/* <Footer/> */}
-            {/* </main> */}
+<Footer/>
           </ThemeProvider>
       </body>
     </html>
+    </ClerkProvider>
   );
 }

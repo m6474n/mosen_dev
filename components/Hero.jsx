@@ -38,8 +38,10 @@ export default function Hero() {
             </div>
             <div className="actions flex flex-row items-center gap-4 pt-6 lg:justify-start justify-center">
                 {/* <HoverBorderGradient> Download CV</HoverBorderGradient> */}
-                <GradientBorderButton title={"Download CV"} className={`px-6  ` }/> 
-                <Button className={`rounded-full py-[24px] bg-purple-500 hover:bg-violet-500 text-white px-6`}> Hire Me</Button>
+                <a href="/muhammad-mohsin-cv.pdf" download="muhammad-mohsin-cv.pdf">
+  <GradientBorderButton title="Download CV" className="px-6" />
+</a>
+               <Link href={'https://www.fiverr.com/mosen_dev55'}> <Button className={`rounded-full py-[24px] bg-purple-500 hover:bg-violet-500 text-white px-6`}> Hire Me</Button></Link>
             </div>
           </div>
 
