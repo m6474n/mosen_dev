@@ -1,0 +1,291 @@
+{
+  "entities": {
+    "Post": {
+      "title": "Post",
+      "description": "Administrative post or workspace system parameters",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique record identifier"
+        },
+        "title": {
+          "type": "string",
+          "description": "Header title text"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Draft", "Published"],
+          "description": "Visibility flag"
+        },
+        "lastModified": {
+          "type": "string",
+          "description": "Date update flag"
+        },
+        "type": {
+          "type": "string",
+          "description": "Category segment"
+        },
+        "content": {
+          "type": "string",
+          "description": "Body description"
+        }
+      },
+      "required": ["id", "title", "status"]
+    },
+    "CaseStudy": {
+      "title": "CaseStudy",
+      "description": "Product development case study",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "industry": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "challenge": {
+          "type": "string"
+        },
+        "solution": {
+          "type": "string"
+        },
+        "tech": {
+          "type": "array",
+          "description": "Array of technologies used"
+        },
+        "results": {
+          "type": "array",
+          "description": "Array of metric objects"
+        },
+        "contentMarkdown": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Draft", "Published"]
+        },
+        "lastModified": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "title", "status"]
+    },
+    "Project": {
+      "title": "Project",
+      "description": "General application index and metadata",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Draft", "Published"]
+        },
+        "lastModified": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "industry": {
+          "type": "string"
+        },
+        "tech": {
+          "type": "array"
+        }
+      },
+      "required": ["id", "title", "status"]
+    },
+    "Service": {
+      "title": "Service",
+      "description": "Offered service description card and details",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "num": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "outcomes": {
+          "type": "array"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Draft", "Published"]
+        },
+        "lastModified": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "title", "status"]
+    },
+    "Resource": {
+      "title": "Resource",
+      "description": "Downloadable templates and developer tooling scripts",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "downloadCount": {
+          "type": "number"
+        },
+        "tags": {
+          "type": "array"
+        },
+        "codeBlock": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Draft", "Published"]
+        },
+        "lastModified": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "title", "status"]
+    },
+    "Blog": {
+      "title": "Blog",
+      "description": "Technical insights writeup or editorial posts",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "excerpt": {
+          "type": "string"
+        },
+        "publishedAt": {
+          "type": "string"
+        },
+        "readTime": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array"
+        },
+        "contentHtml": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Draft", "Published"]
+        },
+        "lastModified": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "title", "status"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Inbox inquiries and booking proposals from prospective clients",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "time": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "read": {
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["message", "booking"]
+        },
+        "company": {
+          "type": "string"
+        },
+        "service": {
+          "type": "string"
+        },
+        "budget": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "name", "email", "content", "read"]
+    }
+  },
+  "firestore": {
+    "/posts/{postId}": {
+      "schema": "Post",
+      "description": "Administrative support posts"
+    },
+    "/case_studies/{caseStudyId}": {
+      "schema": "CaseStudy",
+      "description": "Premium case studies collection"
+    },
+    "/projects/{projectId}": {
+      "schema": "Project",
+      "description": "Workspace projects collection"
+    },
+    "/services/{serviceId}": {
+      "schema": "Service",
+      "description": "Client-facing service catalogue configurations"
+    },
+    "/resources/{resourceId}": {
+      "schema": "Resource",
+      "description": "Vault resources and scripts library"
+    },
+    "/blogs/{blogId}": {
+      "schema": "Blog",
+      "description": "Technical insights essays"
+    },
+    "/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Ingested lead messages and booking info cards"
+    }
+  }
+}
