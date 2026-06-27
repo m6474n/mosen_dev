@@ -11,6 +11,8 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CustomPointer from '@/components/CustomPointer';
 import InitialPreloader from '@/components/InitialPreloader';
+import { GoogleAnalytics } from "@next/third-parties/google";
+
 import './globals.css';
 
 const inter = Inter({
@@ -137,6 +139,7 @@ function RootLayoutInner({ children }: { children: React.ReactNode }) {
           </DataProvider>
         </AuthProvider>
       </body>
+       <GoogleAnalytics gaId="G-70PJPMKWT6" />
     </html>
   );
 }
