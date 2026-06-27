@@ -63,7 +63,7 @@ export const DEFAULT_METADATA: Metadata = {
     card: 'summary_large_image',
     title: 'Mosen — Product Engineer, Designer & Automation Builder',
     description: 'Muhammad Mohsin (Mosen) — Product Engineer, Visual Designer, and Workflow Automation Builder. Bridging the gap between structure, beauty, and operational efficiency.',
-    creator: '@mosen_dev',
+    creator: '@mosen_here',
     images: ['/og-image.jpg'],
   },
   alternates: {
