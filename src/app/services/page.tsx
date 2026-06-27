@@ -1,8 +1,10 @@
 import ServicesView from '@/components/ServicesView';
+import { DEFAULT_METADATA } from '@/lib/seo';
 
 export const metadata = {
-  title: 'Services & Revenue Automation — Mosen Portfolio',
-  description: 'Three integrated service offerings: Product Design, Client Engineering, and Automation Systems — delivered by one engineer.',
+  ...DEFAULT_METADATA,
+  title: 'Services, Revenue Engines & Workflow Automation — Mosen Portfolio',
+  description: 'Three integrated value engines: Product Design, client-side engineering, and backend workflow automation systems. Get details on development pricing models and timeline estimates.',
 };
 
 export default function ServicesPage() {

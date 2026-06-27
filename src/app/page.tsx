@@ -1,8 +1,9 @@
 import HomeView from '@/components/HomeView';
+import { DEFAULT_METADATA } from '@/lib/seo';
 
 export const metadata = {
+  ...DEFAULT_METADATA,
   title: 'Mosen — Product Engineer · Designer · Automation Builder',
-  description: 'Muhammad Mohsin — One person. Three disciplines. Zero handoffs. Product engineer, visual designer, and workflow automation builder.',
 };
 
 export default function HomePage() {
