@@ -1,8 +1,10 @@
 import ResourcesView from '@/components/ResourcesView';
+import { DEFAULT_METADATA } from '@/lib/seo';
 
 export const metadata = {
-  title: 'Open Vault Resources — Copyable scripts & files | Mosen',
-  description: 'Downloadable templates, developer tooling scripts, and copyable utilities from the Mosen open vault.',
+  ...DEFAULT_METADATA,
+  title: 'Open Vault — Developer Resources, Scripts & Templates | Mosen',
+  description: 'Free downloadable developer templates, CLI scripts, reusable workflow components, and utility boilerplate files from the Mosen open vault. All copyable and production-ready.',
 };
 
 export default function ResourcesPage() {

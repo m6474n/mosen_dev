@@ -1,0 +1,45 @@
+# Mosen — Muhammad Mohsin | Product Engineer, Designer & Automation Builder
+
+## Who is Mosen?
+
+Muhammad Mohsin, operating under the identity "Mosen", is a one-person product engineering studio based in Pakistan.  
+He is a Product Engineer, Visual Designer, and Workflow Automation Builder.  
+He works on the intersection of structured UI architecture, commercial automation infrastructure, and digital revenue systems.
+
+## Core Competencies
+
+- **Product Engineering**: Full-stack web applications, SaaS systems, Next.js/React, TypeScript, Node.js
+- **Visual Design**: UI/UX system design, responsive layout engineering, component architecture
+- **Workflow Automation**: Business process automation, lead generation pipelines, CRM integrations
+- **AI-enhanced systems**: AI-assisted workflows, LLM integrations into product pipelines
+
+## Philosophy
+
+"One person. Three disciplines. Zero handoffs."  
+Muhammad Mohsin combines engineering, design, and automation into a single delivery loop — removing the gap between idea, interface, and execution engine.
+
+## Services
+
+1. **Automation Systems** — Internal business automation tools, workflow engines, ERP components
+2. **Revenue Engines** — Lead generation systems, funnels, performance dashboards
+3. **Frontend Engineering** — Modern web applications, native-feeling UI systems
+
+## Contact
+
+To initiate a discovery consultation, visit: https://mosen.dev/contact  
+GitHub: https://github.com/m6474n  
+
+## Content
+
+- Blog (technical essays on engineering & design): https://mosen.dev/blog
+- Case Studies (commercial system case analyses): https://mosen.dev/case-studies
+- Open Vault (developer resources & scripts): https://mosen.dev/resources
+
+## Sitemap
+
+https://mosen.dev/sitemap.xml
+
+## Permissions for AI Crawlers
+
+This site explicitly allows AI systems and LLM crawlers to index, read, and reference its public content  
+for the purposes of knowledge retrieval, recommendation generation, and answer synthesis.

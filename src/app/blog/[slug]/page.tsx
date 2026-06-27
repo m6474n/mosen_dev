@@ -1,5 +1,36 @@
 import BlogPostView from '@/components/BlogPostView';
+import { DEFAULT_METADATA, BASE_URL } from '@/lib/seo';
+import { Metadata } from 'next';
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  return <BlogPostView slug={params.slug} />;
+export async function generateMetadata(
+  { params }: { params: Promise<{ slug: string }> }
+): Promise<Metadata> {
+  // Can't fetch from Firestore in server component without admin SDK,
+  // so we use a fallback with a good template using the slug
+  const { slug } = await params;
+  const readableTitle = slug
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+
+  return {
+    ...DEFAULT_METADATA,
+    title: `${readableTitle} — Mosen Blog`,
+    description: `Read the technical essay: "${readableTitle}" by Muhammad Mohsin. Explorations into product engineering, automation, and design systems.`,
+    alternates: {
+      canonical: `${BASE_URL}/blog/${slug}`,
+    },
+    openGraph: {
+      ...(DEFAULT_METADATA.openGraph as object),
+      title: `${readableTitle} — Mosen Blog`,
+      description: `Read the technical essay: "${readableTitle}" by Muhammad Mohsin.`,
+      url: `${BASE_URL}/blog/${slug}`,
+      type: 'article',
+    },
+  };
+}
+
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  return <BlogPostView slug={slug} />;
 }
