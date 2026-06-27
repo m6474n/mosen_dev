@@ -10,6 +10,7 @@ import DefaultPageLayout, { Container } from './DefaultPageLayout';
 import DynamicPageHeader from './DynamicPageHeader';
 import ReusableCard from './ReusableCard';
 import Button from './Button';
+import { stripHtml } from '../lib/richText';
 
 export default function ServicesView() {
   const { services } = useData();
@@ -87,7 +88,7 @@ export default function ServicesView() {
                       {srv.title.toUpperCase()}
                     </h3>
                     <p className="text-xs font-light text-neutral-600 leading-relaxed mb-8">
-                      {srv.description}
+                      {stripHtml(srv.description)}
                     </p>
 
                     <div className="border-t border-neutral-200 pt-6 mb-8">
@@ -104,8 +105,8 @@ export default function ServicesView() {
                   </div>
 
                   <div className="border-t border-neutral-200 pt-6 flex flex-col gap-4">
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="font-semibold text-neutral-400 uppercase tracking-widest">Pricing Model</span>
+                    <div className="flex justify-start items-start text-sm">
+                      {/* <span className="font-semibold text-neutral-400 uppercase tracking-widest">Pricing Model</span> */}
                       <span className="font-bold text-neutral-900 font-mono">{srv.pricing}</span>
                     </div>
                     <Link
@@ -142,11 +143,10 @@ export default function ServicesView() {
                 {features.map((f) => (
                   <label
                     key={f.id}
-                    className={`flex items-start gap-3 p-3 border transition-all cursor-pointer ${
-                      selectedFeatures.includes(f.id)
-                        ? 'border-neutral-950 bg-neutral-50/50'
-                        : 'border-neutral-100 hover:border-neutral-300'
-                    }`}
+                    className={`flex items-start gap-3 p-3 border transition-all cursor-pointer ${selectedFeatures.includes(f.id)
+                      ? 'border-neutral-950 bg-neutral-50/50'
+                      : 'border-neutral-100 hover:border-neutral-300'
+                      }`}
                   >
                     <input
                       type="checkbox"
@@ -167,7 +167,7 @@ export default function ServicesView() {
           <ReusableCard hoverable={false} variant="white" className="p-8 md:p-12 h-full">
             <div>
               <h4 className="text-[10px] font-light tracking-widest text-neutral-400 uppercase mb-6">Estimated Totals</h4>
-              
+
               <div className="flex flex-col gap-6 border-b border-neutral-100 pb-8 mb-8">
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-light text-neutral-500 uppercase tracking-wide">Selected Systems</span>
@@ -238,8 +238,8 @@ export default function ServicesView() {
             {SERVICES_FAQ.map((faq, idx) => {
               const isOpen = !!openIndices[idx];
               return (
-                <div 
-                  key={idx} 
+                <div
+                  key={idx}
                   className="border-b border-neutral-200 py-5 transition-colors duration-200 hover:bg-neutral-50/50"
                 >
                   <button

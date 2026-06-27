@@ -7,6 +7,7 @@ export interface CaseStudyScreenshot {
   title: string;
   description: string;
   type: 'mobile' | 'desktop' | 'website';
+  imageUrl?: string;
 }
 
 export interface CaseStudy {

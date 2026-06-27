@@ -7,6 +7,7 @@ import { motion } from 'motion/react';
 import gsap from 'gsap';
 import { ArrowUpRight, Cpu, TrendingUp, Code, CheckCircle, ArrowRight } from 'lucide-react';
 import { useData } from '../context/DataContext';
+import { stripHtml } from '../lib/richText';
 import { MOHSIN_BIO, PROCESS_STEPS, TESTIMONIALS } from '../data';
 import { Container } from './DefaultPageLayout';
 import ReusableCard from './ReusableCard';
@@ -255,7 +256,7 @@ export default function HomeView() {
                 <span className="text-xs font-bold text-neutral-600 mb-8">{srv.num}</span>
                 <h3 className="text-lg font-light text-white mb-4 uppercase tracking-wide">{srv.title.toUpperCase()}</h3>
                 <p className="text-xs font-light text-neutral-400 leading-relaxed mb-8 flex-grow">
-                  {srv.description}
+                  {stripHtml(srv.description)}
                 </p>
                 <Link
                   href="/services"
@@ -316,7 +317,7 @@ export default function HomeView() {
                   <span className="text-xs text-neutral-400 font-mono tracking-wider">{project.industry.toUpperCase()}</span>
                 </div>
                 <p className="text-xs font-light text-neutral-500 leading-relaxed max-w-md">
-                  {project.summary}
+                  {stripHtml(project.summary)}
                 </p>
                 <div className="md:text-right flex flex-col md:items-end">
                   <div className="text-2xl md:text-3xl font-sans font-extralight text-neutral-950 tracking-tight line-height-[1] mb-1">

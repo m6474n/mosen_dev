@@ -11,10 +11,22 @@ interface BlogPostViewProps {
 }
 
 export default function BlogPostView({ slug }: BlogPostViewProps) {
-  const { blogs } = useData();
+  const { blogs, loading } = useData();
   const activePost = blogs.find((b) => b.slug === slug);
 
-  // Fallback if post is not found
+  // Show loader while Firebase data is still being fetched
+  if (loading) {
+    return (
+      <DefaultPageLayout>
+        <Container className="items-center justify-center py-32 text-center">
+          <div className="w-6 h-6 border-2 border-neutral-950 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-xs font-mono text-neutral-400 uppercase tracking-widest">Loading essay...</p>
+        </Container>
+      </DefaultPageLayout>
+    );
+  }
+
+  // Fallback if post is not found (only shown after loading completes)
   if (!activePost) {
     return (
       <DefaultPageLayout>

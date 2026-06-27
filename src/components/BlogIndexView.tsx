@@ -7,6 +7,7 @@ import { useData } from '../context/DataContext';
 import DefaultPageLayout, { Container } from './DefaultPageLayout';
 import DynamicPageHeader from './DynamicPageHeader';
 import ReusableCard from './ReusableCard';
+import { stripHtml } from '../lib/richText';
 
 export default function BlogIndexView() {
   const { blogs } = useData();
@@ -42,7 +43,7 @@ export default function BlogIndexView() {
                 </h3>
 
                 <p className="text-xs font-light text-neutral-500 leading-relaxed mb-8">
-                  {essay.excerpt}
+                  {stripHtml(essay.excerpt)}
                 </p>
               </div>
 

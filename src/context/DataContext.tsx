@@ -100,24 +100,20 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           const msgsSnap = await getDocs(collection(db, 'contact'));
           const msgsList = msgsSnap.docs.map(d => ({ id: d.id, ...d.data() })) as any[];
 
-          // Fallbacks to default data if Firebase databases are connected but brand-new empty
-          if (postsList.length === 0 && csList.length === 0 && svcsList.length === 0) {
-            console.log("Firestore databases are empty. Sourced from local assets.");
-            loadLocalDataFallback();
-          } else {
-            setPosts(postsList);
-            setCaseStudies(csList);
-            setProjects(projList);
-            setServices(svcsList);
-            setResources(resList);
-            setBlogs(blogsList);
-            setMessages(msgsList);
-          }
+          setPosts(postsList);
+          setCaseStudies(csList);
+          setProjects(projList);
+          setServices(svcsList);
+          setResources(resList);
+          setBlogs(blogsList);
+          setMessages(msgsList);
         } catch (error) {
-          console.error("Error loading Firestore collections, falling back to LocalStorage:", error);
+          console.error("Critical error loading live Firestore collections:", error);
+          // Fallback to local state ONLY if network fails completely, to prevent breaking UI
           loadLocalDataFallback();
         }
       } else {
+        console.warn("Firebase not configured. Operating in local sandbox mode.");
         loadLocalDataFallback();
       }
       setLoading(false);

@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
+import dynamic from 'next/dynamic';
+import 'react-quill-new/dist/quill.snow.css';
 import { 
   LayoutDashboard, 
   FileText, 
@@ -31,12 +33,16 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { useData, MessageItemData } from '../context/DataContext';
+import { useAuth } from '../context/AuthContext';
 import { CaseStudy, Service, Resource, BlogPost } from '../types';
+
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
 type ContentType = 'posts' | 'case_studies' | 'projects' | 'services' | 'resources' | 'blogs';
 
 export default function AdminDashboardView() {
   const router = useRouter();
+  const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [contentSubTab, setContentSubTab] = useState<ContentType>('posts');
   const [inboxSubTab, setInboxSubTab] = useState<'messages' | 'bookings'>('messages');
@@ -123,12 +129,21 @@ export default function AdminDashboardView() {
         </div>
 
         {/* Action button: Exit to index */}
-        <div className="p-4 border-t border-neutral-900">
+        <div className="p-4 border-t border-neutral-900 flex flex-col gap-2">
           <button 
-            onClick={() => router.push('/')}
+            onClick={async () => {
+              await logout();
+              router.push('/');
+            }}
             className="w-full flex items-center justify-center gap-2.5 px-4 py-3 bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white transition-all uppercase text-[10px] font-bold tracking-wider rounded-none cursor-pointer border border-neutral-800"
           >
-            <LogOut className="w-4 h-4" /> Exit to Homepage
+            <LogOut className="w-4 h-4" /> Terminate Session
+          </button>
+          <button 
+            onClick={() => router.push('/')}
+            className="w-full flex items-center justify-center gap-2.5 px-4 py-2 bg-transparent text-neutral-500 hover:text-white transition-all uppercase text-[9px] font-bold tracking-wider rounded-none cursor-pointer"
+          >
+            Go to Homepage
           </button>
         </div>
       </div>
@@ -524,23 +539,90 @@ function ContentManager({ subTab, setSubTab, addLog }: { subTab: ContentType, se
                       />
                     </div>
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Problem Brief Challenge</label>
-                    <textarea 
-                      value={editingItem.challenge || ''} 
-                      onChange={e => setEditingItem({ ...editingItem, challenge: e.target.value })} 
-                      rows={2}
-                      className="w-full border border-neutral-200 p-3 text-xs rounded-none font-sans" 
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="flex flex-col gap-2">
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Problem Brief Challenge</label>
+                      <textarea 
+                        value={editingItem.challenge || ''} 
+                        onChange={e => setEditingItem({ ...editingItem, challenge: e.target.value })} 
+                        rows={2}
+                        className="w-full border border-neutral-200 p-3 text-xs rounded-none font-sans" 
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Project Solution Architecture</label>
+                      <textarea 
+                        value={editingItem.solution || ''} 
+                        onChange={e => setEditingItem({ ...editingItem, solution: e.target.value })} 
+                        rows={2}
+                        className="w-full border border-neutral-200 p-3 text-xs rounded-none font-sans" 
+                      />
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Project Solution Architecture</label>
-                    <textarea 
-                      value={editingItem.solution || ''} 
-                      onChange={e => setEditingItem({ ...editingItem, solution: e.target.value })} 
-                      rows={2}
-                      className="w-full border border-neutral-200 p-3 text-xs rounded-none font-sans" 
-                    />
+
+                  {/* Screenshots Management section */}
+                  <div className="border-t border-neutral-100 pt-6">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block mb-3">Case Study Screenshots (Platform Previews)</label>
+                    <div className="space-y-4">
+                      {Array.from({ length: 3 }).map((_, idx) => {
+                        const shot = editingItem.screenshots?.[idx] || { id: `screen-${idx}`, title: '', description: '', type: 'desktop', imageUrl: '' };
+                        const updateScreenshot = (field: string, val: string) => {
+                          const list = [...(editingItem.screenshots || [])];
+                          while (list.length <= idx) {
+                            list.push({ id: `screen-${list.length}`, title: '', description: '', type: 'desktop', imageUrl: '' });
+                          }
+                          list[idx] = { ...list[idx], [field]: val };
+                          setEditingItem({ ...editingItem, screenshots: list });
+                        };
+
+                        return (
+                          <div key={idx} className="bg-neutral-50 p-4 border border-neutral-200 grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div className="flex flex-col gap-1.5">
+                              <span className="text-[9px] font-bold text-neutral-400">SCREEN {idx + 1} TITLE</span>
+                              <input 
+                                type="text"
+                                value={shot.title || ''}
+                                onChange={e => updateScreenshot('title', e.target.value)}
+                                placeholder="E.g., Dashboard Overview"
+                                className="w-full border border-neutral-200 px-2 py-1 text-xs rounded-none bg-white"
+                              />
+                            </div>
+                            <div className="flex flex-col gap-1.5">
+                              <span className="text-[9px] font-bold text-neutral-400">IMAGE URL</span>
+                              <input 
+                                type="text"
+                                value={shot.imageUrl || ''}
+                                onChange={e => updateScreenshot('imageUrl', e.target.value)}
+                                placeholder="E.g., https://.../image.png"
+                                className="w-full border border-neutral-200 px-2 py-1 text-xs rounded-none bg-white font-mono"
+                              />
+                            </div>
+                            <div className="flex flex-col gap-1.5">
+                              <span className="text-[9px] font-bold text-neutral-400">PLATFORM TYPE</span>
+                              <select 
+                                value={shot.type || 'desktop'}
+                                onChange={e => updateScreenshot('type', e.target.value)}
+                                className="w-full border border-neutral-200 px-2 py-1.5 text-xs rounded-none bg-white cursor-pointer"
+                              >
+                                <option value="desktop">Desktop</option>
+                                <option value="mobile">Mobile</option>
+                                <option value="website">Website</option>
+                              </select>
+                            </div>
+                            <div className="flex flex-col gap-1.5">
+                              <span className="text-[9px] font-bold text-neutral-400">SHORT DESCRIPTION</span>
+                              <input 
+                                type="text"
+                                value={shot.description || ''}
+                                onChange={e => updateScreenshot('description', e.target.value)}
+                                placeholder="E.g., Bidding calculations layout"
+                                className="w-full border border-neutral-200 px-2 py-1 text-xs rounded-none bg-white"
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               )}
@@ -681,35 +763,34 @@ function ContentManager({ subTab, setSubTab, addLog }: { subTab: ContentType, se
                 </div>
               )}
 
-              {/* Main Content TextArea (Handles description, summaries or html bodies) */}
-              <div className="flex flex-col gap-2 flex-grow min-h-[220px]">
+              {/* Main Content Rich Text Editor (Handles description, summaries or html bodies) */}
+              <div className="flex flex-col gap-2 flex-grow min-h-[340px]">
                 <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
-                  {subTab === 'blogs' ? 'Detailed Essay Content Body (HTML Supported)' : 'Document Core Description / Summary Text'}
+                  {subTab === 'blogs' ? 'Detailed Essay Content Body (Visual Rich Text Editor)' : 'Document Core Description / Summary Text'}
                 </label>
-                <textarea 
-                  value={editingItem.content || editingItem.contentMarkdown || editingItem.contentHtml || editingItem.description || ''} 
-                  onChange={e => {
-                    const txt = e.target.value;
-                    const updateObj: any = { ...editingItem };
-                    if (subTab === 'case_studies') {
-                      updateObj.contentMarkdown = txt;
-                      updateObj.summary = txt.slice(0, 180);
-                    } else if (subTab === 'blogs') {
-                      updateObj.contentHtml = txt;
-                      updateObj.content = txt;
-                    } else if (subTab === 'services' || subTab === 'resources') {
-                      updateObj.description = txt;
-                      updateObj.content = txt;
-                    } else {
-                      updateObj.content = txt;
-                    }
-                    setEditingItem(updateObj);
-                  }} 
-                  required
-                  rows={8}
-                  placeholder="Insert complete writeup body, documentation text or description paragraphs here..."
-                  className="w-full border border-neutral-200 p-4 outline-hidden focus:border-neutral-950 font-mono text-xs flex-grow rounded-none resize-y" 
-                />
+                <div className="flex-grow flex flex-col min-h-[280px] border border-neutral-200">
+                  <ReactQuill
+                    theme="snow"
+                    value={editingItem.content || editingItem.contentMarkdown || editingItem.contentHtml || editingItem.description || ''}
+                    onChange={(txt) => {
+                      const updateObj: any = { ...editingItem };
+                      if (subTab === 'case_studies') {
+                        updateObj.contentMarkdown = txt;
+                        updateObj.summary = txt.replace(/<[^>]*>/g, '').slice(0, 180);
+                      } else if (subTab === 'blogs') {
+                        updateObj.contentHtml = txt;
+                        updateObj.content = txt;
+                      } else if (subTab === 'services' || subTab === 'resources') {
+                        updateObj.description = txt;
+                        updateObj.content = txt;
+                      } else {
+                        updateObj.content = txt;
+                      }
+                      setEditingItem(updateObj);
+                    }}
+                    className="flex-grow flex flex-col font-sans text-sm bg-white"
+                  />
+                </div>
               </div>
             </div>
           </form>
@@ -1131,7 +1212,7 @@ function SettingsPanel({ isFirebaseActive, seedFirebase, addLog }: { isFirebaseA
           </button>
           {!isFirebaseActive && (
             <span className="text-[9px] text-amber-400 font-mono uppercase tracking-widest text-center mt-2">
-              Requires VITE_ env keys
+              Requires NEXT_PUBLIC_ env keys
             </span>
           )}
         </div>

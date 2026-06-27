@@ -6,6 +6,7 @@ import { ReactLenis } from 'lenis/react';
 import { AnimatePresence } from 'motion/react';
 import { usePathname } from 'next/navigation';
 import { DataProvider } from '@/context/DataContext';
+import { AuthProvider } from '@/context/AuthContext';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CustomPointer from '@/components/CustomPointer';
@@ -29,42 +30,64 @@ const interTight = Inter_Tight({
 function RootLayoutInner({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const pathname = usePathname();
-  const isAdminRoute = pathname.startsWith('/admin');
+  const isAdminRoute = pathname.startsWith('/admin') || pathname.startsWith('/login');
+
+  const pageContent = (
+    <>
+      {!isAdminRoute && <CustomPointer />}
+
+      {!isAdminRoute && (
+        <AnimatePresence mode="wait">
+          {isLoading && (
+            <InitialPreloader key="app-preloader" onComplete={() => setIsLoading(false)} />
+          )}
+        </AnimatePresence>
+      )}
+
+      <div
+        className={`selection:bg-neutral-950 selection:text-white flex flex-col ${
+          isAdminRoute
+            ? 'min-h-screen bg-neutral-50'
+            : 'min-h-screen justify-between bg-white text-neutral-900'
+        }`}
+      >
+        {!isAdminRoute && <Header />}
+
+        <div className="flex-grow flex flex-col">
+          {isAdminRoute ? (
+            <main className="flex-grow flex flex-col">
+              {children}
+            </main>
+          ) : (
+            <AnimatePresence mode="wait">
+              {!isLoading && (
+                <main className="flex-grow flex flex-col">
+                  {children}
+                </main>
+              )}
+            </AnimatePresence>
+          )}
+        </div>
+
+        {!isAdminRoute && <Footer />}
+      </div>
+    </>
+  );
 
   return (
     <html lang="en" className={`${inter.variable} ${interTight.variable}`}>
       <body>
-        <DataProvider>
-          <ReactLenis root options={{ lerp: 0.1, duration: 1.2, smoothWheel: true }}>
-            <CustomPointer />
-
-            <AnimatePresence mode="wait">
-              {isLoading && (
-                <InitialPreloader key="app-preloader" onComplete={() => setIsLoading(false)} />
-              )}
-            </AnimatePresence>
-
-            <div
-              className={`min-h-screen selection:bg-neutral-950 selection:text-white flex flex-col justify-between ${
-                isAdminRoute ? 'bg-neutral-50' : 'bg-white text-neutral-900'
-              }`}
-            >
-              {!isAdminRoute && <Header />}
-
-              <div className="flex-grow flex flex-col">
-                <AnimatePresence mode="wait">
-                  {!isLoading && (
-                    <main className="flex-grow flex flex-col">
-                      {children}
-                    </main>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {!isAdminRoute && <Footer />}
-            </div>
-          </ReactLenis>
-        </DataProvider>
+        <AuthProvider>
+          <DataProvider>
+            {isAdminRoute ? (
+              pageContent
+            ) : (
+              <ReactLenis root options={{ lerp: 0.1, duration: 1.2, smoothWheel: true }}>
+                {pageContent}
+              </ReactLenis>
+            )}
+          </DataProvider>
+        </AuthProvider>
       </body>
     </html>
   );

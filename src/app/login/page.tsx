@@ -3,16 +3,16 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import AdminDashboardView from '@/components/AdminDashboardView';
+import LoginView from '@/components/LoginView';
 import { Activity } from 'lucide-react';
 
-export default function AdminPage() {
+export default function LoginPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.replace('/login');
+    if (!loading && user) {
+      router.replace('/admin');
     }
   }, [user, loading, router]);
 
@@ -25,9 +25,9 @@ export default function AdminPage() {
     );
   }
 
-  if (!user) {
+  if (user) {
     return null;
   }
 
-  return <AdminDashboardView />;
+  return <LoginView />;
 }

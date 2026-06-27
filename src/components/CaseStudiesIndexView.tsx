@@ -7,6 +7,7 @@ import { useData } from '../context/DataContext';
 import DefaultPageLayout, { Container } from './DefaultPageLayout';
 import DynamicPageHeader from './DynamicPageHeader';
 import ReusableCard from './ReusableCard';
+import { stripHtml } from '../lib/richText';
 
 export default function CaseStudiesIndexView() {
   const { caseStudies } = useData();
@@ -50,7 +51,7 @@ export default function CaseStudiesIndexView() {
                 </h3>
 
                 <p className="text-xs font-light text-neutral-600 leading-relaxed max-w-2xl mb-8">
-                  {project.summary}
+                  {stripHtml(project.summary)}
                 </p>
 
                 {/* Immediate main outcome indicator */}

@@ -27,6 +27,7 @@
     "next": "^16.2.9",
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
+    "react-quill-new": "^3.8.3",
     "vite": "^6.2.3"
   },
   "devDependencies": {

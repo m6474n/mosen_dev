@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Download, Copy, Check, Terminal, FileCode, Sliders, ExternalLink } from 'lucide-react';
 import { useData } from '../context/DataContext';
+import { stripHtml } from '../lib/richText';
 import { Resource } from '../types';
 import DefaultPageLayout, { Container } from './DefaultPageLayout';
 import DynamicPageHeader from './DynamicPageHeader';
@@ -145,7 +146,7 @@ export default function ResourcesView() {
                     </h3>
 
                     <p className="text-xs font-light text-neutral-500 leading-relaxed mb-6">
-                      {resource.description}
+                      {stripHtml(resource.description)}
                     </p>
 
                     <div className="flex flex-wrap gap-1.5 mb-8">
