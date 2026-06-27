@@ -1,4 +1,7 @@
+'use client';
+
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Cpu, TrendingUp, Code, CheckCircle, Calculator, PhoneCall, HelpCircle, Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useData } from '../context/DataContext';
@@ -105,12 +108,12 @@ export default function ServicesView() {
                       <span className="font-semibold text-neutral-400 uppercase tracking-widest">Pricing Model</span>
                       <span className="font-bold text-neutral-900 font-mono">{srv.pricing}</span>
                     </div>
-                    <a
-                      href="#/contact"
+                    <Link
+                      href="/contact"
                       className="w-full text-center py-3 bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-bold tracking-wider transition-colors block uppercase"
                     >
                       Enquire For Setup
-                    </a>
+                    </Link>
                   </div>
                 </ReusableCard>
               );
@@ -207,12 +210,12 @@ export default function ServicesView() {
               <p className="text-[11px] font-light text-neutral-400 leading-relaxed">
                 Estimates are calculated using standard production complexities and are fully custom-adjustable. This allows us to establish flat-rate billing bounds without hidden charges.
               </p>
-              <a
-                href={`#/contact?service=custom-scope&budget=${totals.cost}&message=Estimated features list: ${selectedFeatures.join(', ')}`}
+              <Link
+                href={`/contact?service=custom-scope&budget=${totals.cost}&message=Estimated features list: ${selectedFeatures.join(', ')}`}
                 className="w-full text-center py-4 bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-bold tracking-wider transition-colors uppercase"
               >
                 Book Scope Verification Call
-              </a>
+              </Link>
             </div>
           </ReusableCard>
         </Container>

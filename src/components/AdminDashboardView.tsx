@@ -1,4 +1,7 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   LayoutDashboard, 
@@ -33,6 +36,7 @@ import { CaseStudy, Service, Resource, BlogPost } from '../types';
 type ContentType = 'posts' | 'case_studies' | 'projects' | 'services' | 'resources' | 'blogs';
 
 export default function AdminDashboardView() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [contentSubTab, setContentSubTab] = useState<ContentType>('posts');
   const [inboxSubTab, setInboxSubTab] = useState<'messages' | 'bookings'>('messages');
@@ -121,7 +125,7 @@ export default function AdminDashboardView() {
         {/* Action button: Exit to index */}
         <div className="p-4 border-t border-neutral-900">
           <button 
-            onClick={() => window.location.hash = '#/'}
+            onClick={() => router.push('/')}
             className="w-full flex items-center justify-center gap-2.5 px-4 py-3 bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white transition-all uppercase text-[10px] font-bold tracking-wider rounded-none cursor-pointer border border-neutral-800"
           >
             <LogOut className="w-4 h-4" /> Exit to Homepage

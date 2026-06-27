@@ -1,4 +1,8 @@
+'use client';
+
 import React, { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion } from 'motion/react';
 import gsap from 'gsap';
 import { ArrowUpRight, Cpu, TrendingUp, Code, CheckCircle, ArrowRight } from 'lucide-react';
@@ -35,6 +39,7 @@ function GsapCounter({ value }: { value: string }) {
 
 export default function HomeView() {
   const { services, caseStudies } = useData();
+  const router = useRouter();
   const heroTitleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
@@ -108,21 +113,21 @@ export default function HomeView() {
 
           <div ref={buttonsRef} style={{ opacity: 0 }} className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-16 w-full">
             <Button
-              onClick={() => window.location.hash = '#/contact'}
+              onClick={() => router.push('/contact')}
               variant="primary"
               id="hero-cta-btn"
               className="w-full sm:w-auto"
             >
               BOOK A DISCOVERY CALL
             </Button>
-            <a
-              href="#/case-studies"
+            <Link
+              href="/case-studies"
               className="text-xs font-bold tracking-wider text-neutral-950 hover:text-neutral-600 transition-colors border-b-2 border-neutral-950 pb-1 flex items-center gap-1.5 uppercase"
               id="hero-works-btn"
             >
               VIEW CASE STUDIES
               <ArrowRight className="w-3.5 h-3.5" />
-            </a>
+            </Link>
           </div>
 
           {/* Core Stats */}
@@ -188,14 +193,14 @@ export default function HomeView() {
               <p className="text-sm font-light text-neutral-600 leading-relaxed mb-8 tracking-wide">
                 That means you get a single product partner who takes a business problem from architectural design to deployed, automated system — without translation loss between roles, without missed context, and without coordinating three agencies who have never met.
               </p>
-              <a
-                href="#/about"
+              <Link
+                href="/about"
                 className="inline-flex items-center gap-2 text-xs font-bold tracking-wider text-neutral-950 hover:text-neutral-600 transition-colors border-b-2 border-neutral-950 pb-1 uppercase"
                 id="about-learn-more"
               >
                 LEARN MORE ABOUT MY BACKGROUND
                 <ArrowRight className="w-3.5 h-3.5" />
-              </a>
+              </Link>
             </div>
 
             <ReusableCard hoverable={false} variant="white" className="p-8 md:p-12 gap-6 flex flex-col">
@@ -252,12 +257,12 @@ export default function HomeView() {
                 <p className="text-xs font-light text-neutral-400 leading-relaxed mb-8 flex-grow">
                   {srv.description}
                 </p>
-                <a
-                  href={`#/services`}
+                <Link
+                  href="/services"
                   className="inline-flex items-center gap-1 text-[11px] font-bold text-neutral-400 hover:text-white tracking-widest uppercase transition-colors"
                 >
                   EXPLORE {srv.title.toUpperCase()} <ArrowRight className="w-3 h-3 ml-1" />
-                </a>
+                </Link>
               </div>
             ))}
           </div>
@@ -284,19 +289,19 @@ export default function HomeView() {
                 PROJECTS THAT<br />MOVED NUMBERS.
               </h2>
             </div>
-            <a
-              href="#/case-studies"
+            <Link
+              href="/case-studies"
               className="text-xs font-bold tracking-wider text-neutral-950 hover:text-neutral-600 transition-colors border-b-2 border-neutral-950 pb-1 uppercase"
               id="all-work-link"
             >
               ALL COMPREHENSIVE CASE STUDIES
-            </a>
+            </Link>
           </div>
 
           <div className="flex flex-col">
             {caseStudies.map((project, index) => (
-              <a
-                href={`#/case-study/${project.id}`}
+              <Link
+                href={`/case-studies/${project.id}`}
                 key={project.id}
                 className="group grid grid-cols-1 md:grid-cols-[60px_1.2fr_1.5fr_1fr] gap-4 md:gap-6 items-start py-10 border-b border-neutral-100 hover:bg-neutral-50 px-4 -mx-4 transition-all"
                 id={`work-item-${project.id}`}
@@ -321,7 +326,7 @@ export default function HomeView() {
                     {project.results[0].label.toUpperCase()}
                   </div>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
         </Container>
@@ -441,7 +446,7 @@ export default function HomeView() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
             <Button
-              onClick={() => window.location.hash = '#/contact'}
+              onClick={() => router.push('/contact')}
               variant="primary"
               id="cta-schedule-call"
               className="w-full sm:w-auto px-8"
@@ -449,7 +454,7 @@ export default function HomeView() {
               SCHEDULE A CALL
             </Button>
             <Button
-              onClick={() => window.location.hash = '#/contact'}
+              onClick={() => router.push('/contact')}
               variant="secondary"
               id="cta-project"
               className="w-full sm:w-auto px-8"

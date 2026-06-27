@@ -1,19 +1,16 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import firebaseAppletConfig from "../../firebase-applet-config.json";
-
-const env = (import.meta as any).env || {};
 
 const firebaseConfig = {
-  apiKey: firebaseAppletConfig.apiKey || env.VITE_FIREBASE_API_KEY,
-  authDomain: firebaseAppletConfig.authDomain || env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: firebaseAppletConfig.projectId || env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: firebaseAppletConfig.storageBucket || env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: firebaseAppletConfig.messagingSenderId || env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: firebaseAppletConfig.appId || env.VITE_FIREBASE_APP_ID
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
-const databaseId = firebaseAppletConfig.firestoreDatabaseId || "(default)";
+const databaseId = "(default)";
 
 export const hasFirebaseConfig = !!(
   firebaseConfig.projectId && 

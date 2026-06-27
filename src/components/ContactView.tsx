@@ -1,4 +1,8 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { Mail, Briefcase, DollarSign, Send, CheckCircle2, RefreshCw, Terminal, ArrowUpRight } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { MOHSIN_BIO } from '../data';
@@ -23,22 +27,16 @@ export default function ContactView() {
   const [simulatedRefCode, setSimulatedRefCode] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
 
-  // Extract initial parameters from URL hash, if any
+  // Extract initial parameters from URL search params
+  const searchParams = useSearchParams();
   useEffect(() => {
-    const hash = window.location.hash;
-    if (hash.includes('?')) {
-      const queryPart = hash.split('?')[1];
-      const params = new URLSearchParams(queryPart);
-      
-      const srvParam = params.get('service');
-      const bdgParam = params.get('budget');
-      const msgParam = params.get('message');
-      
-      if (srvParam) setService(srvParam);
-      if (bdgParam) setBudget(bdgParam.startsWith('$') ? bdgParam : `$${bdgParam}`);
-      if (msgParam) setMessage(msgParam);
-    }
-  }, []);
+    const srvParam = searchParams.get('service');
+    const bdgParam = searchParams.get('budget');
+    const msgParam = searchParams.get('message');
+    if (srvParam) setService(srvParam);
+    if (bdgParam) setBudget(bdgParam.startsWith('$') ? bdgParam : `$${bdgParam}`);
+    if (msgParam) setMessage(msgParam);
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -209,12 +207,12 @@ export default function ContactView() {
                   >
                     <RefreshCw className="w-4 h-4" /> RE-SUBMIT TO INTAKE
                   </Button>
-                  <a
-                    href="#/"
+                  <Link
+                    href="/"
                     className="py-3 px-6 bg-neutral-950 hover:bg-neutral-800 text-white font-bold text-xs tracking-wider uppercase text-center block flex-grow"
                   >
                     RETURN TO HOME
-                  </a>
+                  </Link>
                 </div>
               </div>
             ) : (

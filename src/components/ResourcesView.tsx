@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { Search, Download, Copy, Check, Terminal, FileCode, Sliders, ExternalLink } from 'lucide-react';
 import { useData } from '../context/DataContext';

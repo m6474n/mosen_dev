@@ -1,10 +1,14 @@
+'use client';
+
 import React from 'react';
+import dynamic from 'next/dynamic';
 import { CheckCircle2, Award, ArrowUpRight, ShieldCheck, Zap, Layers } from 'lucide-react';
 import { MOHSIN_BIO, SKILLSET, MILESTONES } from '../data';
 import DefaultPageLayout, { Container } from './DefaultPageLayout';
 import DynamicPageHeader from './DynamicPageHeader';
 import ReusableCard from './ReusableCard';
-import InteractiveWorldMap from './InteractiveWorldMap';
+
+const InteractiveWorldMap = dynamic(() => import('./InteractiveWorldMap'), { ssr: false });
 
 export default function AboutView() {
   const skillset = SKILLSET;

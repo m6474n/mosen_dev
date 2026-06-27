@@ -1,4 +1,7 @@
+'use client';
+
 import React from 'react';
+import Link from 'next/link';
 import { Mail, Github, Linkedin, ArrowUp } from 'lucide-react';
 import { MOHSIN_BIO } from '../data';
 
@@ -13,9 +16,9 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 items-start">
           {/* Brand info */}
           <div className="flex flex-col gap-4">
-            <a href="#/" className="font-sans font-bold text-xl tracking-wider hover:opacity-80 transition-opacity">
+            <Link href="/" className="font-sans font-bold text-xl tracking-wider hover:opacity-80 transition-opacity">
               MOSEN<span className="text-neutral-500">.</span>
-            </a>
+            </Link>
             <p className="text-xs font-light text-neutral-400 tracking-wide">
               {MOHSIN_BIO.detailedBio}
             </p>
@@ -29,20 +32,20 @@ export default function Footer() {
             <div className="flex flex-col gap-4">
               <span className="text-[10px] font-bold tracking-widest text-neutral-500 uppercase">EXPLORE</span>
               <ul className="flex flex-col gap-2.5 text-xs font-light text-neutral-400 list-none">
-                <li><a href="#/" className="hover:text-white transition-colors">HOME</a></li>
-                <li><a href="#/about" className="hover:text-white transition-colors">ABOUT</a></li>
-                <li><a href="#/services" className="hover:text-white transition-colors">SERVICES</a></li>
-                <li><a href="#/case-studies" className="hover:text-white transition-colors">CASE STUDIES</a></li>
+                <li><Link href="/" className="hover:text-white transition-colors">HOME</Link></li>
+                <li><Link href="/about" className="hover:text-white transition-colors">ABOUT</Link></li>
+                <li><Link href="/services" className="hover:text-white transition-colors">SERVICES</Link></li>
+                <li><Link href="/case-studies" className="hover:text-white transition-colors">CASE STUDIES</Link></li>
               </ul>
             </div>
 
             <div className="flex flex-col gap-4">
               <span className="text-[10px] font-bold tracking-widest text-neutral-500 uppercase">RESOURCES</span>
               <ul className="flex flex-col gap-2.5 text-xs font-light text-neutral-400 list-none">
-                <li><a href="#/resources" className="hover:text-white transition-colors">UTILITIES & UTILS</a></li>
-                <li><a href="#/blog" className="hover:text-white transition-colors">BLOG ARTICLES</a></li>
-                <li><a href="#/contact" className="hover:text-white transition-colors">REVENUE PIPELINES</a></li>
-                <li><a href="#/contact" className="hover:text-white transition-colors">TALK TO ME</a></li>
+                <li><Link href="/resources" className="hover:text-white transition-colors">UTILITIES & UTILS</Link></li>
+                <li><Link href="/blog" className="hover:text-white transition-colors">BLOG ARTICLES</Link></li>
+                <li><Link href="/contact" className="hover:text-white transition-colors">REVENUE PIPELINES</Link></li>
+                <li><Link href="/contact" className="hover:text-white transition-colors">TALK TO ME</Link></li>
               </ul>
             </div>
           </div>

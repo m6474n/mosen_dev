@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { 
   Wifi, WifiOff, Cpu, HardDrive, Terminal, Shield, Play, 

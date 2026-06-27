@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { motion } from 'motion/react';
 
@@ -15,7 +17,7 @@ export default function ReusableCard({
   hoverable = true,
   className = '',
   variant = 'white',
-  ...props
+  id,
 }: ReusableCardProps) {
   const bgStyles = variant === 'muted' ? 'bg-neutral-50/50' : 'bg-white';
   const borderStyles = hoverable
@@ -25,7 +27,7 @@ export default function ReusableCard({
   const motionProps = hoverable
     ? {
         whileHover: { y: -4, scale: 1.01 },
-        transition: { type: 'spring', stiffness: 350, damping: 22 }
+        transition: { type: 'spring' as const, stiffness: 350, damping: 22 }
       }
     : {};
 
@@ -33,7 +35,7 @@ export default function ReusableCard({
     <motion.div
       {...motionProps}
       className={`p-8 md:p-12 ${bgStyles} ${borderStyles} shadow-xs flex flex-col justify-between ${className}`}
-      {...props}
+      id={id}
     >
       {children}
     </motion.div>

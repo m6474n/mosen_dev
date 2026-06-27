@@ -1,3 +1,5 @@
+'use client';
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db, hasFirebaseConfig } from '../lib/firebase';
 import { 
@@ -249,7 +251,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           break;
         case 'blogs':
           setBlogs(prev => {
-            const list = prev.some(i => i.id === updatedItem.id) ? prev.map(i => i.id === updatedItem.id ? updatedItem : i) : [updatedItem, ...prev];
+            const list = prev.some(i => i.slug === updatedItem.slug) ? prev.map(i => i.slug === updatedItem.slug ? updatedItem : i) : [updatedItem, ...prev];
             localStorage.setItem('mosen_blogs', JSON.stringify(list));
             return list;
           });
@@ -260,7 +262,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     if (isFirebaseActive) {
       try {
         const collectionName = type;
-        await setDoc(doc(db, collectionName, item.id), item);
+        const docId = type === 'blogs' ? item.slug : item.id;
+        await setDoc(doc(db, collectionName, docId), item);
         updateLocalState(type, item);
         savedSuccessfully = true;
       } catch (err) {
@@ -318,7 +321,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           break;
         case 'blogs':
           setBlogs(prev => {
-            const list = prev.filter(i => i.id !== targetId);
+            const list = prev.filter(i => i.slug !== targetId);
             localStorage.setItem('mosen_blogs', JSON.stringify(list));
             return list;
           });

@@ -1,13 +1,15 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X, ArrowUpRight } from 'lucide-react';
 import Button from './Button';
 
-interface HeaderProps {
-  currentHash: string;
-}
-
-export default function Header({ currentHash }: HeaderProps) {
+export default function Header() {
+  const pathname = usePathname();
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -19,32 +21,25 @@ export default function Header({ currentHash }: HeaderProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile menu on hash change
+  // Close mobile menu on route change
   useEffect(() => {
     setMobileMenuOpen(false);
-  }, [currentHash]);
+  }, [pathname]);
 
   const navLinks = [
-    { label: 'ABOUT', href: '#/about' },
-    { label: 'SERVICES', href: '#/services' },
-    { label: 'CASE STUDIES', href: '#/case-studies' },
-    { label: 'RESOURCES', href: '#/resources' },
-    { label: 'BLOG', href: '#/blog' },
-    { label: 'CONTACT', href: '#/contact' },
+    { label: 'ABOUT', href: '/about' },
+    { label: 'SERVICES', href: '/services' },
+    { label: 'CASE STUDIES', href: '/case-studies' },
+    { label: 'RESOURCES', href: '/resources' },
+    { label: 'BLOG', href: '/blog' },
+    { label: 'CONTACT', href: '/contact' },
   ];
 
-  const getCleanPath = (hash: string) => {
-    if (!hash || hash === '#/') return '';
-    return hash;
-  };
-
-  const activePath = getCleanPath(currentHash);
-
   const isActive = (href: string) => {
-    if (href === '#/case-studies') {
-      return activePath.startsWith('#/case-study');
+    if (href === '/case-studies') {
+      return pathname.startsWith('/case-studies');
     }
-    return activePath.startsWith(href);
+    return pathname.startsWith(href);
   };
 
   return (
@@ -57,13 +52,13 @@ export default function Header({ currentHash }: HeaderProps) {
       }`}
     >
       <div className="w-full max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
-        <a 
-          href="#/" 
+        <Link
+          href="/"
           className="font-sans font-bold text-lg tracking-wider text-neutral-900 transition-opacity hover:opacity-80"
           id="nav-logo"
         >
           MOSEN<span className="text-neutral-400">.</span>
-        </a>
+        </Link>
 
         {/* Desktop links */}
         <ul className="hidden md:flex items-center gap-8 list-none">
@@ -71,15 +66,15 @@ export default function Header({ currentHash }: HeaderProps) {
             const active = isActive(link.href);
             return (
               <li key={link.href} className="relative py-1">
-                <a
+                <Link
                   href={link.href}
                   className={`text-xs font-semibold tracking-wider transition-colors hover:text-neutral-950 ${
                     active ? 'text-neutral-950 font-bold' : 'text-neutral-500'
                   }`}
-                  id={`link-${link.label.toLowerCase()}`}
+                  id={`link-${link.label.toLowerCase().replace(' ', '-')}`}
                 >
                   {link.label}
-                </a>
+                </Link>
                 {active && (
                   <motion.div
                     layoutId="desktopNavUnderline"
@@ -92,7 +87,7 @@ export default function Header({ currentHash }: HeaderProps) {
           })}
           <li>
             <Button
-              onClick={() => window.location.hash = '#/contact'}
+              onClick={() => router.push('/contact')}
               variant="primary"
               className="!px-4 !py-2.5 rounded-none flex items-center gap-1.5 shadow-sm"
               id="cta-book-call"
@@ -127,7 +122,7 @@ export default function Header({ currentHash }: HeaderProps) {
             <ul className="flex flex-col gap-4 list-none">
               {navLinks.map((link) => (
                 <li key={link.href}>
-                  <a
+                  <Link
                     href={link.href}
                     className={`block text-sm font-semibold tracking-wider py-2 transition-colors ${
                       isActive(link.href) ? 'text-neutral-950 border-l-2 border-neutral-950 pl-3' : 'text-neutral-500 pl-3'
@@ -135,14 +130,14 @@ export default function Header({ currentHash }: HeaderProps) {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
               <li className="mt-2 pt-4 border-t border-neutral-100">
                 <Button
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    window.location.hash = '#/contact';
+                    router.push('/contact');
                   }}
                   variant="primary"
                   className="w-full justify-center py-3 rounded-none flex items-center gap-2 text-center"
