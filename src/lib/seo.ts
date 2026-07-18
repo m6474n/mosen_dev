@@ -69,7 +69,7 @@ export const DEFAULT_METADATA: Metadata = {
   alternates: {
     canonical: BASE_URL,
   },
-  // verification: {
-  //   google: 'your-google-site-verification-token', // User can override this later
-  // }
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '',
+  },
 };

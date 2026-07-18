@@ -12,6 +12,7 @@ import Footer from '@/components/Footer';
 import CustomPointer from '@/components/CustomPointer';
 import InitialPreloader from '@/components/InitialPreloader';
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { Analytics } from "@vercel/analytics/next"
 
 import './globals.css';
 
@@ -85,11 +86,10 @@ function RootLayoutInner({ children }: { children: React.ReactNode }) {
       )}
 
       <div
-        className={`selection:bg-neutral-950 selection:text-white flex flex-col ${
-          isAdminRoute
-            ? 'min-h-screen bg-neutral-50'
-            : 'min-h-screen justify-between bg-white text-neutral-900'
-        }`}
+        className={`selection:bg-neutral-950 selection:text-white flex flex-col ${isAdminRoute
+          ? 'min-h-screen bg-neutral-50'
+          : 'min-h-screen justify-between bg-white text-neutral-900'
+          }`}
       >
         {!isAdminRoute && <Header />}
 
@@ -139,7 +139,8 @@ function RootLayoutInner({ children }: { children: React.ReactNode }) {
           </DataProvider>
         </AuthProvider>
       </body>
-       <GoogleAnalytics gaId="G-70PJPMKWT6" />
+      <GoogleAnalytics gaId="G-70PJPMKWT6" />
+      <Analytics />
     </html>
   );
 }

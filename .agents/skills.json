@@ -1,0 +1,23 @@
+﻿{
+  "version": "1.0.0",
+  "project": "mosen.dev",
+  "owner": "Muhammad Mohsin (m6474n)",
+  "updated": "2026-06-28",
+  "skills": [
+    {
+      "name": "mosen-context",
+      "path": "skills/mosen-context/SKILL.md",
+      "triggers": ["mosen", "portfolio", "website", "firebase", "admin dashboard", "case study", "blog", "services"]
+    },
+    {
+      "name": "token-optimizer",
+      "path": "skills/token-optimizer/SKILL.md",
+      "triggers": ["token", "efficiency", "large file", "optimize", "context window", "read", "grep"]
+    },
+    {
+      "name": "component-coder",
+      "path": "skills/component-coder/SKILL.md",
+      "triggers": ["component", "view", "tsx", "ui", "animation", "section", "layout", "design"]
+    }
+  ]
+}

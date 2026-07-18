@@ -1,6 +1,5 @@
 import { MetadataRoute } from 'next';
-
-const SITE_URL = 'https://mosen.dev';
+import { BASE_URL } from '@/lib/seo';
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -9,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/admin', '/login', '/api/'],
     },
-    sitemap: `${SITE_URL}/sitemap.xml`,
+    sitemap: `${BASE_URL}/sitemap.xml`,
   };
 }
