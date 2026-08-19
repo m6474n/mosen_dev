@@ -2,15 +2,20 @@
 
 import React from 'react';
 import dynamic from 'next/dynamic';
-import { CheckCircle2, Award, ArrowUpRight, ShieldCheck, Zap, Layers } from 'lucide-react';
+import Link from 'next/link';
+import { CheckCircle2, Award, ArrowUpRight, ShieldCheck, Zap, Layers, ArrowRight } from 'lucide-react';
+import { useData } from '../context/DataContext';
 import { MOHSIN_BIO, SKILLSET, MILESTONES } from '../data';
 import DefaultPageLayout, { Container } from './DefaultPageLayout';
 import DynamicPageHeader from './DynamicPageHeader';
 import ReusableCard from './ReusableCard';
+import Button from './Button';
+import { stripHtml } from '../lib/richText';
 
 const InteractiveWorldMap = dynamic(() => import('./InteractiveWorldMap'), { ssr: false });
 
 export default function AboutView() {
+  const { services, projects } = useData();
   const skillset = SKILLSET;
   const milestones = MILESTONES;
 
@@ -29,7 +34,7 @@ export default function AboutView() {
       </section>
 
       {/* ─── STORY & VALUES ─── */}
-      <section className="py-8">
+      <section className="py-12">
         <Container className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
           <div className="flex flex-col gap-6">
             <h2 className="font-sans font-light text-2xl md:text-3xl tracking-tight text-neutral-900 uppercase">
@@ -71,19 +76,25 @@ export default function AboutView() {
         </Container>
       </section>
 
-      {/* ─── ACHIEVEMENTS / TIMELINE ─── */}
-      <section className="py-8 md:py-12 bg-neutral-50 border-y border-neutral-100">
+      {/* ─── SERVICES INTEGRATION SECTION ─── */}
+      <section className="py-16 bg-neutral-950 text-white border-y border-neutral-900">
         <Container>
-          <h2 className="font-sans font-light text-2xl md:text-3xl tracking-tight text-neutral-950 mb-12 uppercase">
-            CHRONOLOGICAL MILESTONES
+          <div className="flex items-center gap-3 mb-6 text-neutral-500">
+            <span className="w-6 h-[1px] bg-neutral-700"></span>
+            <span className="text-[10px] font-extrabold tracking-widest uppercase">CORE SERVICES</span>
+          </div>
+          <h2 className="font-sans font-light text-2xl md:text-4xl tracking-tight text-white mb-12 uppercase">
+            DESIGN, ENGINEERING & AUTOMATION
           </h2>
-          <div className="flex flex-col">
-            {milestones.map((item, idx) => (
-              <div key={idx} className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-4 md:gap-12 py-8 border-b border-neutral-200 last:border-0">
-                <span className="text-xs font-bold text-neutral-400 font-mono tracking-wider">{item.year}</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-neutral-800 p-px">
+            {services.slice(0, 3).map((srv) => (
+              <div key={srv.id} className="bg-neutral-950 p-8 hover:bg-neutral-900/40 transition duration-300 flex flex-col justify-between min-h-[220px]">
                 <div>
-                  <h3 className="text-sm font-light text-neutral-950 tracking-wide mb-2 uppercase">{item.title}</h3>
-                  <p className="text-xs font-light text-neutral-500 leading-relaxed max-w-2xl">{item.desc}</p>
+                  <span className="text-xs font-bold text-neutral-600 mb-6 block">{srv.num}</span>
+                  <h3 className="text-base font-light text-white mb-4 uppercase tracking-wide">{srv.title.toUpperCase()}</h3>
+                  <p className="text-xs font-light text-neutral-400 leading-relaxed">
+                    {stripHtml(srv.description)}
+                  </p>
                 </div>
               </div>
             ))}
@@ -91,15 +102,51 @@ export default function AboutView() {
         </Container>
       </section>
 
-      {/* ─── DETAILED SKILLS & TOOLKIT ─── */}
-      <section className="py-8 md:py-12 bg-white">
+      {/* ─── FEATURED PROJECTS SECTION ─── */}
+      <section className="py-16 bg-white border-b border-neutral-100">
+        <Container>
+          <div className="flex items-center gap-3 mb-6 text-neutral-400">
+            <span className="w-6 h-[1px] bg-neutral-300"></span>
+            <span className="text-[10px] font-extrabold tracking-widest uppercase">FEATURED WORK</span>
+          </div>
+          <h2 className="font-sans font-light text-2xl md:text-4xl tracking-tight text-neutral-950 mb-12 uppercase">
+            SELECTED PRODUCT DEPLOYS
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {projects.filter(p => p.status === 'Published').slice(0, 3).map((project, idx) => (
+              <ReusableCard key={project.id} hoverable={true} className="p-6 border-neutral-200 flex flex-col justify-between">
+                <div>
+                  {project.screenshotUrl && (
+                    <div className="w-full aspect-video overflow-hidden border border-neutral-100 bg-neutral-50 mb-4">
+                      <img src={project.screenshotUrl} alt={project.title} className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest font-mono">
+                    {project.projectType}
+                  </span>
+                  <h3 className="font-[family-name:var(--font-inter)] text-sm font-medium tracking-tight text-neutral-950 uppercase mt-1">
+                    {project.title}
+                  </h3>
+                  <div 
+                    className="text-xs font-light text-neutral-500 leading-relaxed mt-2"
+                    dangerouslySetInnerHTML={{ __html: project.description }}
+                  />
+                </div>
+              </ReusableCard>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* ─── TECHNICAL TOOLKIT & STACKS ─── */}
+      <section className="py-16 bg-neutral-50 border-b border-neutral-100">
         <Container>
           <h2 className="font-sans font-light text-2xl md:text-3xl tracking-tight text-neutral-950 mb-12 uppercase">
             TECHNICAL TOOLKIT & STACKS
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {skillset.map((skill, idx) => (
-              <ReusableCard key={idx} hoverable={true} className="p-6 md:p-8 flex flex-col justify-start">
+              <ReusableCard key={idx} hoverable={true} className="p-6 md:p-8 flex flex-col justify-start bg-white">
                 <h4 className="text-xs font-light tracking-wider text-neutral-900 mb-4 border-b border-neutral-100 pb-3 uppercase">
                   {skill.category}
                 </h4>
@@ -117,141 +164,51 @@ export default function AboutView() {
         </Container>
       </section>
 
-      {/* ─── LOCATION MAP SIMULATOR / WORKING RADIUS ─── */}
-      <section className="py-12 md:py-16 bg-neutral-950 text-white border-t border-neutral-900">
+      {/* ─── LOCATION MAP & GEOGRAPHY ─── */}
+      <section className="py-16 bg-neutral-950 text-white">
         <Container>
-          <div className="flex flex-col gap-12">
-            {/* Top Info Panel */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-              <div className="lg:col-span-2">
-                <span className="text-[10px] font-bold tracking-widest text-neutral-500 uppercase block mb-3">GEOGRAPHY & CORE TERMS</span>
-                <h2 className="font-sans font-light text-2xl md:text-3xl lg:text-4xl tracking-tight text-white mb-5 uppercase">
-                  Based in Pakistan. Operating Internationally.
-                </h2>
-                <p className="text-xs font-light text-neutral-400 leading-relaxed max-w-3xl">
-                  Most client engagements are conducted entirely remote. We align schedules across European, Middle Eastern, and North American time zones seamlessly. Working hours are coordinated through async-first dashboards, task triggers, and weekly progress briefings.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4 bg-neutral-900 p-6 border border-neutral-800 w-full">
-                <div>
-                  <div className="text-[10px] font-bold text-neutral-500 uppercase mb-1 font-mono">LOCAL TIMEZONE</div>
-                  <div className="text-xs font-light text-neutral-200 font-mono uppercase">PAKISTAN PST (UTC+5)</div>
-                </div>
-                <div>
-                  <div className="text-[10px] font-bold text-neutral-500 uppercase mb-1 font-mono">PREFERRED METHODS</div>
-                  <div className="text-xs font-light text-neutral-200 font-mono uppercase">SLACK / EMAIL / Google Meet</div>
-                </div>
-              </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start mb-12">
+            <div className="lg:col-span-2">
+              <span className="text-[10px] font-bold tracking-widest text-neutral-500 uppercase block mb-3">GEOGRAPHY & TIMING</span>
+              <h2 className="font-sans font-light text-2xl md:text-4xl tracking-tight text-white mb-5 uppercase">
+                Remote Collaboration. Globally Synchronized.
+              </h2>
+              <p className="text-xs font-light text-neutral-400 leading-relaxed max-w-3xl">
+                Operating internationally from Pakistan. Engagements align smoothly across European, Middle Eastern, and North American business hours using async-first systems.
+              </p>
             </div>
-
-            {/* Expansive Map Column */}
-            <div className="w-full">
-              <InteractiveWorldMap />
+            <div className="bg-neutral-900 p-6 border border-neutral-800 w-full flex flex-col gap-4">
+              <div>
+                <div className="text-[10px] font-bold text-neutral-500 uppercase mb-1 font-mono">LOCAL TIMEZONE</div>
+                <div className="text-xs font-light text-neutral-200 font-mono uppercase">PAKISTAN PST (UTC+5)</div>
+              </div>
+              <div>
+                <div className="text-[10px] font-bold text-neutral-500 uppercase mb-1 font-mono">CHANNELS</div>
+                <div className="text-xs font-light text-neutral-200 font-mono uppercase">SLACK / EMAIL / GOOGLE MEET</div>
+              </div>
             </div>
           </div>
+          <InteractiveWorldMap />
         </Container>
       </section>
 
-      {/* ─── COLLABORATION MANIFESTO / OPERATIONAL STANDARDS ─── */}
-      <section id="collaboration-manifesto" className="py-16 md:py-24 bg-white border-t border-neutral-100">
-        <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start mb-16">
-            <div className="lg:col-span-1 flex flex-col gap-4">
-              <span className="text-[10px] font-extrabold tracking-widest text-neutral-400 uppercase font-mono flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-neutral-950 animate-pulse"></span>
-                ENGAGEMENT CONTRACT
-              </span>
-              <h2 className="font-sans font-light text-2xl md:text-3xl lg:text-4xl tracking-tight text-neutral-950 uppercase leading-none">
-                THE COLLABORATION PROTOCOLS
-              </h2>
-            </div>
-            <div className="lg:col-span-2">
-              <p className="text-xs font-light text-neutral-500 leading-relaxed max-w-2xl mt-0.5">
-                Working with a single specialized engineer is radically different than hiring a bloated agency. By removing managers, visual templates, and translation layers, we establish a high-trust, low-overhead environment designed for speed.
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-neutral-200 border border-neutral-200 rounded-none overflow-hidden">
-            {/* Protocol 1 */}
-            <div id="manifesto-card-1" className="bg-white p-8 md:p-10 flex flex-col justify-between hover:bg-neutral-50/50 transition duration-300 group">
-              <div className="flex flex-col gap-6">
-                <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-neutral-300 font-mono">01 / FEEDBACK</span>
-                  <div className="w-8 h-8 rounded-full border border-neutral-100 flex items-center justify-center bg-neutral-50 text-neutral-500 group-hover:border-neutral-900 group-hover:text-neutral-950 transition-colors">
-                    <CheckCircle2 className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <h3 className="text-sm font-semibold tracking-wider text-neutral-950 uppercase font-mono">ASYNC-FIRST STATUS LOOPS</h3>
-                  <p className="text-xs font-light text-neutral-500 leading-relaxed">
-                    No hour-long, directionless sync calls. I write daily visual summaries and update active code previews on progress markers, preserving your time.
-                  </p>
-                </div>
-              </div>
-              <div className="mt-8 pt-4 border-t border-neutral-100 flex items-center justify-between text-[10px] font-mono text-neutral-400">
-                <span>STATUS: TRANSPARENT</span>
-                <span>METRIC: 100% VISIBILITY</span>
-              </div>
-            </div>
-
-            {/* Protocol 2 */}
-            <div id="manifesto-card-2" className="bg-white p-8 md:p-10 flex flex-col justify-between hover:bg-neutral-50/50 transition duration-300 group">
-              <div className="flex flex-col gap-6">
-                <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-neutral-300 font-mono">02 / CODE QUALITY</span>
-                  <div className="w-8 h-8 rounded-full border border-neutral-100 flex items-center justify-center bg-neutral-50 text-neutral-500 group-hover:border-neutral-900 group-hover:text-neutral-950 transition-colors">
-                    <Zap className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <h3 className="text-sm font-semibold tracking-wider text-neutral-950 uppercase font-mono">CODE IS THE CANVAS</h3>
-                  <p className="text-xs font-light text-neutral-500 leading-relaxed">
-                    Interactive flows are authored directly in clean production components, not just static PNG screens. What you inspect and audit is physically real.
-                  </p>
-                </div>
-              </div>
-              <div className="mt-8 pt-4 border-t border-neutral-100 flex items-center justify-between text-[10px] font-mono text-neutral-400">
-                <span>REDUCIBILITY: NO SLOP</span>
-                <span>TESTS: LINT PASSED</span>
-              </div>
-            </div>
-
-            {/* Protocol 3 */}
-            <div id="manifesto-card-3" className="bg-white p-8 md:p-10 flex flex-col justify-between hover:bg-neutral-50/50 transition duration-300 group">
-              <div className="flex flex-col gap-6">
-                <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-neutral-300 font-mono">03 / OWNERSHIP</span>
-                  <div className="w-8 h-8 rounded-full border border-neutral-100 flex items-center justify-center bg-neutral-50 text-neutral-500 group-hover:border-neutral-900 group-hover:text-neutral-950 transition-colors">
-                    <Layers className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <h3 className="text-sm font-semibold tracking-wider text-neutral-950 uppercase font-mono">ABSOLUTE INHERITABILITY</h3>
-                  <p className="text-xs font-light text-neutral-500 leading-relaxed">
-                    Every database collection, cloud automation, and container config is packaged with clear operational rules. Another engineer can take custody instantly.
-                  </p>
-                </div>
-              </div>
-              <div className="mt-8 pt-4 border-t border-neutral-100 flex items-center justify-between text-[10px] font-mono text-neutral-400">
-                <span>ASSET RIGHTS: 100% CUSTODY</span>
-                <span>DOCS: DIRECT LINK</span>
-              </div>
-            </div>
-          </div>
-
-          <div id="manifesto-trust-indicator" className="mt-8 bg-neutral-50 border border-neutral-100 p-6 rounded-none flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div className="flex flex-col gap-1">
-              <span className="text-[9px] font-bold tracking-wider text-neutral-400 font-mono uppercase font-semibold">GUARANTEED ASSURANCE</span>
-              <p className="text-xs font-light text-neutral-600">
-                Every project is fully vetted for performance, SEO standards, and viewport compatibility before the files are handed over.
-              </p>
-            </div>
-            <div className="flex items-center gap-2 shrink-0 select-none">
-              <div className="w-2.5 h-2.5 bg-neutral-950 rounded-full animate-pulse"></div>
-              <span className="text-[10px] font-bold text-neutral-900 font-mono uppercase">LATEST REVISION ACTIVE</span>
-            </div>
+      {/* ─── HIGH IMPACT CTA ─── */}
+      <section className="py-24 bg-white border-t border-neutral-100 text-center">
+        <Container className="max-w-4xl mx-auto flex flex-col items-center gap-8">
+          <span className="text-[10px] font-bold tracking-[0.2em] text-neutral-400 uppercase">GET IN TOUCH</span>
+          <h2 className="font-sans font-light text-4xl md:text-6xl tracking-tight text-neutral-950 uppercase leading-tight">
+            Ready to optimize your workflow pipeline?
+          </h2>
+          <p className="text-sm font-light text-neutral-500 max-w-[600px] leading-relaxed">
+            Let's design a custom layout, engineer a robust interface, or automate background APIs for your business. Book a discovery call today.
+          </p>
+          <div className="pt-4">
+            <Link href="/contact">
+              <Button variant="primary" className="flex items-center gap-2">
+                BOOK A DISCOVERY CALL
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
           </div>
         </Container>
       </section>

@@ -50,6 +50,16 @@ export interface Resource {
   isPremium?: boolean;
 }
 
+export interface Project {
+  id: string;
+  title: string;
+  projectType: string;
+  description: string;
+  screenshotUrl?: string;
+  status: 'Draft' | 'Published';
+  lastModified: string;
+}
+
 export interface BlogPost {
   slug: string;
   title: string;
@@ -57,8 +67,11 @@ export interface BlogPost {
   publishedAt: string;
   readTime: string;
   tags: string[];
+  categories?: string[];
   contentHtml: string;
   coverImage?: string;
+  status?: 'Draft' | 'Published';
+  lastModified?: string;
 }
 
 export interface ContactSubmission {

@@ -39,7 +39,7 @@ function GsapCounter({ value }: { value: string }) {
 }
 
 export default function HomeView() {
-  const { services, caseStudies } = useData();
+  const { services, projects } = useData();
   const router = useRouter();
   const heroTitleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
@@ -122,11 +122,11 @@ export default function HomeView() {
               BOOK A DISCOVERY CALL
             </Button>
             <Link
-              href="/case-studies"
+              href="/projects"
               className="text-xs font-bold tracking-wider text-neutral-950 hover:text-neutral-600 transition-colors border-b-2 border-neutral-950 pb-1 flex items-center gap-1.5 uppercase"
               id="hero-works-btn"
             >
-              VIEW CASE STUDIES
+              VIEW PROJECTS
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -291,41 +291,51 @@ export default function HomeView() {
               </h2>
             </div>
             <Link
-              href="/case-studies"
+              href="/projects"
               className="text-xs font-bold tracking-wider text-neutral-950 hover:text-neutral-600 transition-colors border-b-2 border-neutral-950 pb-1 uppercase"
               id="all-work-link"
             >
-              ALL COMPREHENSIVE CASE STUDIES
+              ALL PROJECTS
             </Link>
           </div>
 
-          <div className="flex flex-col">
-            {caseStudies.map((project, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {projects.filter(p => p.status === 'Published').slice(0, 3).map((project, index) => (
               <Link
-                href={`/case-studies/${project.id}`}
+                href="/projects"
                 key={project.id}
-                className="group grid grid-cols-1 md:grid-cols-[60px_1.2fr_1.5fr_1fr] gap-4 md:gap-6 items-start py-10 border-b border-neutral-100 hover:bg-neutral-50 px-4 -mx-4 transition-all"
+                className="group flex flex-col justify-between border border-neutral-200 p-8 hover:border-neutral-950 transition-all duration-300 bg-white"
                 id={`work-item-${project.id}`}
               >
-                <div className="text-[11px] font-bold text-neutral-400 group-hover:text-neutral-950 transition-colors pt-1">
-                  0{index + 1}
-                </div>
-                <div>
-                  <h3 className="text-base font-light text-neutral-950 tracking-tight mb-2 group-hover:underline uppercase decoration-neutral-400">
-                    {project.title.toUpperCase()}
-                  </h3>
-                  <span className="text-xs text-neutral-400 font-mono tracking-wider">{project.industry.toUpperCase()}</span>
-                </div>
-                <p className="text-xs font-light text-neutral-500 leading-relaxed max-w-md">
-                  {stripHtml(project.summary)}
-                </p>
-                <div className="md:text-right flex flex-col md:items-end">
-                  <div className="text-2xl md:text-3xl font-sans font-extralight text-neutral-950 tracking-tight line-height-[1] mb-1">
-                    {project.results[0].value}
+                <div className="space-y-4">
+                  {project.screenshotUrl && (
+                    <div className="w-full aspect-video overflow-hidden border border-neutral-100 bg-neutral-50 mb-4">
+                      <img 
+                        src={project.screenshotUrl} 
+                        alt={project.title} 
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c';
+                        }}
+                      />
+                    </div>
+                  )}
+                  <div>
+                    <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest font-mono">
+                      0{index + 1} // {project.projectType.toUpperCase()}
+                    </span>
+                    <h3 className="text-base font-light text-neutral-950 tracking-tight mt-1 group-hover:underline uppercase decoration-neutral-400">
+                      {project.title}
+                    </h3>
                   </div>
-                  <div className="text-[10px] font-semibold text-neutral-400 tracking-widest uppercase">
-                    {project.results[0].label.toUpperCase()}
-                  </div>
+                  <div 
+                    className="text-xs font-light text-neutral-500 leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: project.description }}
+                  />
+                </div>
+                <div className="mt-8 pt-4 border-t border-neutral-100 flex items-center justify-between text-[10px] font-mono text-neutral-400">
+                  <span>VIEW DETAILS</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-neutral-950 group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>
             ))}

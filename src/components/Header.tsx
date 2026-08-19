@@ -28,16 +28,13 @@ export default function Header() {
 
   const navLinks = [
     { label: 'ABOUT', href: '/about' },
-    { label: 'SERVICES', href: '/services' },
-    { label: 'CASE STUDIES', href: '/case-studies' },
-    { label: 'RESOURCES', href: '/resources' },
+    { label: 'PROJECTS', href: '/projects' },
     { label: 'BLOG', href: '/blog' },
-    { label: 'CONTACT', href: '/contact' },
   ];
 
   const isActive = (href: string) => {
-    if (href === '/case-studies') {
-      return pathname.startsWith('/case-studies');
+    if (href === '/projects') {
+      return pathname.startsWith('/projects');
     }
     return pathname.startsWith(href);
   };

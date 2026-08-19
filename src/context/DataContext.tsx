@@ -24,7 +24,7 @@ import {
   ESTIMATOR_FEATURES,
   SKILLSET
 } from '../data';
-import { CaseStudy, Service, Resource, BlogPost, ContactSubmission } from '../types';
+import { CaseStudy, Service, Resource, BlogPost, ContactSubmission, Project } from '../types';
 
 export interface MessageItemData {
   id: string;
@@ -43,9 +43,10 @@ export interface MessageItemData {
 interface DataContextType {
   posts: any[];
   caseStudies: CaseStudy[];
-  projects: any[];
+  projects: Project[];
   services: Service[];
   resources: Resource[];
+
   blogs: BlogPost[];
   messages: MessageItemData[];
   loading: boolean;
@@ -62,7 +63,7 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 export function DataProvider({ children }: { children: React.ReactNode }) {
   const [posts, setPosts] = useState<any[]>([]);
   const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([]);
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [resources, setResources] = useState<Resource[]>([]);
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
@@ -86,7 +87,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           const csList = csSnap.docs.map(d => ({ id: d.id, ...d.data() })) as any[];
 
           const projSnap = await getDocs(collection(db, 'projects'));
-          const projList = projSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+          const projList = projSnap.docs.map(d => ({ id: d.id, ...d.data() })) as any[];
 
           const svcsSnap = await getDocs(collection(db, 'services'));
           const svcsList = svcsSnap.docs.map(d => ({ id: d.id, ...d.data() })) as any[];
@@ -150,11 +151,11 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       const initProj = CASE_STUDIES.map(cs => ({
         id: cs.id,
         title: cs.title,
-        status: 'Published',
-        lastModified: '2026-06-01',
-        content: cs.summary,
-        industry: cs.industry,
-        tech: cs.tech
+        projectType: cs.industry || 'Web App',
+        description: cs.summary,
+        screenshotUrl: cs.image || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c',
+        status: 'Published' as const,
+        lastModified: '2026-06-01'
       }));
       setProjects(initProj);
       localStorage.setItem('mosen_projects', JSON.stringify(initProj));
@@ -182,8 +183,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     else {
       const blogsList = BLOG_POSTS.map(bp => ({
         ...bp,
-        id: bp.slug, // map slug to id for administrative listing
-        status: 'Published',
+        id: bp.slug,
+        categories: bp.tags && bp.tags.length > 0 ? [bp.tags[0]] : ['Technology'],
+        status: 'Published' as const,
         lastModified: bp.publishedAt
       })) as any[];
       setBlogs(blogsList);
@@ -424,6 +426,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           publishedAt: blog.publishedAt,
           readTime: blog.readTime,
           tags: blog.tags,
+          categories: blog.tags && blog.tags.length > 0 ? [blog.tags[0]] : ['Technology'],
           contentHtml: blog.contentHtml,
           status: 'Published',
           lastModified: blog.publishedAt
@@ -452,11 +455,11 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       const initProj = CASE_STUDIES.map(cs => ({
         id: cs.id,
         title: cs.title,
+        projectType: cs.industry || 'Web App',
+        description: cs.summary,
+        screenshotUrl: cs.image || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c',
         status: 'Published',
-        lastModified: '2026-06-01',
-        content: cs.summary,
-        industry: cs.industry,
-        tech: cs.tech
+        lastModified: '2026-06-01'
       }));
       for (const pr of initProj) {
         await setDoc(doc(db, 'projects', pr.id), pr);
