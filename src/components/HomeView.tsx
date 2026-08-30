@@ -41,6 +41,17 @@ function GsapCounter({ value }: { value: string }) {
 export default function HomeView() {
   const { services, projects } = useData();
   const router = useRouter();
+
+  // Filter published projects
+  const publishedProjects = projects.filter(p => p.status === 'Published');
+  // Get featured projects
+  const featuredProjects = publishedProjects.filter(p => p.featured === true);
+  // Use featured projects if available, otherwise load recent projects (sorted by date descending)
+  const homeProjects = featuredProjects.length > 0
+    ? featuredProjects.slice(0, 3)
+    : [...publishedProjects]
+        .sort((a, b) => b.lastModified.localeCompare(a.lastModified))
+        .slice(0, 3);
   const heroTitleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
@@ -299,17 +310,17 @@ export default function HomeView() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {projects.filter(p => p.status === 'Published').slice(0, 3).map((project, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {homeProjects.map((project, index) => (
               <Link
-                href="/projects"
+                href={`/projects/${project.id}`}
                 key={project.id}
-                className="group flex flex-col justify-between border border-neutral-200 p-8 hover:border-neutral-950 transition-all duration-300 bg-white"
+                className="group flex flex-col justify-between border border-neutral-200 hover:border-neutral-950 transition-all duration-300 bg-white overflow-hidden"
                 id={`work-item-${project.id}`}
               >
-                <div className="space-y-4">
+                <div>
                   {project.screenshotUrl && (
-                    <div className="w-full aspect-video overflow-hidden border border-neutral-100 bg-neutral-50 mb-4">
+                    <div className="w-full aspect-video overflow-hidden bg-neutral-50 border-b border-neutral-200 relative">
                       <img 
                         src={project.screenshotUrl} 
                         alt={project.title} 
@@ -320,20 +331,23 @@ export default function HomeView() {
                       />
                     </div>
                   )}
-                  <div>
-                    <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest font-mono">
-                      0{index + 1} // {project.projectType.toUpperCase()}
-                    </span>
-                    <h3 className="text-base font-light text-neutral-950 tracking-tight mt-1 group-hover:underline uppercase decoration-neutral-400">
-                      {project.title}
-                    </h3>
+                  <div className="p-6 space-y-4">
+                    <div>
+                      <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest font-mono">
+                        0{index + 1} // {project.projectType.toUpperCase()}
+                      </span>
+                      <h3 className="text-base font-light text-neutral-950 tracking-tight mt-1 group-hover:underline uppercase decoration-neutral-400">
+                        {project.title}
+                      </h3>
+                    </div>
+                    <div 
+                      className="text-xs font-light text-neutral-500 leading-relaxed line-clamp-3 overflow-hidden text-ellipsis"
+                    >
+                      {stripHtml(project.description)}
+                    </div>
                   </div>
-                  <div 
-                    className="text-xs font-light text-neutral-500 leading-relaxed"
-                    dangerouslySetInnerHTML={{ __html: project.description }}
-                  />
                 </div>
-                <div className="mt-8 pt-4 border-t border-neutral-100 flex items-center justify-between text-[10px] font-mono text-neutral-400">
+                <div className="p-6 pt-4 border-t border-neutral-100 flex items-center justify-between text-[10px] font-mono text-neutral-400 mt-auto">
                   <span>VIEW DETAILS</span>
                   <ArrowRight className="w-3.5 h-3.5 text-neutral-950 group-hover:translate-x-1 transition-transform" />
                 </div>

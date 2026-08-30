@@ -117,6 +117,7 @@ function RootLayoutInner({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${interTight.variable}`}>
       <head>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 120%22><rect width=%22120%22 height=%22120%22 fill=%22%23111111%22 rx=%220%22/><text x=%2250%25%22 y=%2260%25%22 font-size=%2280%22 font-family=%22Inter,sans-serif%22 font-weight=%22900%22 fill=%22white%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22>M</text></svg>" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}

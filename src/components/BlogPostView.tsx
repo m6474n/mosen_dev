@@ -76,9 +76,8 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
           ))}
         </div>
 
-        {/* The main core text body */}
         <div
-          className="prose prose-neutral max-w-none text-neutral-800 leading-relaxed text-sm font-light font-sans tracking-wide space-y-6"
+          className="prose prose-neutral max-w-none text-neutral-800 leading-relaxed text-sm font-light font-sans tracking-wide space-y-6 ql-editor"
           id="essay-content"
           dangerouslySetInnerHTML={{ __html: activePost.contentHtml }}
         />

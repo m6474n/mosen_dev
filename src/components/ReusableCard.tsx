@@ -7,9 +7,10 @@ interface ReusableCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   hoverable?: boolean;
   className?: string;
-  variant?: 'white' | 'muted';
+  variant?: 'white' | 'muted' | 'dark';
   key?: any;
   id?: string;
+  noPadding?: boolean;
 }
 
 export default function ReusableCard({
@@ -18,11 +19,21 @@ export default function ReusableCard({
   className = '',
   variant = 'white',
   id,
+  noPadding = false,
 }: ReusableCardProps) {
-  const bgStyles = variant === 'muted' ? 'bg-neutral-50/50' : 'bg-white';
+  const bgStyles = variant === 'dark' 
+    ? 'bg-neutral-900' 
+    : variant === 'muted' 
+      ? 'bg-neutral-50/50' 
+      : 'bg-white';
+
   const borderStyles = hoverable
-    ? 'border border-neutral-200 hover:border-neutral-900'
+    ? variant === 'dark'
+      ? 'border border-neutral-800 hover:border-neutral-700'
+      : 'border border-neutral-200 hover:border-neutral-900'
     : 'border border-neutral-100';
+  
+  const paddingStyles = noPadding ? '' : 'p-8 md:p-12';
   
   const motionProps = hoverable
     ? {
@@ -34,7 +45,7 @@ export default function ReusableCard({
   return (
     <motion.div
       {...motionProps}
-      className={`p-8 md:p-12 ${bgStyles} ${borderStyles} shadow-xs flex flex-col justify-between ${className}`}
+      className={`${paddingStyles} ${bgStyles} ${borderStyles} shadow-xs flex flex-col justify-between ${className}`}
       id={id}
     >
       {children}

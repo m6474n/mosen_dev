@@ -19,6 +19,17 @@ export default function AboutView() {
   const skillset = SKILLSET;
   const milestones = MILESTONES;
 
+  // Filter published projects
+  const publishedProjects = projects.filter(p => p.status === 'Published');
+  // Get featured projects
+  const featuredProjects = publishedProjects.filter(p => p.featured === true);
+  // Use featured projects if available, otherwise load recent projects
+  const aboutProjects = featuredProjects.length > 0
+    ? featuredProjects.slice(0, 3)
+    : [...publishedProjects]
+        .sort((a, b) => b.lastModified.localeCompare(a.lastModified))
+        .slice(0, 3);
+
   return (
     <DefaultPageLayout>
       {/* ─── ABOUT HEADER ─── */}
@@ -102,42 +113,6 @@ export default function AboutView() {
         </Container>
       </section>
 
-      {/* ─── FEATURED PROJECTS SECTION ─── */}
-      <section className="py-16 bg-white border-b border-neutral-100">
-        <Container>
-          <div className="flex items-center gap-3 mb-6 text-neutral-400">
-            <span className="w-6 h-[1px] bg-neutral-300"></span>
-            <span className="text-[10px] font-extrabold tracking-widest uppercase">FEATURED WORK</span>
-          </div>
-          <h2 className="font-sans font-light text-2xl md:text-4xl tracking-tight text-neutral-950 mb-12 uppercase">
-            SELECTED PRODUCT DEPLOYS
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {projects.filter(p => p.status === 'Published').slice(0, 3).map((project, idx) => (
-              <ReusableCard key={project.id} hoverable={true} className="p-6 border-neutral-200 flex flex-col justify-between">
-                <div>
-                  {project.screenshotUrl && (
-                    <div className="w-full aspect-video overflow-hidden border border-neutral-100 bg-neutral-50 mb-4">
-                      <img src={project.screenshotUrl} alt={project.title} className="w-full h-full object-cover" />
-                    </div>
-                  )}
-                  <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest font-mono">
-                    {project.projectType}
-                  </span>
-                  <h3 className="font-[family-name:var(--font-inter)] text-sm font-medium tracking-tight text-neutral-950 uppercase mt-1">
-                    {project.title}
-                  </h3>
-                  <div 
-                    className="text-xs font-light text-neutral-500 leading-relaxed mt-2"
-                    dangerouslySetInnerHTML={{ __html: project.description }}
-                  />
-                </div>
-              </ReusableCard>
-            ))}
-          </div>
-        </Container>
-      </section>
-
       {/* ─── TECHNICAL TOOLKIT & STACKS ─── */}
       <section className="py-16 bg-neutral-50 border-b border-neutral-100">
         <Container>
@@ -164,7 +139,68 @@ export default function AboutView() {
         </Container>
       </section>
 
-      {/* ─── LOCATION MAP & GEOGRAPHY ─── */}
+      {/* ─── RECENT WORK SECTION (DARK MODE) ─── */}
+      <section className="py-16 bg-neutral-950 text-white border-t border-neutral-900">
+        <Container>
+          <div className="flex items-center gap-3 mb-6 text-neutral-500">
+            <span className="w-6 h-[1px] bg-neutral-700"></span>
+            <span className="text-[10px] font-extrabold tracking-widest uppercase">RECENT WORK</span>
+          </div>
+          <h2 className="font-sans font-light text-2xl md:text-4xl tracking-tight text-white mb-12 uppercase">
+            SELECTED PRODUCT DEPLOYS
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {aboutProjects.map((project) => (
+              <Link href={`/projects/${project.id}`} key={project.id} className="block group h-full">
+                <ReusableCard 
+                  hoverable={true} 
+                  noPadding={true} 
+                  variant="dark"
+                  className="flex flex-col h-full justify-between transition-colors duration-300 overflow-hidden"
+                >
+                  <div>
+                    {project.screenshotUrl && (
+                      <div className="w-full aspect-video overflow-hidden bg-neutral-950 border-b border-neutral-800 relative transition-colors duration-300">
+                        <img 
+                          src={project.screenshotUrl} 
+                          alt={project.title} 
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c';
+                          }}
+                        />
+                      </div>
+                    )}
+                    <div className="p-6 space-y-4">
+                      <div>
+                        <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest font-mono">
+                          {project.projectType.toUpperCase()}
+                        </span>
+                        <h3 className="font-[family-name:var(--font-inter)] text-sm font-bold tracking-tight text-white uppercase mt-1 group-hover:underline decoration-neutral-600">
+                          {project.title}
+                        </h3>
+                      </div>
+                      <div 
+                        className="text-xs font-light text-neutral-400 leading-relaxed font-sans line-clamp-3 overflow-hidden text-ellipsis"
+                      >
+                        {stripHtml(project.description)}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-6 pt-4 border-t border-neutral-800 flex items-center justify-between text-[10px] font-mono text-neutral-500 mt-auto">
+                    <span>VIEW DETAILS</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-white group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </ReusableCard>
+              </Link>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* ─── COMMENTED GEOGRAPHY & TIMING ─── */}
+      {/* 
       <section className="py-16 bg-neutral-950 text-white">
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start mb-12">
@@ -191,6 +227,7 @@ export default function AboutView() {
           <InteractiveWorldMap />
         </Container>
       </section>
+      */}
 
       {/* ─── HIGH IMPACT CTA ─── */}
       <section className="py-24 bg-white border-t border-neutral-100 text-center">

@@ -29,8 +29,8 @@ import { Project, BlogPost } from '../types';
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
 // ─── Cloudinary Image Uploader Widget ─────────────────────────────────────────
-const CLOUDINARY_CLOUD_NAME = 'mosen-dcfde';
-const CLOUDINARY_UPLOAD_PRESET = 'mosen_preset';
+const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'mosen-dcfde';
+const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'mosen_preset';
 
 function CloudinaryUploader({ 
   onUploadSuccess, 
@@ -140,6 +140,11 @@ export default function AdminDashboardView() {
     deleteItem, 
     toggleMessageRead 
   } = useData();
+
+  // Get all unique project categories/types dynamically listed from existing projects
+  const existingCategories = Array.from(
+    new Set(projects.map(p => p.projectType).filter(Boolean))
+  ).sort();
 
   const [activeTab, setActiveTab] = useState<'dashboard' | 'projects' | 'blogs' | 'leads'>('dashboard');
   
@@ -360,25 +365,66 @@ export default function AdminDashboardView() {
                         <input 
                           type="text" 
                           value={editingProject.title} 
-                          onChange={e => setEditingProject({ ...editingProject, title: e.target.value })}
+                          onChange={e => {
+                            const title = e.target.value;
+                            const isNew = !projects.some(p => p.id === editingProject.id);
+                            if (isNew) {
+                              const slug = title
+                                .toLowerCase()
+                                .replace(/[^a-z0-9]+/g, '-')
+                                .replace(/(^-|-$)+/g, '');
+                              setEditingProject({ ...editingProject, title, id: slug });
+                            } else {
+                              setEditingProject({ ...editingProject, title });
+                            }
+                          }}
                           required
                           className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none" 
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Project Type</label>
-                        <input 
-                          type="text" 
-                          value={editingProject.projectType} 
-                          onChange={e => setEditingProject({ ...editingProject, projectType: e.target.value })}
-                          required
-                          placeholder="e.g. Web App, Automation, Layout"
-                          className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none" 
-                        />
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Project Type / Category</label>
+                        {(() => {
+                          const isNewCategory = editingProject.projectType && !existingCategories.includes(editingProject.projectType);
+                          const selectValue = isNewCategory ? '__NEW__' : editingProject.projectType;
+                          return (
+                            <>
+                              <select
+                                value={selectValue}
+                                onChange={e => {
+                                  const val = e.target.value;
+                                  if (val === '__NEW__') {
+                                    setEditingProject({ ...editingProject, projectType: '' });
+                                  } else {
+                                    setEditingProject({ ...editingProject, projectType: val });
+                                  }
+                                }}
+                                className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none cursor-pointer"
+                              >
+                                <option value="">-- Select Category --</option>
+                                {existingCategories.map(cat => (
+                                  <option key={cat} value={cat}>{cat.toUpperCase()}</option>
+                                ))}
+                                <option value="__NEW__">+ ADD NEW CATEGORY...</option>
+                              </select>
+
+                              {selectValue === '__NEW__' && (
+                                <input 
+                                  type="text" 
+                                  value={editingProject.projectType} 
+                                  onChange={e => setEditingProject({ ...editingProject, projectType: e.target.value })}
+                                  required
+                                  placeholder="Enter new custom category..."
+                                  className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none mt-2 font-mono" 
+                                />
+                              )}
+                            </>
+                          );
+                        })()}
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
                       <div className="flex flex-col gap-2">
                         <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Publication Status</label>
                         <select 
@@ -390,7 +436,28 @@ export default function AdminDashboardView() {
                           <option value="Published">Published (Live)</option>
                         </select>
                       </div>
-                      <div className="flex flex-col gap-2 sm:col-span-2">
+                      <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Featured status</label>
+                        <select 
+                          value={editingProject.featured ? 'Featured' : 'Standard'} 
+                          onChange={e => setEditingProject({ ...editingProject, featured: e.target.value === 'Featured' })}
+                          className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none cursor-pointer"
+                        >
+                          <option value="Standard">Standard</option>
+                          <option value="Featured">Featured</option>
+                        </select>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Live / Production URL</label>
+                        <input 
+                          type="text" 
+                          value={editingProject.liveUrl || ''} 
+                          onChange={e => setEditingProject({ ...editingProject, liveUrl: e.target.value })}
+                          placeholder="e.g. App Store, Play Store or web link"
+                          className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none font-mono" 
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2">
                         <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Screenshot URL</label>
                         <input 
                           type="text" 
@@ -420,8 +487,33 @@ export default function AdminDashboardView() {
                     </div>
                   </form>
                 ) : (
-                  <div className="bg-white border border-neutral-200 rounded-none shadow-xs overflow-hidden">
-                    <div className="p-4 border-b border-neutral-100 flex justify-between items-center bg-neutral-50">
+                  <>
+                    {/* Projects Stats Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+                      <div className="bg-white border border-neutral-200 p-6 flex flex-col justify-between gap-4">
+                        <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">TOTAL PROJECTS</span>
+                        <span className="text-3xl font-extrabold text-neutral-950">{projects.length}</span>
+                      </div>
+                      <div className="bg-white border border-neutral-200 p-6 flex flex-col justify-between gap-4">
+                        <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">PUBLISHED (LIVE)</span>
+                        <span className="text-3xl font-extrabold text-neutral-950">
+                          {projects.filter(p => p.status === 'Published').length}
+                        </span>
+                      </div>
+                      <div className="bg-white border border-neutral-200 p-6 flex flex-col justify-between gap-4">
+                        <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">DRAFTS (HIDDEN)</span>
+                        <span className="text-3xl font-extrabold text-neutral-500">
+                          {projects.filter(p => p.status === 'Draft').length}
+                        </span>
+                      </div>
+                      <div className="bg-white border border-neutral-200 p-6 flex flex-col justify-between gap-4">
+                        <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">CATEGORIES</span>
+                        <span className="text-3xl font-extrabold text-neutral-950">{existingCategories.length}</span>
+                      </div>
+                    </div>
+
+                    <div className="bg-white border border-neutral-200 rounded-none shadow-xs overflow-hidden">
+                      <div className="p-4 border-b border-neutral-100 flex justify-between items-center bg-neutral-50">
                       <div className="relative">
                         <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
                         <input 
@@ -439,8 +531,10 @@ export default function AdminDashboardView() {
                           projectType: '',
                           description: '',
                           screenshotUrl: '',
+                          liveUrl: '',
                           status: 'Published',
-                          lastModified: new Date().toISOString().split('T')[0]
+                          lastModified: new Date().toISOString().split('T')[0],
+                          featured: false
                         })}
                         className="bg-neutral-950 hover:bg-neutral-800 text-white px-4 py-2 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 cursor-pointer rounded-none"
                       >
@@ -462,7 +556,16 @@ export default function AdminDashboardView() {
                         {projects.filter(p => p.title.toLowerCase().includes(searchTerm.toLowerCase())).map((project) => (
                           <tr key={project.id} className="border-b border-neutral-100 hover:bg-neutral-50/50 transition-colors">
                             <td className="p-4 text-xs font-mono text-neutral-400">{project.id}</td>
-                            <td className="p-4 text-xs font-bold uppercase text-neutral-950">{project.title}</td>
+                             <td className="p-4 text-xs font-bold uppercase text-neutral-950">
+                               <div className="flex items-center gap-2 flex-wrap">
+                                 <span>{project.title}</span>
+                                 {project.featured && (
+                                   <span className="text-[9px] font-mono font-bold text-amber-600 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-none">
+                                     ★ FEATURED
+                                   </span>
+                                 )}
+                               </div>
+                             </td>
                             <td className="p-4 text-xs text-neutral-500 font-mono uppercase">{project.projectType}</td>
                             <td className="p-4">
                               <span className={`text-[9px] font-mono font-bold uppercase px-2 py-0.5 border rounded-none ${
@@ -494,7 +597,8 @@ export default function AdminDashboardView() {
                       </tbody>
                     </table>
                   </div>
-                )}
+                </>
+              )}
               </div>
             )}
 

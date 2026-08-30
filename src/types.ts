@@ -56,8 +56,10 @@ export interface Project {
   projectType: string;
   description: string;
   screenshotUrl?: string;
+  liveUrl?: string;
   status: 'Draft' | 'Published';
   lastModified: string;
+  featured?: boolean;
 }
 
 export interface BlogPost {

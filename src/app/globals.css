@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "react-quill-new/dist/quill.snow.css";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -82,4 +83,122 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #111111;
+}
+
+/* Modernist Typography styles for dynamic content */
+.prose {
+  font-family: var(--font-sans);
+  color: #111111;
+}
+
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: #111111;
+  text-transform: uppercase;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.prose h1 { font-size: 1.5rem; border-b: 1px solid #e5e5e5; padding-bottom: 0.5rem; }
+.prose h2 { font-size: 1.25rem; border-b: 1px solid #f5f5f5; padding-bottom: 0.25rem; }
+.prose h3 { font-size: 1.1rem; }
+.prose h4 { font-size: 1rem; }
+
+.prose p {
+  margin-bottom: 1.5rem;
+  line-height: 1.7;
+}
+
+.prose strong {
+  font-weight: 700;
+  color: #111111;
+}
+
+.prose em {
+  font-style: italic;
+}
+
+.prose ul, .prose ol {
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.prose ul {
+  list-style-type: square;
+}
+
+.prose ol {
+  list-style-type: decimal;
+}
+
+.prose li {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.prose a {
+  color: #111111;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 500;
+}
+
+.prose a:hover {
+  opacity: 0.7;
+}
+
+.prose blockquote {
+  border-left: 2px solid #111111;
+  padding-left: 1.25rem;
+  font-style: italic;
+  color: #666666;
+  margin: 1.5rem 0;
+}
+
+.prose pre, .prose code {
+  font-family: monospace;
+  background-color: #f5f5f5;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.85em;
+}
+
+.prose pre {
+  padding: 1rem;
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+}
+
+/* Reset Quill editor ql-editor padding/layout for static view pages */
+.ql-editor {
+  padding: 0 !important;
+  height: auto !important;
+  overflow-y: visible !important;
+  line-height: inherit !important;
+  font-family: inherit !important;
+  font-size: inherit !important;
+}
+
+/* Force standard browser bullets and numbers for lists inside static ql-editor */
+.ql-editor ul {
+  list-style-type: disc !important;
+  padding-left: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.ql-editor ol {
+  list-style-type: decimal !important;
+  padding-left: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.ql-editor li {
+  list-style-type: inherit !important;
+  padding-left: 0 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.ql-editor li::before {
+  content: none !important;
 }
