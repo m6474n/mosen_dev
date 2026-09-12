@@ -153,6 +153,7 @@ export default function AdminDashboardView() {
 
   // Editing state
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [isCustomCategory, setIsCustomCategory] = useState(false);
   const [editingBlog, setEditingBlog] = useState<BlogPost | null>(null);
   const [activeLead, setActiveLead] = useState<MessageItemData | null>(null);
   
@@ -162,6 +163,7 @@ export default function AdminDashboardView() {
   useEffect(() => {
     setSearchTerm('');
     setEditingProject(null);
+    setIsCustomCategory(false);
     setEditingBlog(null);
     setActiveLead(null);
   }, [activeTab]);
@@ -333,7 +335,10 @@ export default function AdminDashboardView() {
                       <div className="flex gap-2">
                         <button 
                           type="button" 
-                          onClick={() => setEditingProject(null)} 
+                          onClick={() => {
+                            setEditingProject(null);
+                            setIsCustomCategory(false);
+                          }} 
                           className="px-3 py-1.5 border border-neutral-300 text-[10px] font-bold uppercase tracking-wider hover:bg-neutral-100 cursor-pointer rounded-none"
                         >
                           Cancel
@@ -384,43 +389,50 @@ export default function AdminDashboardView() {
                       </div>
                       <div className="flex flex-col gap-2">
                         <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Project Type / Category</label>
-                        {(() => {
-                          const isNewCategory = editingProject.projectType && !existingCategories.includes(editingProject.projectType);
-                          const selectValue = isNewCategory ? '__NEW__' : editingProject.projectType;
-                          return (
-                            <>
-                              <select
-                                value={selectValue}
-                                onChange={e => {
-                                  const val = e.target.value;
-                                  if (val === '__NEW__') {
-                                    setEditingProject({ ...editingProject, projectType: '' });
-                                  } else {
-                                    setEditingProject({ ...editingProject, projectType: val });
-                                  }
-                                }}
-                                className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none cursor-pointer"
-                              >
-                                <option value="">-- Select Category --</option>
-                                {existingCategories.map(cat => (
-                                  <option key={cat} value={cat}>{cat.toUpperCase()}</option>
-                                ))}
-                                <option value="__NEW__">+ ADD NEW CATEGORY...</option>
-                              </select>
+                        <select
+                          value={isCustomCategory ? '__NEW__' : (editingProject.projectType || '')}
+                          onChange={e => {
+                            const val = e.target.value;
+                            if (val === '__NEW__') {
+                              setIsCustomCategory(true);
+                              setEditingProject({ ...editingProject, projectType: '' });
+                            } else {
+                              setIsCustomCategory(false);
+                              setEditingProject({ ...editingProject, projectType: val });
+                            }
+                          }}
+                          className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none cursor-pointer"
+                        >
+                          <option value="">-- Select Category --</option>
+                          {existingCategories.map(cat => (
+                            <option key={cat} value={cat}>{cat.toUpperCase()}</option>
+                          ))}
+                          <option value="__NEW__">+ ADD NEW CATEGORY...</option>
+                        </select>
 
-                              {selectValue === '__NEW__' && (
-                                <input 
-                                  type="text" 
-                                  value={editingProject.projectType} 
-                                  onChange={e => setEditingProject({ ...editingProject, projectType: e.target.value })}
-                                  required
-                                  placeholder="Enter new custom category..."
-                                  className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none mt-2 font-mono" 
-                                />
-                              )}
-                            </>
-                          );
-                        })()}
+                        {isCustomCategory && (
+                          <div className="flex items-center gap-2 mt-2">
+                            <input 
+                              type="text" 
+                              value={editingProject.projectType} 
+                              onChange={e => setEditingProject({ ...editingProject, projectType: e.target.value })}
+                              required
+                              autoFocus
+                              placeholder="Enter new custom category (e.g. Web3, AI Tools)..."
+                              className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none font-mono" 
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setIsCustomCategory(false);
+                                setEditingProject({ ...editingProject, projectType: '' });
+                              }}
+                              className="text-[10px] font-mono text-neutral-500 hover:text-neutral-800 uppercase px-2 py-2 border border-neutral-200 shrink-0"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -525,17 +537,20 @@ export default function AdminDashboardView() {
                         />
                       </div>
                       <button 
-                        onClick={() => setEditingProject({
-                          id: `project-${Math.floor(Math.random() * 1000)}`,
-                          title: '',
-                          projectType: '',
-                          description: '',
-                          screenshotUrl: '',
-                          liveUrl: '',
-                          status: 'Published',
-                          lastModified: new Date().toISOString().split('T')[0],
-                          featured: false
-                        })}
+                        onClick={() => {
+                          setIsCustomCategory(false);
+                          setEditingProject({
+                            id: `project-${Math.floor(Math.random() * 1000)}`,
+                            title: '',
+                            projectType: '',
+                            description: '',
+                            screenshotUrl: '',
+                            liveUrl: '',
+                            status: 'Published',
+                            lastModified: new Date().toISOString().split('T')[0],
+                            featured: false
+                          });
+                        }}
                         className="bg-neutral-950 hover:bg-neutral-800 text-white px-4 py-2 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 cursor-pointer rounded-none"
                       >
                         <Plus className="w-3.5 h-3.5" /> New Project
@@ -576,7 +591,10 @@ export default function AdminDashboardView() {
                             </td>
                             <td className="p-4 text-right flex gap-1 justify-end">
                               <button 
-                                onClick={() => setEditingProject(project)}
+                                onClick={() => {
+                                  setIsCustomCategory(Boolean(project.projectType && !existingCategories.includes(project.projectType)));
+                                  setEditingProject(project);
+                                }}
                                 className="px-2.5 py-1 border border-neutral-200 text-[9px] font-bold uppercase hover:bg-neutral-100 transition rounded-none cursor-pointer"
                               >
                                 Edit
