@@ -11,6 +11,7 @@ import { stripHtml } from '../lib/richText';
 import { MOHSIN_BIO, PROCESS_STEPS, TESTIMONIALS } from '../data';
 import { Container } from './DefaultPageLayout';
 import ReusableCard from './ReusableCard';
+import ProjectCard from './ProjectCard';
 import Button from './Button';
 
 function GsapCounter({ value }: { value: string }) {
@@ -312,46 +313,11 @@ export default function HomeView() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {homeProjects.map((project, index) => (
-              <Link
-                href={`/projects/${project.id}`}
+              <ProjectCard
                 key={project.id}
-                className="group flex flex-col justify-between border border-neutral-200 hover:border-neutral-950 transition-all duration-300 bg-white overflow-hidden"
-                id={`work-item-${project.id}`}
-              >
-                <div>
-                  {project.screenshotUrl && (
-                    <div className="w-full aspect-video overflow-hidden bg-neutral-50 border-b border-neutral-200 relative">
-                      <img 
-                        src={project.screenshotUrl} 
-                        alt={project.title} 
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c';
-                        }}
-                      />
-                    </div>
-                  )}
-                  <div className="p-6 space-y-4">
-                    <div>
-                      <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest font-mono">
-                        0{index + 1} // {project.projectType.toUpperCase()}
-                      </span>
-                      <h3 className="text-base font-light text-neutral-950 tracking-tight mt-1 group-hover:underline uppercase decoration-neutral-400">
-                        {project.title}
-                      </h3>
-                    </div>
-                    <div 
-                      className="text-xs font-light text-neutral-500 leading-relaxed line-clamp-3 overflow-hidden text-ellipsis"
-                    >
-                      {stripHtml(project.description)}
-                    </div>
-                  </div>
-                </div>
-                <div className="p-6 pt-4 border-t border-neutral-100 flex items-center justify-between text-[10px] font-mono text-neutral-400 mt-auto">
-                  <span>VIEW DETAILS</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-neutral-950 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </Link>
+                project={project}
+                index={index}
+              />
             ))}
           </div>
         </Container>

@@ -46,7 +46,7 @@ export default function ProjectDetailView({ slug }: ProjectDetailViewProps) {
       <Container className="max-w-3xl flex flex-col">
         {/* Main Screenshot/Image */}
         {project.screenshotUrl && (
-          <div className="w-full aspect-video overflow-hidden border border-neutral-200 bg-neutral-50 relative mb-6">
+          <div className="w-full aspect-[2/1] overflow-hidden border border-neutral-200 bg-neutral-50 relative mb-6">
             <img 
               src={project.screenshotUrl} 
               alt={project.title} 

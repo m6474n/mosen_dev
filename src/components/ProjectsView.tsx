@@ -1,14 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { motion } from 'motion/react';
-import { ArrowRight, Sparkles } from 'lucide-react';
 import { useData } from '@/context/DataContext';
 import { stripHtml } from '@/lib/richText';
 import DefaultPageLayout, { Container } from './DefaultPageLayout';
 import DynamicPageHeader from './DynamicPageHeader';
-import ReusableCard from './ReusableCard';
+import ProjectCard from './ProjectCard';
 import type { Project } from '@/types';
 
 export default function ProjectsView() {
@@ -16,15 +14,26 @@ export default function ProjectsView() {
   const [activeFilter, setActiveFilter] = useState<string>('ALL');
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  // Filter projects by status = Published and not featured
-  const publishedProjects = projects.filter(p => p.status === 'Published' && !p.featured);
+  // Include all published projects (both featured and standard)
+  const publishedProjects = projects.filter(p => p.status === 'Published');
 
-  // Get unique project types for filter buttons
-  const projectTypes = ['ALL', ...Array.from(new Set(publishedProjects.map(p => p.projectType.toUpperCase())))];
+  // Dynamically extract all available unique categories from published projects
+  const projectTypes = [
+    'ALL',
+    ...Array.from(
+      new Set(
+        publishedProjects
+          .map(p => (p.projectType?.trim() || 'PROJECT').toUpperCase())
+          .filter(Boolean)
+      )
+    ),
+  ];
 
   const filteredProjects = publishedProjects.filter(p => {
-    const matchesCategory = activeFilter === 'ALL' || p.projectType.toUpperCase() === activeFilter;
-    const matchesSearch = p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const type = (p.projectType?.trim() || 'PROJECT').toUpperCase();
+    const matchesCategory = activeFilter === 'ALL' || type === activeFilter;
+    const matchesSearch =
+      p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       stripHtml(p.description).toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
   });
@@ -47,12 +56,12 @@ export default function ProjectsView() {
                 key={type}
                 onClick={() => {
                   setActiveFilter(type);
-                  // Optionally clear search when changing tabs to prevent empty feed confusion
                 }}
-                className={`px-4 py-2 text-[10px] font-bold tracking-wider uppercase transition-all duration-300 rounded-none cursor-pointer border ${activeFilter === type
-                  ? 'bg-neutral-950 text-white border-neutral-950'
-                  : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-900 hover:text-neutral-900'
-                  }`}
+                className={`px-4 py-2 text-[10px] font-bold tracking-wider uppercase transition-all duration-300 rounded-none cursor-pointer border ${
+                  activeFilter === type
+                    ? 'bg-neutral-950 text-white border-neutral-950'
+                    : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-900 hover:text-neutral-900'
+                }`}
               >
                 {type}
               </button>
@@ -88,47 +97,12 @@ export default function ProjectsView() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                className="h-full"
               >
-                <Link href={`/projects/${project.id}`} className="block h-full group">
-                  <ReusableCard hoverable={true} noPadding={true} className="flex flex-col h-full justify-between border-neutral-200 group-hover:border-neutral-950 transition-colors duration-300 overflow-hidden">
-                    <div>
-                      {project.screenshotUrl && (
-                        <div className="w-full aspect-video overflow-hidden bg-neutral-50 border-b border-neutral-200 relative transition-colors duration-300">
-                          <img
-                            src={project.screenshotUrl}
-                            alt={project.title}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            onError={(e) => {
-                              // Fallback to placeholder if url fails
-                              (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c';
-                            }}
-                          />
-                        </div>
-                      )}
-                      <div className="p-6 space-y-4">
-                        <div>
-                          <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest font-mono">
-                            {project.projectType.toUpperCase()}
-                          </span>
-                          <h3 className="font-[family-name:var(--font-inter)] text-lg font-medium tracking-tight text-neutral-950 uppercase mt-1 group-hover:underline decoration-neutral-400">
-                            {project.title}
-                          </h3>
-                        </div>
-                        <div
-                          className="text-xs font-light text-neutral-500 leading-relaxed font-sans line-clamp-3 overflow-hidden text-ellipsis"
-                        >
-                          {stripHtml(project.description)}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="p-6 pt-4 border-t border-neutral-100 flex items-center justify-between text-[10px] font-mono text-neutral-400 mt-auto">
-                      <span>STATUS: {project.status.toUpperCase()}</span>
-                      <span className="font-bold text-neutral-950 flex items-center gap-1">
-                        UPDATED ON: {project.lastModified}
-                      </span>
-                    </div>
-                  </ReusableCard>
-                </Link>
+                <ProjectCard
+                  project={project}
+                  index={idx}
+                />
               </motion.div>
             ))}
           </div>
