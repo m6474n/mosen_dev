@@ -104,44 +104,7 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
         style={{ scaleX }}
       />
 
-      <Container className="max-w-4xl pt-4 pb-24">
-        {/* Top Breadcrumb Navigation */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="flex items-center justify-between gap-4 mb-8 pb-5 border-b border-neutral-200"
-        >
-          <Link
-            href="/blog"
-            className="inline-flex items-center gap-2 text-xs font-bold tracking-wider text-neutral-400 hover:text-neutral-950 transition-colors uppercase font-mono group"
-            id="back-to-essays"
-          >
-            <div className="w-7 h-7 rounded-full bg-neutral-100 group-hover:bg-neutral-950 text-neutral-600 group-hover:text-white transition-all flex items-center justify-center">
-              <ArrowLeft className="w-3.5 h-3.5" />
-            </div>
-            BACK TO ESSAYS
-          </Link>
-
-          <button
-            type="button"
-            onClick={handleShare}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-neutral-200 hover:border-neutral-950 text-[10px] font-mono uppercase tracking-wider text-neutral-600 hover:text-neutral-950 transition-all cursor-pointer shadow-2xs"
-          >
-            {copied ? (
-              <>
-                <Check className="w-3 h-3 text-emerald-600" />
-                <span>LINK COPIED</span>
-              </>
-            ) : (
-              <>
-                <Share2 className="w-3 h-3" />
-                <span>SHARE ESSAY</span>
-              </>
-            )}
-          </button>
-        </motion.div>
-
+      <Container className="max-w-4xl pt-8 pb-24">
         {/* Editorial Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -149,18 +112,38 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className="space-y-5 mb-10"
         >
-          <div className="flex flex-wrap items-center gap-3 text-[10px] text-neutral-400 font-bold font-mono uppercase tracking-widest">
-            <span className="flex items-center gap-1.5 text-neutral-600">
-              <Calendar className="w-3.5 h-3.5" /> {activePost.publishedAt.toUpperCase()}
-            </span>
-            <span>•</span>
-            <span className="flex items-center gap-1.5 text-neutral-600">
-              <Clock className="w-3.5 h-3.5" /> {activePost.readTime.toUpperCase()}
-            </span>
-            <span>•</span>
-            <span className="inline-flex items-center gap-1 text-neutral-900 font-bold">
-              <BookOpen className="w-3 h-3" /> EDITORIAL ESSAY
-            </span>
+          <div className="flex flex-wrap items-center justify-between gap-3 text-[10px] text-neutral-400 font-bold font-mono uppercase tracking-widest">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="flex items-center gap-1.5 text-neutral-600">
+                <Calendar className="w-3.5 h-3.5" /> {activePost.publishedAt.toUpperCase()}
+              </span>
+              <span>•</span>
+              <span className="flex items-center gap-1.5 text-neutral-600">
+                <Clock className="w-3.5 h-3.5" /> {activePost.readTime.toUpperCase()}
+              </span>
+              <span>•</span>
+              <span className="inline-flex items-center gap-1 text-neutral-900 font-bold">
+                <BookOpen className="w-3 h-3" /> EDITORIAL ESSAY
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleShare}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-neutral-200 hover:border-neutral-950 text-[10px] font-mono uppercase tracking-wider text-neutral-600 hover:text-neutral-950 transition-all cursor-pointer shadow-2xs"
+            >
+              {copied ? (
+                <>
+                  <Check className="w-3 h-3 text-emerald-600" />
+                  <span>LINK COPIED</span>
+                </>
+              ) : (
+                <>
+                  <Share2 className="w-3 h-3" />
+                  <span>SHARE</span>
+                </>
+              )}
+            </button>
           </div>
 
           <h1 className="font-[family-name:var(--font-inter-tight)] font-black text-3xl sm:text-5xl md:text-6xl tracking-tight text-neutral-950 uppercase leading-[1.08] select-none">

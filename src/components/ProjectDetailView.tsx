@@ -85,34 +85,7 @@ export default function ProjectDetailView({ slug }: ProjectDetailViewProps) {
 
   return (
     <DefaultPageLayout>
-      <Container className="max-w-5xl flex flex-col pt-4 pb-20">
-        {/* Navigation Breadcrumb */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="flex items-center justify-between gap-4 mb-8 pb-5 border-b border-neutral-200"
-        >
-          <Link
-            href="/projects"
-            className="inline-flex items-center gap-2 text-xs font-bold tracking-wider text-neutral-400 hover:text-neutral-950 transition-colors uppercase font-mono group"
-            id="back-to-projects"
-          >
-            <div className="w-7 h-7 rounded-full bg-neutral-100 group-hover:bg-neutral-950 text-neutral-600 group-hover:text-white transition-all flex items-center justify-center">
-              <ArrowLeft className="w-3.5 h-3.5" />
-            </div>
-            BACK TO DIRECTORY
-          </Link>
-
-          <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-neutral-400">
-            <span className="hidden sm:inline">PROJECT ARCHIVE</span>
-            <ChevronRight className="w-3 h-3 hidden sm:inline" />
-            <span className="text-neutral-950 font-bold px-2.5 py-1 rounded-full bg-neutral-100 border border-neutral-200">
-              {project.projectType.toUpperCase()}
-            </span>
-          </div>
-        </motion.div>
-
+      <Container className="max-w-5xl flex flex-col pt-8 pb-20">
         {/* Hero Title & Live Link */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -160,17 +133,17 @@ export default function ProjectDetailView({ slug }: ProjectDetailViewProps) {
           </div>
         </motion.div>
 
-        {/* Cinematic Visual Stage Showcase */}
+        {/* Cinematic Visual Stage Showcase (Border Removed) */}
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="relative w-full rounded-3xl overflow-hidden bg-neutral-950 border border-neutral-800 shadow-2xl mb-12 p-3 sm:p-4 group"
+          className="relative w-full rounded-3xl overflow-hidden bg-neutral-950 shadow-2xl mb-12 group"
         >
           {/* Subtle Ambient Glow */}
           <div className="absolute top-0 inset-x-0 h-40 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(255,255,255,0.1),transparent_70%)] pointer-events-none" />
 
-          <div className="relative rounded-2xl overflow-hidden bg-neutral-900 border border-white/10 aspect-[16/10] sm:aspect-[16/9] flex items-center justify-center">
+          <div className="relative w-full overflow-hidden bg-neutral-900 aspect-[16/10] sm:aspect-[16/9] flex items-center justify-center">
             {screenshot ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
