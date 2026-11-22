@@ -224,7 +224,7 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
         {/* Overhead wide-angle radial spotlight */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[130vw] h-[400px] bg-[radial-gradient(ellipse_75%_50%_at_50%_0%,rgba(255,255,255,0.08),transparent_70%)]" />
         {/* Subtle coordinate dot mesh */}
-        <div 
+        <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
             backgroundImage: `radial-gradient(circle, #fff 1px, transparent 1px)`,
@@ -293,7 +293,7 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
       </div>
 
       {/* ─── FULL-WIDTH PANORAMIC 3D VIEWPORT (5+ SLIDES PER VIEW) ─── */}
-      <div 
+      <div
         ref={stageRef}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
@@ -302,7 +302,7 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
         className="w-full relative h-[540px] sm:h-[580px] md:h-[620px] flex items-center justify-center overflow-visible cursor-grab active:cursor-grabbing touch-none"
         style={{ perspective: 1200, perspectiveOrigin: '50% 50%' }}
       >
-        <div 
+        <div
           className="relative w-full h-full flex items-center justify-center"
           style={{ transformStyle: 'preserve-3d' }}
         >
@@ -319,11 +319,11 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
             if (absDiff > 2.8) return null;
 
             // ─── REVERSE WIDE-ANGLE PROJECTION MATH ───
-            // Center is small (focus); sides gradually increase in size!
-            // d=0: scale: 0.82 (small focused)
-            // d=1: scale: 1.02 (larger)
-            // d=2: scale: 1.20 (maximum wide-angle peripheral expansion)
-            const scale = 0.82 + Math.min(absDiff, 2.5) * 0.19;
+            // Center active slide slightly enlarged for visual presence; sides expand gradually
+            // d=0: scale: 0.92 (increased presence for active card)
+            // d=1: scale: 1.05
+            // d=2: scale: 1.20
+            const scale = 0.92 + Math.min(absDiff, 2.5) * 0.14;
 
             // Horizontal position across panoramic field - tighter near center, expanding outward
             const x = diff * baseSpacing * (1 + absDiff * 0.18);
@@ -362,11 +362,10 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
                   transformStyle: 'preserve-3d',
                   transition: isDraggingRef.current ? 'none' : 'filter 0.3s ease, border-color 0.3s ease',
                 }}
-                className={`absolute top-0 w-[270px] sm:w-[310px] md:w-[340px] lg:w-[360px] h-[480px] sm:h-[510px] md:h-[550px] cursor-pointer rounded-3xl border transition-all duration-300 ${
-                  isCenter
-                    ? 'border-white/80 bg-neutral-900/95 shadow-[0_25px_80px_-10px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.4)] ring-1 ring-white/20'
-                    : 'border-white/15 bg-neutral-900/80 shadow-[0_15px_45px_-10px_rgba(0,0,0,0.7)] hover:border-white/40'
-                } backdrop-blur-2xl flex flex-col justify-between overflow-hidden select-none`}
+                className={`absolute top-0 w-[285px] sm:w-[325px] md:w-[360px] lg:w-[380px] h-[500px] sm:h-[530px] md:h-[570px] cursor-pointer rounded-3xl border transition-all duration-300 ${isCenter
+                  ? 'border-white/80 bg-neutral-900/95 shadow-[0_25px_80px_-10px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.4)] ring-1 ring-white/20'
+                  : 'border-white/15 bg-neutral-900/80 shadow-[0_15px_45px_-10px_rgba(0,0,0,0.7)] hover:border-white/40'
+                  } backdrop-blur-2xl flex flex-col justify-between overflow-hidden select-none`}
               >
                 {/* ─── CARD UPPER HALF: WINDOW STAGE ─── */}
                 <div className="relative w-full h-[48%] bg-neutral-950/90 border-b border-neutral-800/80 overflow-hidden flex flex-col shrink-0">
@@ -497,11 +496,10 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
                             animateTo(Math.round(displayProgress + diff));
                           }
                         }}
-                        className={`flex-grow justify-center px-4 py-2 rounded-full text-[10px] font-extrabold uppercase tracking-widest transition-all flex items-center gap-1 shadow-sm ${
-                          isCenter
-                            ? 'bg-white hover:bg-neutral-200 text-neutral-950'
-                            : 'bg-neutral-800 hover:bg-white hover:text-neutral-950 text-white'
-                        }`}
+                        className={`flex-grow justify-center px-4 py-2 rounded-full text-[10px] font-extrabold uppercase tracking-widest transition-all flex items-center gap-1 shadow-sm ${isCenter
+                          ? 'bg-white hover:bg-neutral-200 text-neutral-950'
+                          : 'bg-neutral-800 hover:bg-white hover:text-neutral-950 text-white'
+                          }`}
                       >
                         EXPLORE
                         <ArrowUpRight className="w-3 h-3" />
@@ -515,31 +513,7 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
         </div>
       </div>
 
-      {/* ─── STAGE FOOTER TRACK & BULLETS ─── */}
-      <div className="relative z-20 max-w-7xl mx-auto px-6 md:px-12 mt-6 md:mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-        {/* Navigation bullets */}
-        <div className="flex items-center gap-2">
-          {items.slice(0, Math.min(total, 6)).map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => animateTo(i)}
-              aria-label={`Go to slide ${i + 1}`}
-              className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                i === (activeIndex % Math.min(total, 6))
-                  ? 'w-10 bg-white'
-                  : 'w-2.5 bg-neutral-700 hover:bg-neutral-500'
-              }`}
-            />
-          ))}
-        </div>
 
-        {/* Drag / swipe guide */}
-        <div className="flex items-center gap-2 text-neutral-500 font-mono text-[10px] uppercase tracking-wider">
-          <Sparkles className="w-3.5 h-3.5 text-neutral-400" />
-          <span>GSAP SMOOTH SCROLL · DRAG / WHEEL TO ROTATE · CENTER FOCUS EXPANDS SIDES</span>
-        </div>
-      </div>
-    </section>
+    </section >
   );
 }
