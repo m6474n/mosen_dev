@@ -367,42 +367,26 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
                   : 'border-white/15 bg-neutral-900/80 shadow-[0_15px_45px_-10px_rgba(0,0,0,0.7)] hover:border-white/40'
                   } backdrop-blur-2xl flex flex-col justify-between overflow-hidden select-none`}
               >
-                {/* ─── CARD UPPER HALF: WINDOW STAGE ─── */}
-                <div className="relative w-full h-[48%] bg-neutral-950/90 border-b border-neutral-800/80 overflow-hidden flex flex-col shrink-0">
-                  {/* Window title bar */}
-                  <div className="h-8 px-3 border-b border-neutral-800/80 bg-neutral-900/60 flex items-center justify-between shrink-0">
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-red-500/80" />
-                      <span className="w-2 h-2 rounded-full bg-amber-500/80" />
-                      <span className="w-2 h-2 rounded-full bg-emerald-500/80" />
-                    </div>
-                    <span className="font-mono text-[9px] text-neutral-500 uppercase tracking-widest truncate max-w-[150px]">
-                      {item.realId}.mosen.dev
-                    </span>
-                    <div className="flex items-center gap-1 text-[9px] font-mono text-neutral-500">
-                      <Terminal className="w-2.5 h-2.5 text-neutral-400" />
-                      <span>PROD</span>
-                    </div>
-                  </div>
-
+                {/* ─── CARD UPPER HALF: VISUAL STAGE ─── */}
+                <div className="relative w-full h-[52%] bg-neutral-950 border-b border-neutral-800/80 overflow-hidden flex flex-col shrink-0">
                   {/* Screenshot / Mockup Preview */}
-                  <div className="relative flex-grow w-full overflow-hidden flex items-center justify-center p-2.5 bg-gradient-to-b from-neutral-950 to-neutral-900">
+                  <div className="relative w-full h-full overflow-hidden flex items-center justify-center bg-gradient-to-b from-neutral-950 to-neutral-900">
                     {item.screenshotUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={item.screenshotUrl}
                         alt={item.title}
-                        className="w-full h-full object-cover rounded-lg border border-white/10 shadow-md"
+                        className="w-full h-full object-cover transition-transform duration-700 ease-out hover:scale-105"
                         onError={(e) => {
                           (e.target as HTMLImageElement).style.display = 'none';
                         }}
                       />
                     ) : cs && cs.screenshots && cs.screenshots.length > 0 ? (
-                      <div className="w-full h-full flex items-center justify-center scale-75 sm:scale-85 origin-center">
+                      <div className="w-full h-full flex items-center justify-center scale-90 origin-center">
                         <InteractiveScreenshotMockup screenshotId={cs.screenshots[0].id} />
                       </div>
                     ) : (
-                      <div className="w-full h-full rounded-lg border border-dashed border-neutral-800 bg-neutral-950/60 flex flex-col items-center justify-center p-4 text-center">
+                      <div className="w-full h-full border border-dashed border-neutral-800 bg-neutral-950/60 flex flex-col items-center justify-center p-4 text-center">
                         <Monitor className="w-6 h-6 text-neutral-600 mb-1" />
                         <span className="font-mono text-[10px] text-neutral-400 uppercase tracking-wider font-bold">
                           {item.title}
