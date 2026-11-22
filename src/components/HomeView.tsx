@@ -12,6 +12,7 @@ import { MOHSIN_BIO, PROCESS_STEPS, TESTIMONIALS } from '../data';
 import { Container } from './DefaultPageLayout';
 import ReusableCard from './ReusableCard';
 import ProjectCard from './ProjectCard';
+import PanoramicProjectSlider from './PanoramicProjectSlider';
 import Button from './Button';
 
 function GsapCounter({ value }: { value: string }) {
@@ -289,46 +290,8 @@ export default function HomeView() {
         </Container>
       </motion.section>
 
-      {/* ─── SELECTED WORK CASE STUDIES LIST ─── */}
-      <motion.section
-        initial={{ opacity: 0, y: 35 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-120px" }}
-        transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
-        id="work-intro"
-        className="py-12 md:py-16 bg-white border-b border-neutral-100"
-      >
-        <Container>
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
-            <div>
-              <div className="flex items-center gap-3 mb-6 text-neutral-400">
-                <span className="w-6 h-[1px] bg-neutral-300"></span>
-                <span className="text-[10px] font-extrabold tracking-widest uppercase">SELECTED WORK</span>
-              </div>
-              <h2 className="font-sans font-light text-3xl md:text-5xl leading-tight tracking-tight text-neutral-950 uppercase">
-                PROJECTS THAT<br />MOVED NUMBERS.
-              </h2>
-            </div>
-            <Link
-              href="/projects"
-              className="text-xs font-bold tracking-wider text-neutral-950 hover:text-neutral-600 transition-colors border-b-2 border-neutral-950 pb-1 uppercase"
-              id="all-work-link"
-            >
-              ALL PROJECTS
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {homeProjects.map((project, index) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                index={index}
-              />
-            ))}
-          </div>
-        </Container>
-      </motion.section>
+      {/* ─── FULL-WIDTH PANORAMIC 3D PROJECTS SLIDER ─── */}
+      <PanoramicProjectSlider projects={publishedProjects.length > 0 ? publishedProjects : projects} />
 
       {/* ─── PROCESS STEPS ─── */}
       <motion.section
