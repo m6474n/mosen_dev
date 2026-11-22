@@ -208,8 +208,8 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
   };
 
   // Wide-angle card spacing calculations (visible 5 cards: -2, -1, 0, 1, 2)
-  // Increased spacing between slides for more breathing room
-  const baseSpacing = Math.min(Math.max(windowWidth * 0.25, 290), 420);
+  // Tightened spacing around active/center slide
+  const baseSpacing = Math.min(Math.max(windowWidth * 0.17, 210), 280);
 
   return (
     <section
@@ -325,8 +325,8 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
             // d=2: scale: 1.20 (maximum wide-angle peripheral expansion)
             const scale = 0.82 + Math.min(absDiff, 2.5) * 0.19;
 
-            // Horizontal position across panoramic field
-            const x = diff * baseSpacing * (1 + absDiff * 0.08);
+            // Horizontal position across panoramic field - tighter near center, expanding outward
+            const x = diff * baseSpacing * (1 + absDiff * 0.18);
 
             // Angle inwards towards center (panoramic amphitheater curvature)
             const rotateY = diff * -18 * (1 + absDiff * 0.15);
