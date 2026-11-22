@@ -1,4 +1,4 @@
-﻿# Mosen Portfolio — Project-Scoped Agent Rules
+# Mosen Portfolio — Project-Scoped Agent Rules
 
 ## 1. Project Identity
 - **Project**: `mosen.` — Personal portfolio & CMS for Muhammad Mohsin.

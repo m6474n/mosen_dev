@@ -290,10 +290,7 @@ export default function HomeView() {
         </Container>
       </motion.section>
 
-      {/* ─── FULL-WIDTH PANORAMIC 3D PROJECTS SLIDER ─── */}
-      <PanoramicProjectSlider projects={publishedProjects.length > 0 ? publishedProjects : projects} />
-
-      {/* ─── PROCESS STEPS ─── */}
+      {/* ─── PROCESS STEPS (HOW IT WORKS) ─── */}
       <motion.section
         initial={{ opacity: 0, y: 35 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -335,6 +332,9 @@ export default function HomeView() {
           </div>
         </Container>
       </motion.section>
+
+      {/* ─── FULL-WIDTH PANORAMIC 3D PROJECTS SLIDER ─── */}
+      <PanoramicProjectSlider projects={publishedProjects.length > 0 ? publishedProjects : projects} />
 
       {/* ─── TESTIMONIALS ─── */}
       <motion.section

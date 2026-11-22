@@ -24,16 +24,52 @@ interface PanoramicProjectSliderProps {
 export default function PanoramicProjectSlider({ projects }: PanoramicProjectSliderProps) {
   // Guarantee at least 6 items for continuous multi-card panoramic rendering
   const items = React.useMemo(() => {
-    let source: Project[] = projects && projects.length > 0 ? projects : CASE_STUDIES.map((cs) => ({
+    // Filter out:
+    // 1. Projects categorized under "AI systems and automations" (or containing ai / automation)
+    // 2. Projects without any feature image/screenshot
+    const eligibleProjects = (projects || []).filter((p) => {
+      const type = (p.projectType || '').toLowerCase();
+      const isAiAutomation = type.includes('ai system') || type.includes('automation');
+      if (isAiAutomation) return false;
+
+      const cs = CASE_STUDIES.find((c) => c.id === p.id);
+      const hasFeaturedImage = Boolean(
+        p.screenshotUrl ||
+        (cs && cs.screenshots && cs.screenshots.length > 0)
+      );
+
+      return hasFeaturedImage;
+    });
+
+    let source: Project[] = eligibleProjects.length > 0 ? eligibleProjects : CASE_STUDIES.filter((cs) => {
+      const ind = (cs.industry || '').toLowerCase();
+      const isAiAutomation = ind.includes('ai system') || ind.includes('automation');
+      const hasImg = Boolean(cs.screenshots && cs.screenshots.length > 0 && cs.screenshots[0].imageUrl);
+      return !isAiAutomation && hasImg;
+    }).map((cs) => ({
       id: cs.id,
       title: cs.title,
       projectType: cs.industry || 'ENGINEERING',
       description: cs.summary,
-      screenshotUrl: undefined,
+      screenshotUrl: cs.screenshots?.[0]?.imageUrl || undefined,
       liveUrl: undefined,
       status: 'Published' as const,
       lastModified: new Date().toISOString(),
     }));
+
+    // If still empty fallback to all CASE_STUDIES with screenshots
+    if (source.length === 0) {
+      source = CASE_STUDIES.filter(cs => cs.screenshots && cs.screenshots.length > 0).map(cs => ({
+        id: cs.id,
+        title: cs.title,
+        projectType: cs.industry || 'ENGINEERING',
+        description: cs.summary,
+        screenshotUrl: cs.screenshots?.[0]?.imageUrl || undefined,
+        liveUrl: undefined,
+        status: 'Published' as const,
+        lastModified: new Date().toISOString(),
+      }));
+    }
 
     // If less than 6 items, repeat to guarantee 5+ slides per view smoothly
     let expanded = [...source];
@@ -172,7 +208,8 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
   };
 
   // Wide-angle card spacing calculations (visible 5 cards: -2, -1, 0, 1, 2)
-  const baseSpacing = Math.min(Math.max(windowWidth * 0.20, 240), 340);
+  // Increased spacing between slides for more breathing room
+  const baseSpacing = Math.min(Math.max(windowWidth * 0.25, 290), 420);
 
   return (
     <section
