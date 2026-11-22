@@ -47,6 +47,8 @@ export interface Resource {
   content: string; // Brief documentation / guide
   codeBlock?: string; // Copyable code/snippets
   fileUrl?: string;
+  githubUrl?: string; // GitHub repository URL
+  liveUrl?: string; // Deployed / live preview URL
   isPremium?: boolean;
 }
 

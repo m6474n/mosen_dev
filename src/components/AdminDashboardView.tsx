@@ -21,7 +21,12 @@ import {
   Check,
   Mail,
   Clock,
-  Terminal
+  Terminal,
+  Github,
+  ExternalLink,
+  RefreshCw,
+  Loader2,
+  X
 } from 'lucide-react';
 import { useData, MessageItemData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
@@ -242,6 +247,141 @@ export default function AdminDashboardView() {
       alert("Error saving resource.");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  // GitHub integration state & helpers
+  const [showGithubModal, setShowGithubModal] = useState(false);
+  const [githubUsername, setGithubUsername] = useState('m6474n');
+  const [githubRepos, setGithubRepos] = useState<any[]>([]);
+  const [isLoadingGithubRepos, setIsLoadingGithubRepos] = useState(false);
+  const [importingRepoName, setImportingRepoName] = useState<string | null>(null);
+  const [githubDirectInput, setGithubDirectInput] = useState('');
+  const [isFetchingDirect, setIsFetchingDirect] = useState(false);
+  const [githubFeedback, setGithubFeedback] = useState<string | null>(null);
+
+  const fetchGithubRepoResource = async (repoInput: string): Promise<Resource> => {
+    let clean = repoInput.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, '');
+    const parts = clean.split('/');
+    const owner = parts.length > 1 ? parts[0] : (githubUsername || 'm6474n');
+    const repo = parts.length > 1 ? parts[1] : parts[0];
+
+    const repoRes = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
+    if (!repoRes.ok) {
+      throw new Error(`Repository "${owner}/${repo}" not found (${repoRes.status}). Ensure it is public.`);
+    }
+    const repoData = await repoRes.json();
+
+    let readmeContent = '';
+    try {
+      const readmeRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/readme`);
+      if (readmeRes.ok) {
+        const readmeJson = await readmeRes.json();
+        if (readmeJson.content) {
+          const binaryString = atob(readmeJson.content.replace(/\s/g, ''));
+          const bytes = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          readmeContent = new TextDecoder().decode(bytes);
+        }
+      }
+    } catch (e) {
+      console.warn("Could not load readme:", e);
+    }
+
+    const tags = Array.from(new Set([
+      repoData.language,
+      ...(repoData.topics || [])
+    ])).filter(Boolean) as string[];
+
+    let inferredType: 'Product' | 'Script' | 'Template' | 'Utility' = 'Utility';
+    if (repoData.homepage) {
+      inferredType = 'Product';
+    } else if (tags.some(t => /script|bot|scraper|automation|playwright/i.test(t))) {
+      inferredType = 'Script';
+    } else if (tags.some(t => /template|boilerplate|starter/i.test(t))) {
+      inferredType = 'Template';
+    }
+
+    let description = repoData.description || '';
+    if (!description && readmeContent) {
+      const cleanReadme = readmeContent
+        .replace(/#+\s+/g, '')
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+        .replace(/`{1,3}[^`]*`{1,3}/g, '')
+        .trim();
+      description = cleanReadme.slice(0, 160) + '...';
+    }
+    if (!description) {
+      description = `Open source repository by ${owner}`;
+    }
+
+    return {
+      id: repoData.name.toLowerCase(),
+      title: repoData.name.replace(/[-_]/g, ' ').toUpperCase(),
+      description,
+      type: inferredType,
+      tags,
+      downloadCount: repoData.stargazers_count || 0,
+      content: readmeContent || description,
+      codeBlock: `git clone ${repoData.clone_url || repoData.html_url}.git`,
+      fileUrl: `${repoData.html_url}/archive/refs/heads/${repoData.default_branch || 'main'}.zip`,
+      githubUrl: repoData.html_url,
+      liveUrl: repoData.homepage || '',
+      isPremium: false,
+    };
+  };
+
+  const handleFetchAndPopulate = async (url: string) => {
+    if (!url.trim()) return;
+    setIsFetchingDirect(true);
+    setGithubFeedback(null);
+    try {
+      const res = await fetchGithubRepoResource(url);
+      setEditingResource(res);
+      setResourceTagsInput(res.tags.join(', '));
+      setGithubFeedback(`Loaded metadata and README for ${res.title}`);
+    } catch (err: any) {
+      alert(err.message || 'Error fetching GitHub repository.');
+    } finally {
+      setIsFetchingDirect(false);
+    }
+  };
+
+  const handleOneClickImport = async (repo: any) => {
+    setImportingRepoName(repo.name);
+    try {
+      const res = await fetchGithubRepoResource(`${repo.owner.login}/${repo.name}`);
+      const success = await saveItem('resources', res);
+      if (success) {
+        setGithubFeedback(`Imported "${res.title}" into resources!`);
+      } else {
+        alert("Failed to save resource.");
+      }
+    } catch (err: any) {
+      alert(err.message || 'Error importing repository.');
+    } finally {
+      setImportingRepoName(null);
+    }
+  };
+
+  const fetchUserRepos = async (username: string) => {
+    if (!username.trim()) return;
+    setIsLoadingGithubRepos(true);
+    try {
+      const res = await fetch(`https://api.github.com/users/${username.trim()}/repos?sort=updated&per_page=30`);
+      if (res.ok) {
+        const data = await res.json();
+        setGithubRepos(Array.isArray(data) ? data : []);
+      } else {
+        alert(`Failed to fetch repositories for "${username}". Status: ${res.status}`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Network error fetching GitHub repositories.");
+    } finally {
+      setIsLoadingGithubRepos(false);
     }
   };
 
@@ -884,6 +1024,18 @@ export default function AdminDashboardView() {
             {/* ─── RESOURCES CRUD TAB ─── */}
             {activeTab === 'resources' && (
               <div className="space-y-6">
+                {githubFeedback && (
+                  <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2.5 text-xs font-mono flex items-center justify-between">
+                    <span className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-emerald-600" />
+                      {githubFeedback}
+                    </span>
+                    <button onClick={() => setGithubFeedback(null)} className="text-emerald-600 hover:text-emerald-900 text-xs">
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+
                 {editingResource ? (
                   <form onSubmit={handleSaveResource} className="bg-white border border-neutral-200 p-6 space-y-6 rounded-none">
                     <div className="flex justify-between items-center border-b border-neutral-100 pb-4">
@@ -907,6 +1059,38 @@ export default function AdminDashboardView() {
                           className="bg-neutral-950 hover:bg-neutral-800 text-white text-[10px] px-4 py-2 font-bold uppercase tracking-widest disabled:opacity-50 cursor-pointer rounded-none"
                         >
                           {isSaving ? 'Saving...' : 'Save Resource'}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Quick GitHub Auto-Fill Bar */}
+                    <div className="bg-neutral-50 p-4 border border-neutral-200 flex flex-col sm:flex-row items-center gap-3">
+                      <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-neutral-800 shrink-0">
+                        <Github className="w-4 h-4" /> Quick Import from GitHub:
+                      </div>
+                      <div className="flex-grow flex items-center gap-2 w-full">
+                        <input 
+                          type="text" 
+                          value={githubDirectInput} 
+                          onChange={e => setGithubDirectInput(e.target.value)} 
+                          placeholder="e.g. https://github.com/m6474n/my-repo or owner/repo"
+                          className="flex-grow border border-neutral-200 px-3 py-1.5 text-xs bg-white font-mono rounded-none"
+                        />
+                        <button
+                          type="button"
+                          disabled={isFetchingDirect || !githubDirectInput.trim()}
+                          onClick={() => handleFetchAndPopulate(githubDirectInput)}
+                          className="bg-neutral-900 hover:bg-neutral-800 text-white text-[10px] font-bold uppercase tracking-wider px-3.5 py-2 cursor-pointer disabled:opacity-50 rounded-none shrink-0 flex items-center gap-1.5"
+                        >
+                          {isFetchingDirect ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" /> Fetching...
+                            </>
+                          ) : (
+                            <>
+                              <RefreshCw className="w-3.5 h-3.5" /> Fetch & Auto-Fill
+                            </>
+                          )}
                         </button>
                       </div>
                     </div>
@@ -950,6 +1134,33 @@ export default function AdminDashboardView() {
                       </div>
                     </div>
 
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 flex items-center gap-1.5">
+                          <Github className="w-3.5 h-3.5" /> GitHub Repository URL
+                        </label>
+                        <input 
+                          type="text" 
+                          value={editingResource.githubUrl || ''} 
+                          onChange={e => setEditingResource({ ...editingResource, githubUrl: e.target.value })}
+                          placeholder="https://github.com/m6474n/repo-name"
+                          className="border border-neutral-200 px-3 py-2 text-xs bg-white font-mono rounded-none" 
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 flex items-center gap-1.5">
+                          <ExternalLink className="w-3.5 h-3.5" /> Live / Deployed Demo URL
+                        </label>
+                        <input 
+                          type="text" 
+                          value={editingResource.liveUrl || ''} 
+                          onChange={e => setEditingResource({ ...editingResource, liveUrl: e.target.value })}
+                          placeholder="https://my-app.vercel.app"
+                          className="border border-neutral-200 px-3 py-2 text-xs bg-white font-mono rounded-none" 
+                        />
+                      </div>
+                    </div>
+
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                       <div className="flex flex-col gap-2">
                         <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Tags (comma-separated)</label>
@@ -962,7 +1173,7 @@ export default function AdminDashboardView() {
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Download / Copy Count</label>
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Download / Star Count</label>
                         <input 
                           type="number" 
                           value={editingResource.downloadCount ?? 0} 
@@ -971,7 +1182,7 @@ export default function AdminDashboardView() {
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Downloadable File URL</label>
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Downloadable Archive / File URL</label>
                         <input 
                           type="text" 
                           value={editingResource.fileUrl || ''} 
@@ -996,34 +1207,37 @@ export default function AdminDashboardView() {
 
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center justify-between">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Copyable Code / Script Snippet</label>
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Copyable Code / Clone Snippet</label>
                         <span className="text-[9px] font-mono text-neutral-400 uppercase">Optional Code Block</span>
                       </div>
                       <textarea 
-                        rows={7}
+                        rows={6}
                         value={editingResource.codeBlock || ''} 
                         onChange={e => setEditingResource({ ...editingResource, codeBlock: e.target.value })}
-                        placeholder="# Paste code snippet or configuration block here..."
+                        placeholder="# Paste code snippet, clone command, or configuration block..."
                         className="border border-neutral-800 p-4 font-mono text-xs bg-neutral-950 text-neutral-100 rounded-none leading-relaxed" 
                       />
                     </div>
 
                     <div className="flex flex-col gap-2">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Detailed Guide / Documentation</label>
+                      <div className="flex items-center justify-between">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Detailed Guide / README Content</label>
+                        <span className="text-[9px] font-mono text-neutral-400 uppercase">Full Documentation</span>
+                      </div>
                       <textarea 
-                        rows={5}
+                        rows={8}
                         value={editingResource.content} 
                         onChange={e => setEditingResource({ ...editingResource, content: e.target.value })}
                         required
-                        placeholder="Detailed installation, parameters, deployment guide..."
-                        className="border border-neutral-200 p-3 text-xs bg-white rounded-none leading-relaxed font-sans" 
+                        placeholder="Detailed installation, parameters, deployment guide or README markdown..."
+                        className="border border-neutral-200 p-3 text-xs bg-white rounded-none leading-relaxed font-mono" 
                       />
                     </div>
                   </form>
                 ) : (
                   <div className="bg-white border border-neutral-200 rounded-none overflow-hidden">
-                    <div className="p-4 border-b border-neutral-200 flex justify-between items-center bg-neutral-50/50">
-                      <div className="relative w-72">
+                    <div className="p-4 border-b border-neutral-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-neutral-50/50">
+                      <div className="relative w-full sm:w-72">
                         <Search className="w-3.5 h-3.5 absolute left-3 top-3 text-neutral-400" />
                         <input 
                           type="text" 
@@ -1033,27 +1247,43 @@ export default function AdminDashboardView() {
                           className="w-full border border-neutral-200 pl-9 pr-3 py-1.5 text-xs bg-white font-mono rounded-none"
                         />
                       </div>
-                      <button 
-                        onClick={() => {
-                          const newRes: Resource = {
-                            id: `res-${Date.now().toString(36)}`,
-                            title: '',
-                            description: '',
-                            type: 'Script',
-                            tags: [],
-                            downloadCount: 0,
-                            content: '',
-                            codeBlock: '',
-                            fileUrl: '',
-                            isPremium: false,
-                          };
-                          setEditingResource(newRes);
-                          setResourceTagsInput('');
-                        }}
-                        className="bg-neutral-950 hover:bg-neutral-800 text-white text-[10px] px-3 py-1.5 font-bold uppercase tracking-wider flex items-center gap-1 cursor-pointer rounded-none"
-                      >
-                        <Plus className="w-3.5 h-3.5" /> New Resource
-                      </button>
+                      <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                        <button 
+                          onClick={() => {
+                            setShowGithubModal(true);
+                            if (githubRepos.length === 0) {
+                              fetchUserRepos(githubUsername);
+                            }
+                          }}
+                          className="border border-neutral-300 hover:border-neutral-900 bg-white text-neutral-900 text-[10px] px-3.5 py-2 font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer rounded-none transition-colors"
+                        >
+                          <Github className="w-3.5 h-3.5" /> Import from GitHub
+                        </button>
+                        <button 
+                          onClick={() => {
+                            const newRes: Resource = {
+                              id: `res-${Date.now().toString(36)}`,
+                              title: '',
+                              description: '',
+                              type: 'Script',
+                              tags: [],
+                              downloadCount: 0,
+                              content: '',
+                              codeBlock: '',
+                              fileUrl: '',
+                              githubUrl: '',
+                              liveUrl: '',
+                              isPremium: false,
+                            };
+                            setEditingResource(newRes);
+                            setResourceTagsInput('');
+                            setGithubDirectInput('');
+                          }}
+                          className="bg-neutral-950 hover:bg-neutral-800 text-white text-[10px] px-4 py-2 font-bold uppercase tracking-wider flex items-center gap-1 cursor-pointer rounded-none"
+                        >
+                          <Plus className="w-3.5 h-3.5" /> New Resource
+                        </button>
+                      </div>
                     </div>
 
                     <table className="w-full text-left border-collapse">
@@ -1063,7 +1293,8 @@ export default function AdminDashboardView() {
                           <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500">Resource</th>
                           <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500 w-28">Type</th>
                           <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500 w-36">Tags</th>
-                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500 w-24">Downloads</th>
+                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500 w-28">Links</th>
+                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500 w-20">Count</th>
                           <th className="p-4 w-28 text-right text-[10px] font-bold uppercase tracking-wider text-neutral-500">Actions</th>
                         </tr>
                       </thead>
@@ -1099,6 +1330,20 @@ export default function AdminDashboardView() {
                                 )}
                               </div>
                             </td>
+                            <td className="p-4">
+                              <div className="flex items-center gap-2">
+                                {res.githubUrl && (
+                                  <a href={res.githubUrl} target="_blank" rel="noreferrer" title="GitHub Repo" className="text-neutral-500 hover:text-neutral-950">
+                                    <Github className="w-3.5 h-3.5" />
+                                  </a>
+                                )}
+                                {res.liveUrl && (
+                                  <a href={res.liveUrl} target="_blank" rel="noreferrer" title="Live Preview" className="text-neutral-500 hover:text-neutral-950">
+                                    <ExternalLink className="w-3.5 h-3.5" />
+                                  </a>
+                                )}
+                              </div>
+                            </td>
                             <td className="p-4 text-xs font-mono text-neutral-600">
                               {res.downloadCount || 0}
                             </td>
@@ -1107,6 +1352,7 @@ export default function AdminDashboardView() {
                                 onClick={() => {
                                   setEditingResource(res);
                                   setResourceTagsInput(res.tags ? res.tags.join(', ') : '');
+                                  setGithubDirectInput(res.githubUrl || '');
                                 }}
                                 className="px-2.5 py-1 border border-neutral-200 text-[9px] font-bold uppercase hover:bg-neutral-100 transition rounded-none cursor-pointer"
                               >
@@ -1127,6 +1373,177 @@ export default function AdminDashboardView() {
                         ))}
                       </tbody>
                     </table>
+                  </div>
+                )}
+
+                {/* ─── GITHUB REPOSITORY BROWSER MODAL ─── */}
+                {showGithubModal && (
+                  <div className="fixed inset-0 z-50 bg-neutral-950/70 backdrop-blur-xs flex items-center justify-center p-4">
+                    <div className="bg-white border border-neutral-200 w-full max-w-3xl max-h-[85vh] flex flex-col rounded-none shadow-2xl">
+                      {/* Modal Header */}
+                      <div className="p-5 border-b border-neutral-200 flex justify-between items-center bg-neutral-50">
+                        <div className="flex items-center gap-2">
+                          <Github className="w-5 h-5 text-neutral-950" />
+                          <div>
+                            <h3 className="font-extrabold text-sm uppercase tracking-wider text-neutral-950">
+                              Import Resource from GitHub
+                            </h3>
+                            <p className="text-[11px] text-neutral-500 font-mono">
+                              1-Click fetch repo info, README documentation & deployed link
+                            </p>
+                          </div>
+                        </div>
+                        <button 
+                          onClick={() => setShowGithubModal(false)}
+                          className="p-1.5 text-neutral-400 hover:text-neutral-950 cursor-pointer"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      {/* Modal Controls Bar */}
+                      <div className="p-4 border-b border-neutral-200 bg-white flex flex-col sm:flex-row items-center gap-3">
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                          <span className="text-[10px] font-bold uppercase text-neutral-400 font-mono">USER:</span>
+                          <input 
+                            type="text" 
+                            value={githubUsername}
+                            onChange={e => setGithubUsername(e.target.value)}
+                            placeholder="GitHub username"
+                            className="border border-neutral-200 px-3 py-1.5 text-xs bg-neutral-50 font-mono w-32 rounded-none"
+                          />
+                          <button
+                            onClick={() => fetchUserRepos(githubUsername)}
+                            disabled={isLoadingGithubRepos}
+                            className="bg-neutral-900 hover:bg-neutral-800 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 cursor-pointer disabled:opacity-50 flex items-center gap-1 rounded-none"
+                          >
+                            {isLoadingGithubRepos ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
+                            Load Repos
+                          </button>
+                        </div>
+
+                        <div className="flex-grow w-full sm:w-auto flex items-center gap-2 sm:border-l sm:border-neutral-200 sm:pl-3">
+                          <input 
+                            type="text" 
+                            value={githubDirectInput}
+                            onChange={e => setGithubDirectInput(e.target.value)}
+                            placeholder="Or paste any repo: owner/repo or full URL"
+                            className="flex-grow border border-neutral-200 px-3 py-1.5 text-xs font-mono rounded-none"
+                          />
+                          <button
+                            onClick={async () => {
+                              if (!githubDirectInput.trim()) return;
+                              setImportingRepoName('direct');
+                              try {
+                                const res = await fetchGithubRepoResource(githubDirectInput);
+                                const success = await saveItem('resources', res);
+                                if (success) {
+                                  setGithubFeedback(`Imported "${res.title}" successfully!`);
+                                  setShowGithubModal(false);
+                                }
+                              } catch (err: any) {
+                                alert(err.message || 'Error importing repo.');
+                              } finally {
+                                setImportingRepoName(null);
+                              }
+                            }}
+                            disabled={importingRepoName === 'direct' || !githubDirectInput.trim()}
+                            className="bg-neutral-950 hover:bg-neutral-800 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 cursor-pointer disabled:opacity-50 shrink-0 rounded-none"
+                          >
+                            {importingRepoName === 'direct' ? 'Importing...' : 'Direct Import'}
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Repos List */}
+                      <div className="flex-grow overflow-y-auto p-4 space-y-2">
+                        {isLoadingGithubRepos ? (
+                          <div className="py-16 text-center flex flex-col items-center justify-center gap-2 text-neutral-400 font-mono text-xs">
+                            <Loader2 className="w-5 h-5 animate-spin text-neutral-950" />
+                            <span>Querying GitHub API for @{githubUsername}...</span>
+                          </div>
+                        ) : githubRepos.length === 0 ? (
+                          <div className="py-12 text-center text-neutral-400 font-mono text-xs">
+                            No public repositories found. Enter a GitHub username and click "Load Repos".
+                          </div>
+                        ) : (
+                          githubRepos.map((repo) => {
+                            const isImporting = importingRepoName === repo.name;
+                            const alreadyImported = resources.some(r => r.id === repo.name.toLowerCase() || r.githubUrl === repo.html_url);
+
+                            return (
+                              <div 
+                                key={repo.id} 
+                                className="border border-neutral-200 p-4 hover:border-neutral-400 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white"
+                              >
+                                <div className="space-y-1 min-w-0">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <span className="font-bold text-xs uppercase text-neutral-950 font-sans tracking-wide">
+                                      {repo.name}
+                                    </span>
+                                    {repo.language && (
+                                      <span className="text-[9px] font-mono px-1.5 py-0.5 bg-neutral-100 text-neutral-700">
+                                        {repo.language}
+                                      </span>
+                                    )}
+                                    <span className="text-[10px] font-mono text-neutral-400">
+                                      ★ {repo.stargazers_count}
+                                    </span>
+                                    {repo.homepage && (
+                                      <a 
+                                        href={repo.homepage} 
+                                        target="_blank" 
+                                        rel="noreferrer" 
+                                        className="text-[10px] font-mono text-emerald-600 hover:underline flex items-center gap-0.5"
+                                      >
+                                        <ExternalLink className="w-2.5 h-2.5" /> Deployed
+                                      </a>
+                                    )}
+                                  </div>
+                                  <p className="text-[11px] text-neutral-500 line-clamp-1 font-sans">
+                                    {repo.description || 'No description provided.'}
+                                  </p>
+                                </div>
+
+                                <div className="shrink-0 flex items-center gap-2">
+                                  {alreadyImported && (
+                                    <span className="text-[9px] font-mono text-neutral-400 uppercase tracking-wider">
+                                      In Library
+                                    </span>
+                                  )}
+                                  <button
+                                    onClick={() => handleOneClickImport(repo)}
+                                    disabled={isImporting}
+                                    className="bg-neutral-950 hover:bg-neutral-800 text-white text-[10px] font-bold uppercase tracking-wider px-3.5 py-2 cursor-pointer disabled:opacity-50 flex items-center gap-1.5 rounded-none"
+                                  >
+                                    {isImporting ? (
+                                      <>
+                                        <Loader2 className="w-3 h-3 animate-spin" /> Importing...
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Plus className="w-3 h-3" /> 1-Click Import
+                                      </>
+                                    )}
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })
+                        )}
+                      </div>
+
+                      {/* Modal Footer */}
+                      <div className="p-3 border-t border-neutral-200 bg-neutral-50 flex justify-between items-center text-[10px] font-mono text-neutral-400">
+                        <span>Imports README markdown into resource content & sets deployment URLs automatically.</span>
+                        <button 
+                          onClick={() => setShowGithubModal(false)} 
+                          className="px-3 py-1 bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-100 font-bold uppercase"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, Download, Copy, Check, Terminal, FileCode, Sliders, ExternalLink } from 'lucide-react';
+import { Search, Download, Copy, Check, Terminal, FileCode, Sliders, ExternalLink, Github } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { stripHtml } from '../lib/richText';
 import { Resource } from '../types';
@@ -158,27 +158,47 @@ export default function ResourcesView() {
                     </div>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row gap-4 border-t border-neutral-100 pt-6 mt-4">
+                  <div className="flex flex-wrap gap-3 border-t border-neutral-100 pt-6 mt-4">
+                    {resource.liveUrl && (
+                      <a
+                        href={resource.liveUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="py-2.5 px-5 bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-bold tracking-wider flex items-center justify-center gap-2 rounded-full cursor-pointer uppercase transition-all shadow-xs"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" /> LIVE DEMO
+                      </a>
+                    )}
+                    {resource.githubUrl && (
+                      <a
+                        href={resource.githubUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="py-2.5 px-5 border border-neutral-200 hover:border-neutral-950 text-neutral-950 text-xs font-bold tracking-wider flex items-center justify-center gap-2 rounded-full cursor-pointer uppercase transition-all"
+                      >
+                        <Github className="w-3.5 h-3.5" /> GITHUB
+                      </a>
+                    )}
                     <button
                       onClick={() => handleDownloadMetric(resource.id)}
-                      className="flex-grow justify-center py-3 px-4 bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-bold tracking-wider flex items-center justify-center gap-2 rounded-none cursor-pointer uppercase transition-colors"
+                      className="py-2.5 px-5 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 text-xs font-bold tracking-wider flex items-center justify-center gap-2 rounded-full cursor-pointer uppercase transition-colors"
                       id={`download-btn-${resource.id}`}
                     >
-                      <Download className="w-4 h-4" /> DOWNLOAD SCHEME
+                      <Download className="w-3.5 h-3.5" /> DOWNLOAD
                     </button>
                     {resource.codeBlock && (
                       <button
                         onClick={() => handleCopyCode(resource.id, resource.codeBlock || '')}
-                        className="py-3 px-4 border border-neutral-200 hover:border-neutral-900 text-neutral-900 text-xs font-bold tracking-wider flex items-center justify-center gap-2 rounded-none cursor-pointer uppercase transition-all"
+                        className="py-2.5 px-5 border border-neutral-200 hover:border-neutral-900 text-neutral-900 text-xs font-bold tracking-wider flex items-center justify-center gap-2 rounded-full cursor-pointer uppercase transition-all"
                         id={`copy-btn-${resource.id}`}
                       >
                         {copiedId === resource.id ? (
                           <>
-                            <Check className="w-4 h-4 text-emerald-600" /> COPIED!
+                            <Check className="w-3.5 h-3.5 text-emerald-600" /> COPIED!
                           </>
                         ) : (
                           <>
-                            <Copy className="w-4 h-4" /> COPY DEPLOY CODE
+                            <Copy className="w-3.5 h-3.5" /> COPY CODE
                           </>
                         )}
                       </button>
