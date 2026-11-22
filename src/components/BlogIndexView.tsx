@@ -41,9 +41,9 @@ export default function BlogIndexView() {
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-2 text-[10px] font-bold tracking-wider uppercase transition-all duration-300 rounded-none cursor-pointer border ${
+              className={`px-4 py-2 text-[10px] font-bold tracking-wider uppercase transition-all duration-300 rounded-full cursor-pointer border ${
                 selectedCategory === category
-                  ? 'bg-neutral-950 text-white border-neutral-950'
+                  ? 'bg-neutral-950 text-white border-neutral-950 shadow-xs'
                   : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-900 hover:text-neutral-900'
               }`}
             >

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { stripHtml } from '@/lib/richText';
 import type { Project } from '@/types';
+import { cn } from '@/lib/utils';
 
 interface ProjectCardProps {
   project: Project;
@@ -20,11 +21,15 @@ export default function ProjectCard({ project, index, className = '' }: ProjectC
     <Link
       href={`/projects/${project.id}`}
       id={`work-item-${project.id}`}
-      className={`group flex flex-col justify-between border border-neutral-200 hover:border-neutral-950 transition-all duration-300 bg-white overflow-hidden h-full ${className}`}
+      className={cn(
+        "group flex flex-col justify-between rounded-2xl border border-neutral-200/90 hover:border-neutral-950/60 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 bg-white overflow-hidden h-full",
+        className
+      )}
     >
       <div>
         {project.screenshotUrl && (
-          <div className="w-full aspect-[2/1] overflow-hidden bg-neutral-50 border-b border-neutral-200 relative">
+          <div className="w-full aspect-[2/1] overflow-hidden bg-neutral-50 border-b border-neutral-100 relative rounded-t-2xl">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={project.screenshotUrl}
               alt={project.title}
@@ -35,7 +40,7 @@ export default function ProjectCard({ project, index, className = '' }: ProjectC
             />
           </div>
         )}
-        <div className="p-5 space-y-3">
+        <div className="p-6 space-y-3">
           <div>
             <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest font-mono">
               {indexLabel}{category}
@@ -49,8 +54,8 @@ export default function ProjectCard({ project, index, className = '' }: ProjectC
           </div>
         </div>
       </div>
-      <div className="px-5 py-3 border-t border-neutral-100 flex items-center justify-between text-[10px] font-mono text-neutral-400 mt-auto">
-        <span>VIEW DETAILS</span>
+      <div className="px-6 py-3.5 border-t border-neutral-100 flex items-center justify-between text-[10px] font-mono text-neutral-400 mt-auto bg-neutral-50/40">
+        <span className="font-semibold tracking-wider">VIEW DETAILS</span>
         <ArrowRight className="w-3.5 h-3.5 text-neutral-950 group-hover:translate-x-1 transition-transform" />
       </div>
     </Link>

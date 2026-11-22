@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Inter, Inter_Tight } from 'next/font/google';
+import { Inter, Inter_Tight, Geist } from 'next/font/google';
 import { ReactLenis } from 'lenis/react';
 import { AnimatePresence } from 'motion/react';
 import { usePathname } from 'next/navigation';
@@ -15,6 +15,9 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import { Analytics } from "@vercel/analytics/next"
 
 import './globals.css';
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const inter = Inter({
   subsets: ['latin'],
@@ -88,7 +91,7 @@ function RootLayoutInner({ children }: { children: React.ReactNode }) {
       <div
         className={`selection:bg-neutral-950 selection:text-white flex flex-col ${isAdminRoute
           ? 'min-h-screen bg-neutral-50'
-          : 'min-h-screen justify-between bg-white text-neutral-900'
+          : 'min-h-screen justify-between bg-neutral-950 text-neutral-900'
           }`}
       >
         {!isAdminRoute && <Header />}
@@ -101,7 +104,7 @@ function RootLayoutInner({ children }: { children: React.ReactNode }) {
           ) : (
             <AnimatePresence mode="wait">
               {!isLoading && (
-                <main className="flex-grow flex flex-col">
+                <main className="flex-grow flex flex-col bg-white rounded-b-[2.5rem] sm:rounded-b-[3.5rem] md:rounded-b-[4.5rem] overflow-hidden shadow-2xl relative z-10">
                   {children}
                 </main>
               )}
@@ -115,7 +118,7 @@ function RootLayoutInner({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <html lang="en" className={`${inter.variable} ${interTight.variable}`}>
+    <html lang="en" className={cn(inter.variable, interTight.variable, "font-sans", geist.variable)}>
       <head>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 120%22><rect width=%22120%22 height=%22120%22 fill=%22%23111111%22 rx=%220%22/><text x=%2250%25%22 y=%2260%25%22 font-size=%2280%22 font-family=%22Inter,sans-serif%22 font-weight=%22900%22 fill=%22white%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22>M</text></svg>" />
         <script

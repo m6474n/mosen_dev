@@ -233,7 +233,7 @@ export default function ContactView() {
                           type="button"
                           key={item.id}
                           onClick={() => setService(item.id)}
-                          className={`py-3 px-3 border text-center transition-all cursor-pointer text-[10px] font-bold tracking-wider uppercase rounded-none ${
+                          className={`py-3 px-3 border text-center transition-all cursor-pointer text-[10px] font-bold tracking-wider uppercase rounded-xl ${
                             service === item.id
                               ? 'bg-neutral-950 border-neutral-950 text-white'
                               : 'bg-white border-neutral-200 text-neutral-600 hover:border-neutral-400'
@@ -259,7 +259,7 @@ export default function ContactView() {
                           type="button"
                           key={b}
                           onClick={() => setBudget(b)}
-                          className={`py-3 px-3 border text-center transition-all cursor-pointer text-[10px] font-bold tracking-wider uppercase rounded-none ${
+                          className={`py-3 px-3 border text-center transition-all cursor-pointer text-[10px] font-bold tracking-wider uppercase rounded-xl ${
                             budget === b
                               ? 'bg-neutral-950 border-neutral-950 text-white'
                               : 'bg-white border-neutral-200 text-neutral-600 hover:border-neutral-400'
@@ -281,7 +281,7 @@ export default function ContactView() {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required
-                        className="w-full text-xs font-semibold tracking-wider text-neutral-900 bg-white border border-neutral-200 focus:border-neutral-950 px-4 py-3 outline-hidden rounded-none"
+                        className="w-full text-xs font-semibold tracking-wider text-neutral-900 bg-white border border-neutral-200 focus:border-neutral-950 px-4 py-3 outline-hidden rounded-xl"
                       />
                     </div>
 
@@ -293,7 +293,7 @@ export default function ContactView() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        className="w-full text-xs font-semibold tracking-wider text-neutral-900 bg-white border border-neutral-200 focus:border-neutral-950 px-4 py-3 outline-hidden rounded-none"
+                        className="w-full text-xs font-semibold tracking-wider text-neutral-900 bg-white border border-neutral-200 focus:border-neutral-950 px-4 py-3 outline-hidden rounded-xl"
                       />
                     </div>
                   </div>
@@ -305,7 +305,7 @@ export default function ContactView() {
                       placeholder="ENTER COMPANY OR DEPLOYMENT DOMAIN"
                       value={company}
                       onChange={(e) => setCompany(e.target.value)}
-                      className="w-full text-xs font-semibold tracking-wider text-neutral-900 bg-white border border-neutral-200 focus:border-neutral-950 px-4 py-3 outline-hidden rounded-none"
+                      className="w-full text-xs font-semibold tracking-wider text-neutral-900 bg-white border border-neutral-200 focus:border-neutral-950 px-4 py-3 outline-hidden rounded-xl"
                     />
                   </div>
 
@@ -317,7 +317,7 @@ export default function ContactView() {
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       required
-                      className="w-full text-xs font-semibold tracking-wider text-neutral-900 bg-white border border-neutral-200 focus:border-neutral-950 px-4 py-3 outline-hidden rounded-none resize-y"
+                      className="w-full text-xs font-semibold tracking-wider text-neutral-900 bg-white border border-neutral-200 focus:border-neutral-950 px-4 py-3 outline-hidden rounded-xl resize-y"
                     />
                   </div>
                 </div>

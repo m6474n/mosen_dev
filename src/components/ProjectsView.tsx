@@ -57,9 +57,9 @@ export default function ProjectsView() {
                 onClick={() => {
                   setActiveFilter(type);
                 }}
-                className={`px-4 py-2 text-[10px] font-bold tracking-wider uppercase transition-all duration-300 rounded-none cursor-pointer border ${
+                className={`px-4 py-2 text-[10px] font-bold tracking-wider uppercase transition-all duration-300 rounded-full cursor-pointer border ${
                   activeFilter === type
-                    ? 'bg-neutral-950 text-white border-neutral-950'
+                    ? 'bg-neutral-950 text-white border-neutral-950 shadow-xs'
                     : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-900 hover:text-neutral-900'
                 }`}
               >
@@ -75,7 +75,7 @@ export default function ProjectsView() {
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
               placeholder="SEARCH PROJECTS..."
-              className="w-full border border-neutral-200 px-4 py-2 text-[10px] tracking-wider font-bold bg-white focus:outline-none focus:border-neutral-950 rounded-none uppercase font-sans placeholder-neutral-400"
+              className="w-full border border-neutral-200 px-4 py-2 text-[10px] tracking-wider font-bold bg-white focus:outline-none focus:border-neutral-950 rounded-full uppercase font-sans placeholder-neutral-400"
             />
           </div>
         </div>

@@ -110,13 +110,13 @@ export default function CaseStudyDetailView({ id }: CaseStudyDetailViewProps) {
 
                 {/* Tabs selection for screenshots if count > 1 */}
                 {currentProject.screenshots.length > 1 && (
-                  <div className="flex border border-neutral-200 p-1 bg-neutral-50 rounded-none select-none">
+                  <div className="flex border border-neutral-200 p-1 bg-neutral-50 rounded-full select-none">
                     {currentProject.screenshots.map((shot, idx) => (
                       <button
                         key={shot.id}
                         onClick={() => setActiveScreenshotIdx(idx)}
-                        className={`px-4 py-1.5 text-[10px] font-bold uppercase transition select-none cursor-pointer ${activeScreenshotIdx === idx
-                          ? 'bg-neutral-950 text-white shadow-xs rounded-none'
+                        className={`px-4 py-1.5 text-[10px] font-bold uppercase transition select-none cursor-pointer rounded-full ${activeScreenshotIdx === idx
+                          ? 'bg-neutral-950 text-white shadow-xs'
                           : 'text-neutral-500 hover:text-neutral-950'
                           }`}
                       >
@@ -134,10 +134,10 @@ export default function CaseStudyDetailView({ id }: CaseStudyDetailViewProps) {
                   const activeShot = currentProject.screenshots![activeScreenshotIdx] || currentProject.screenshots![0];
                   if (!activeShot) return null;
                   return (
-                    <div className="flex flex-col justify-between p-6 bg-neutral-50 border border-neutral-200 rounded-none text-left">
+                    <div className="flex flex-col justify-between p-6 bg-neutral-50 border border-neutral-200 rounded-2xl text-left shadow-xs">
                       <div className="flex flex-col gap-4">
                         <div className="flex items-center gap-2">
-                          <span className="text-[9px] font-bold px-2 py-0.5 border border-neutral-950/20 rounded-none font-mono uppercase bg-white">
+                          <span className="text-[9px] font-bold px-2.5 py-0.5 border border-neutral-950/20 rounded-full font-mono uppercase bg-white">
                             {activeShot.type.toUpperCase()} PREVIEW
                           </span>
                         </div>
@@ -160,7 +160,7 @@ export default function CaseStudyDetailView({ id }: CaseStudyDetailViewProps) {
                 })()}
 
                 {/* Dynamic Image Container */}
-                <div className="bg-neutral-950 rounded-none border border-neutral-200 overflow-hidden flex items-center justify-center min-h-[380px] lg:min-h-[480px] relative group">
+                <div className="bg-neutral-950 rounded-2xl border border-neutral-200 overflow-hidden flex items-center justify-center min-h-[380px] lg:min-h-[480px] relative group shadow-sm">
                   {(() => {
                     const activeShot = currentProject.screenshots![activeScreenshotIdx] || currentProject.screenshots![0];
                     if (!activeShot || !activeShot.imageUrl) {

@@ -51,8 +51,8 @@ export default function HomeView() {
   const homeProjects = featuredProjects.length > 0
     ? featuredProjects.slice(0, 3)
     : [...publishedProjects]
-        .sort((a, b) => b.lastModified.localeCompare(a.lastModified))
-        .slice(0, 3);
+      .sort((a, b) => b.lastModified.localeCompare(a.lastModified))
+      .slice(0, 3);
   const heroTitleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
@@ -100,7 +100,7 @@ export default function HomeView() {
   }, []);
 
   return (
-    <div className="w-full flex flex-col pt-16 bg-white overflow-hidden">
+    <div className="w-full flex flex-col pt-16 bg-white overflow-hidden rounded-b-[2.5rem] sm:rounded-b-[3.5rem] md:rounded-b-[4.5rem]">
       {/* ─── HERO SECTION ─── */}
       <section id="hero" className="py-12 md:py-16 flex items-center bg-white border-b border-neutral-100">
         <Container className="items-center text-center">
@@ -145,7 +145,7 @@ export default function HomeView() {
 
           {/* Core Stats */}
           <div ref={statsRef} className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 pt-12 border-t border-neutral-100 w-full max-w-4xl mx-auto">
-            <div className="text-center" style={{ opacity: 0 }}>
+            <div className="text-center rounded-2xl border border-neutral-100 bg-neutral-50/50 p-6" style={{ opacity: 0 }}>
               <div className="font-sans font-extralight text-4xl md:text-5xl text-neutral-900 tracking-tight mb-2">
                 <GsapCounter value={MOHSIN_BIO.experienceYears} />
               </div>
@@ -153,7 +153,7 @@ export default function HomeView() {
                 YEARS OF EXPERIENCE
               </div>
             </div>
-            <div className="text-center" style={{ opacity: 0 }}>
+            <div className="text-center rounded-2xl border border-neutral-100 bg-neutral-50/50 p-6" style={{ opacity: 0 }}>
               <div className="font-sans font-extralight text-4xl md:text-5xl text-neutral-900 tracking-tight mb-2">
                 <GsapCounter value={MOHSIN_BIO.projectsDelivered} />
               </div>
@@ -161,7 +161,7 @@ export default function HomeView() {
                 PROJECTS DELIVERED
               </div>
             </div>
-            <div className="text-center" style={{ opacity: 0 }}>
+            <div className="text-center rounded-2xl border border-neutral-100 bg-neutral-50/50 p-6" style={{ opacity: 0 }}>
               <div className="font-sans font-extralight text-4xl md:text-5xl text-neutral-900 tracking-tight mb-2">
                 <GsapCounter value={MOHSIN_BIO.coreDisciplinesCount} />
               </div>
@@ -169,7 +169,7 @@ export default function HomeView() {
                 CORE DISCIPLINES
               </div>
             </div>
-            <div className="text-center" style={{ opacity: 0 }}>
+            <div className="text-center rounded-2xl border border-neutral-100 bg-neutral-50/50 p-6" style={{ opacity: 0 }}>
               <div className="font-sans font-extralight text-4xl md:text-5xl text-neutral-900 tracking-tight mb-2">
                 <GsapCounter value="1" />
               </div>
@@ -191,8 +191,8 @@ export default function HomeView() {
         className="py-12 md:py-16 bg-neutral-50/50 border-b border-neutral-100"
       >
         <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
-            <div>
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
+            <div className="w-full lg:flex-[2]">
               <div className="flex items-center gap-3 mb-6 text-neutral-400">
                 <span className="w-6 h-[1px] bg-neutral-300"></span>
                 <span className="text-[10px] font-extrabold tracking-widest uppercase">ABOUT ME</span>
@@ -216,30 +216,32 @@ export default function HomeView() {
               </Link>
             </div>
 
-            <ReusableCard hoverable={false} variant="white" className="p-8 md:p-12 gap-6 flex flex-col">
-              <span className="text-[10px] font-bold tracking-widest text-neutral-400 uppercase block mb-2">THE ADVANTAGES</span>
-              <div className="flex gap-4 items-start pb-6 border-b border-neutral-100">
-                <span className="text-xs font-bold text-neutral-400 pt-1">01</span>
-                <div>
-                  <h4 className="text-sm font-light tracking-wide text-neutral-950 mb-1 uppercase">PRODUCT ENGINEER</h4>
-                  <p className="text-xs font-light text-neutral-500 leading-relaxed">Full ownership from raw concept to deployed system. We build to ship, not file.</p>
+            <div className="w-full lg:flex-[1]">
+              <ReusableCard hoverable={false} variant="white" className="p-8 md:p-10 gap-6 flex flex-col">
+                <span className="text-[10px] font-bold tracking-widest text-neutral-400 uppercase block mb-2">THE ADVANTAGES</span>
+                <div className="flex gap-4 items-start pb-6 border-b border-neutral-100">
+                  <span className="text-xs font-bold text-neutral-400 pt-1">01</span>
+                  <div>
+                    <h4 className="text-sm font-light tracking-wide text-neutral-950 mb-1 uppercase">PRODUCT ENGINEER</h4>
+                    <p className="text-xs font-light text-neutral-500 leading-relaxed">Full ownership from raw concept to deployed system. We build to ship, not file.</p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex gap-4 items-start pb-6 border-b border-neutral-100">
-                <span className="text-xs font-bold text-neutral-400 pt-1">02</span>
-                <div>
-                  <h4 className="text-sm font-light tracking-wide text-neutral-950 mb-1 uppercase">DESIGN-LED DEVELOPMENT</h4>
-                  <p className="text-xs font-light text-neutral-500 leading-relaxed">Every UI element is crafted with intentional alignment and gorgeous, crisp spacing.</p>
+                <div className="flex gap-4 items-start pb-6 border-b border-neutral-100">
+                  <span className="text-xs font-bold text-neutral-400 pt-1">02</span>
+                  <div>
+                    <h4 className="text-sm font-light tracking-wide text-neutral-950 mb-1 uppercase">DESIGN-LED DEVELOPMENT</h4>
+                    <p className="text-xs font-light text-neutral-500 leading-relaxed">Every UI element is crafted with intentional alignment and gorgeous, crisp spacing.</p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex gap-4 items-start">
-                <span className="text-xs font-bold text-neutral-400 pt-1">03</span>
-                <div>
-                  <h4 className="text-sm font-light tracking-wide text-neutral-950 mb-1 uppercase">AUTOMATION-FIRST WORKFLOW</h4>
-                  <p className="text-xs font-light text-neutral-500 leading-relaxed">Repetitive internal administrative workflows are problems to be solved with scripts.</p>
+                <div className="flex gap-4 items-start">
+                  <span className="text-xs font-bold text-neutral-400 pt-1">03</span>
+                  <div>
+                    <h4 className="text-sm font-light tracking-wide text-neutral-950 mb-1 uppercase">AUTOMATION-FIRST WORKFLOW</h4>
+                    <p className="text-xs font-light text-neutral-500 leading-relaxed">Repetitive internal administrative workflows are problems to be solved with scripts.</p>
+                  </div>
                 </div>
-              </div>
-            </ReusableCard>
+              </ReusableCard>
+            </div>
           </div>
         </Container>
       </motion.section>
@@ -262,14 +264,19 @@ export default function HomeView() {
             THREE OFFERINGS.<br />ONE INTEGRATED SYSTEM.
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-neutral-800 p-px">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {services.map((srv) => (
-              <div key={srv.id} className="bg-neutral-950 p-8 md:p-10 hover:bg-neutral-900/40 transition duration-300 flex flex-col">
-                <span className="text-xs font-bold text-neutral-600 mb-8">{srv.num}</span>
-                <h3 className="text-lg font-light text-white mb-4 uppercase tracking-wide">{srv.title.toUpperCase()}</h3>
-                <p className="text-xs font-light text-neutral-400 leading-relaxed mb-8 flex-grow">
-                  {stripHtml(srv.description)}
-                </p>
+              <div
+                key={srv.id}
+                className="bg-neutral-900/90 rounded-2xl border border-neutral-800 p-8 md:p-10 hover:border-neutral-700 hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
+              >
+                <div>
+                  <span className="text-xs font-bold text-neutral-500 mb-6 block font-mono">{srv.num}</span>
+                  <h3 className="text-lg font-light text-white mb-4 uppercase tracking-wide">{srv.title.toUpperCase()}</h3>
+                  <p className="text-xs font-light text-neutral-400 leading-relaxed mb-8">
+                    {stripHtml(srv.description)}
+                  </p>
+                </div>
                 <Link
                   href="/services"
                   className="inline-flex items-center gap-1 text-[11px] font-bold text-neutral-400 hover:text-white tracking-widest uppercase transition-colors"
@@ -341,13 +348,24 @@ export default function HomeView() {
             A PROCESS THAT<br />REMOVES THE RISK.
           </h2>
 
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-px bg-neutral-200 p-px">
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
             {PROCESS_STEPS.map((step) => (
-              <div key={step.num} className="bg-white p-6 md:p-8 flex flex-col justify-between">
-                <span className="text-[10px] font-bold text-neutral-400 tracking-wider mb-6">{step.num}</span>
-                <div>
-                  <h4 className="text-xs font-light tracking-wider text-neutral-900 mb-2 uppercase">{step.title}</h4>
-                  <p className="text-[11px] font-light text-neutral-500 leading-relaxed">{step.desc}</p>
+              <div
+                key={step.num}
+                className="group relative overflow-hidden bg-white rounded-2xl border border-neutral-200/90 p-6 md:p-7 flex flex-col justify-end min-h-[190px] md:min-h-[210px] shadow-xs hover:border-neutral-900/40 hover:shadow-md transition-all duration-300"
+              >
+                {/* Huge number behind text */}
+                <span className="absolute -top-8 -left-4 font-sans font-black text-[130px] sm:text-[150px] md:text-[140px] lg:text-[160px] text-neutral-950/[0.07] select-none pointer-events-none tracking-tighter leading-none group-hover:text-neutral-950/[0.12] transition-colors">
+                  {step.num}
+                </span>
+
+                <div className="relative z-10">
+                  <h4 className="text-xs font-bold tracking-wider text-neutral-900 mb-2 uppercase font-sans">
+                    {step.title}
+                  </h4>
+                  <p className="text-[11px] font-light text-neutral-500 leading-relaxed font-sans">
+                    {step.desc}
+                  </p>
                 </div>
               </div>
             ))}
@@ -394,9 +412,9 @@ export default function HomeView() {
             }}
           >
             {[...TESTIMONIALS, ...TESTIMONIALS, ...TESTIMONIALS, ...TESTIMONIALS].map((t, idx) => (
-              <div 
-                key={idx} 
-                className="bg-white p-8 md:p-10 border border-neutral-150 hover:border-neutral-350 hover:shadow-sm transition-all duration-300 rounded-none flex flex-col justify-between w-[280px] md:w-[380px] shrink-0 h-[210px] md:h-[240px] mx-3 select-none text-left"
+              <div
+                key={idx}
+                className="bg-white p-8 md:p-10 border border-neutral-200/90 hover:border-neutral-900/40 shadow-xs hover:shadow-md transition-all duration-300 rounded-2xl flex flex-col justify-between w-[280px] md:w-[380px] shrink-0 h-[210px] md:h-[240px] mx-3 select-none text-left"
               >
                 <p className="text-xs md:text-[13px] font-light text-neutral-800 italic leading-relaxed mb-6 whitespace-normal">
                   {t.quote}
@@ -418,7 +436,7 @@ export default function HomeView() {
         viewport={{ once: true, margin: "-120px" }}
         transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
         id="final-cta"
-        className="py-16 md:py-20 bg-neutral-50/50"
+        className="py-16 md:py-24 bg-neutral-50/70 rounded-b-[2.5rem] sm:rounded-b-[3.5rem] md:rounded-b-[4.5rem]"
       >
         <Container className="items-center text-center">
           <div className="flex items-center justify-center gap-3 mb-6 text-neutral-400">

@@ -59,3 +59,8 @@
 - For Firestore writes: verify against `firebase-blueprint.json` schema
 - For SEO: every page needs `<title>`, `<meta name="description">`, semantic `<h1>`
 - For new components: ensure they respect the monochrome palette and Inter/Inter Tight fonts
+
+## 8. Continuous Git Commit Rule (Mandatory)
+- **Commit side-by-side**: After every successful change, fix, or feature update, immediately verify compilation and commit the affected files with a concise Conventional Commit message (e.g., `feat(admin): add resource CRUD`, `style(nav): increase navbar and button height`).
+- **Keep working tree clean**: Do not accumulate unstaged or uncommitted diffs across turns.
+- **Format**: Conventional Commits standard (`feat:`, `fix:`, `style:`, `refactor:`, `chore:`).

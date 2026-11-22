@@ -20,11 +20,12 @@ import {
   UploadCloud,
   Check,
   Mail,
-  Clock
+  Clock,
+  Terminal
 } from 'lucide-react';
 import { useData, MessageItemData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
-import { Project, BlogPost } from '../types';
+import { Project, BlogPost, Resource } from '../types';
 
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
@@ -133,6 +134,7 @@ export default function AdminDashboardView() {
   const { 
     projects, 
     blogs, 
+    resources,
     messages, 
     loading, 
     isFirebaseActive, 
@@ -146,7 +148,7 @@ export default function AdminDashboardView() {
     new Set(projects.map(p => p.projectType).filter(Boolean))
   ).sort();
 
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'projects' | 'blogs' | 'leads'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'projects' | 'blogs' | 'resources' | 'leads'>('dashboard');
   
   // Search state
   const [searchTerm, setSearchTerm] = useState('');
@@ -155,6 +157,8 @@ export default function AdminDashboardView() {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isCustomCategory, setIsCustomCategory] = useState(false);
   const [editingBlog, setEditingBlog] = useState<BlogPost | null>(null);
+  const [editingResource, setEditingResource] = useState<Resource | null>(null);
+  const [resourceTagsInput, setResourceTagsInput] = useState('');
   const [activeLead, setActiveLead] = useState<MessageItemData | null>(null);
   
   const [isSaving, setIsSaving] = useState(false);
@@ -165,12 +169,14 @@ export default function AdminDashboardView() {
     setEditingProject(null);
     setIsCustomCategory(false);
     setEditingBlog(null);
+    setEditingResource(null);
     setActiveLead(null);
   }, [activeTab]);
 
   // Statistics calculations
   const totalProjects = projects.length;
   const totalBlogs = blogs.length;
+  const totalResources = resources.length;
   const totalLeads = messages.length;
   const unreadLeads = messages.filter(m => !m.read).length;
 
@@ -212,6 +218,33 @@ export default function AdminDashboardView() {
     }
   };
 
+  const handleSaveResource = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingResource) return;
+    setIsSaving(true);
+    try {
+      const parsedTags = resourceTagsInput
+        .split(',')
+        .map(t => t.trim())
+        .filter(Boolean);
+      const payload: Resource = {
+        ...editingResource,
+        tags: parsedTags,
+      };
+      const success = await saveItem('resources', payload);
+      if (success) {
+        setEditingResource(null);
+      } else {
+        alert("Could not save resource.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error saving resource.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="flex h-screen bg-white overflow-hidden font-sans text-neutral-900 border-t border-neutral-200">
       {/* ─── SIDEBAR ─── */}
@@ -247,6 +280,12 @@ export default function AdminDashboardView() {
               label="Blog Posts" 
               active={activeTab === 'blogs'} 
               onClick={() => setActiveTab('blogs')} 
+            />
+            <SidebarItem 
+              icon={<Terminal className="w-4 h-4" />} 
+              label="Resources" 
+              active={activeTab === 'resources'} 
+              onClick={() => setActiveTab('resources')} 
             />
             <SidebarItem 
               icon={<MessageSquare className="w-4 h-4" />} 
@@ -292,7 +331,7 @@ export default function AdminDashboardView() {
                   <p className="text-xs text-neutral-400 font-mono mt-1 uppercase">V3.0 Simple Desk Overview</p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                   <div className="bg-white border border-neutral-200 p-6 flex flex-col justify-between gap-4">
                     <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">TOTAL PROJECTS</span>
                     <span className="text-3xl font-extrabold text-neutral-950">{totalProjects}</span>
@@ -302,7 +341,11 @@ export default function AdminDashboardView() {
                     <span className="text-3xl font-extrabold text-neutral-950">{totalBlogs}</span>
                   </div>
                   <div className="bg-white border border-neutral-200 p-6 flex flex-col justify-between gap-4">
-                    <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">TOTAL LEADS / INQUIRIES</span>
+                    <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">RESOURCES</span>
+                    <span className="text-3xl font-extrabold text-neutral-950">{totalResources}</span>
+                  </div>
+                  <div className="bg-white border border-neutral-200 p-6 flex flex-col justify-between gap-4">
+                    <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">TOTAL LEADS</span>
                     <span className="text-3xl font-extrabold text-neutral-950">{totalLeads}</span>
                   </div>
                   <div className="bg-white border border-neutral-200 p-6 flex flex-col justify-between gap-4">
@@ -822,6 +865,257 @@ export default function AdminDashboardView() {
                                 onClick={async () => {
                                   if (confirm("Delete blog?")) {
                                     await deleteItem('blogs', blog.slug);
+                                  }
+                                }}
+                                className="p-1 text-neutral-400 hover:text-red-600 transition rounded-none cursor-pointer"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ─── RESOURCES CRUD TAB ─── */}
+            {activeTab === 'resources' && (
+              <div className="space-y-6">
+                {editingResource ? (
+                  <form onSubmit={handleSaveResource} className="bg-white border border-neutral-200 p-6 space-y-6 rounded-none">
+                    <div className="flex justify-between items-center border-b border-neutral-100 pb-4">
+                      <div className="flex items-center gap-2">
+                        <Terminal className="w-4 h-4 text-neutral-900" />
+                        <h3 className="font-bold text-xs uppercase tracking-widest text-neutral-800">
+                          {resources.some(r => r.id === editingResource.id) ? 'Modify Resource' : 'Add New Resource'}
+                        </h3>
+                      </div>
+                      <div className="flex gap-2">
+                        <button 
+                          type="button" 
+                          onClick={() => setEditingResource(null)} 
+                          className="border border-neutral-200 text-neutral-600 hover:bg-neutral-100 text-[10px] px-3 py-2 font-bold uppercase tracking-wider cursor-pointer rounded-none"
+                        >
+                          Cancel
+                        </button>
+                        <button 
+                          type="submit" 
+                          disabled={isSaving}
+                          className="bg-neutral-950 hover:bg-neutral-800 text-white text-[10px] px-4 py-2 font-bold uppercase tracking-widest disabled:opacity-50 cursor-pointer rounded-none"
+                        >
+                          {isSaving ? 'Saving...' : 'Save Resource'}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                      <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Resource ID</label>
+                        <input 
+                          type="text" 
+                          value={editingResource.id} 
+                          onChange={e => setEditingResource({ ...editingResource, id: e.target.value })}
+                          required
+                          disabled={resources.some(r => r.id === editingResource.id)}
+                          placeholder="e.g. fastapi-lead-scraper"
+                          className="border border-neutral-200 px-3 py-2 text-xs bg-neutral-50 font-mono disabled:opacity-60 rounded-none" 
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Title</label>
+                        <input 
+                          type="text" 
+                          value={editingResource.title} 
+                          onChange={e => setEditingResource({ ...editingResource, title: e.target.value })}
+                          required
+                          placeholder="e.g. FastAPI Lead Enrichment Agent"
+                          className="border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none" 
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Type / Classification</label>
+                        <select 
+                          value={editingResource.type || 'Script'} 
+                          onChange={e => setEditingResource({ ...editingResource, type: e.target.value as any })}
+                          className="border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none font-mono"
+                        >
+                          <option value="Script">Script</option>
+                          <option value="Template">Template</option>
+                          <option value="Utility">Utility</option>
+                          <option value="Product">Product</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                      <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Tags (comma-separated)</label>
+                        <input 
+                          type="text" 
+                          value={resourceTagsInput} 
+                          onChange={e => setResourceTagsInput(e.target.value)}
+                          placeholder="Python, FastAPI, Gemini API, Playwright"
+                          className="border border-neutral-200 px-3 py-2 text-xs bg-white font-mono rounded-none" 
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Download / Copy Count</label>
+                        <input 
+                          type="number" 
+                          value={editingResource.downloadCount ?? 0} 
+                          onChange={e => setEditingResource({ ...editingResource, downloadCount: parseInt(e.target.value, 10) || 0 })}
+                          className="border border-neutral-200 px-3 py-2 text-xs bg-white font-mono rounded-none" 
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Downloadable File URL</label>
+                        <input 
+                          type="text" 
+                          value={editingResource.fileUrl || ''} 
+                          onChange={e => setEditingResource({ ...editingResource, fileUrl: e.target.value })}
+                          placeholder="https://... or /downloads/..."
+                          className="border border-neutral-200 px-3 py-2 text-xs bg-white font-mono rounded-none" 
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Short Summary</label>
+                      <textarea 
+                        rows={2}
+                        value={editingResource.description} 
+                        onChange={e => setEditingResource({ ...editingResource, description: e.target.value })}
+                        required
+                        placeholder="Brief one or two sentence overview..."
+                        className="border border-neutral-200 p-3 text-xs bg-white rounded-none leading-relaxed" 
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Copyable Code / Script Snippet</label>
+                        <span className="text-[9px] font-mono text-neutral-400 uppercase">Optional Code Block</span>
+                      </div>
+                      <textarea 
+                        rows={7}
+                        value={editingResource.codeBlock || ''} 
+                        onChange={e => setEditingResource({ ...editingResource, codeBlock: e.target.value })}
+                        placeholder="# Paste code snippet or configuration block here..."
+                        className="border border-neutral-800 p-4 font-mono text-xs bg-neutral-950 text-neutral-100 rounded-none leading-relaxed" 
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Detailed Guide / Documentation</label>
+                      <textarea 
+                        rows={5}
+                        value={editingResource.content} 
+                        onChange={e => setEditingResource({ ...editingResource, content: e.target.value })}
+                        required
+                        placeholder="Detailed installation, parameters, deployment guide..."
+                        className="border border-neutral-200 p-3 text-xs bg-white rounded-none leading-relaxed font-sans" 
+                      />
+                    </div>
+                  </form>
+                ) : (
+                  <div className="bg-white border border-neutral-200 rounded-none overflow-hidden">
+                    <div className="p-4 border-b border-neutral-200 flex justify-between items-center bg-neutral-50/50">
+                      <div className="relative w-72">
+                        <Search className="w-3.5 h-3.5 absolute left-3 top-3 text-neutral-400" />
+                        <input 
+                          type="text" 
+                          value={searchTerm}
+                          onChange={e => setSearchTerm(e.target.value)}
+                          placeholder="Search resources by title, tag..."
+                          className="w-full border border-neutral-200 pl-9 pr-3 py-1.5 text-xs bg-white font-mono rounded-none"
+                        />
+                      </div>
+                      <button 
+                        onClick={() => {
+                          const newRes: Resource = {
+                            id: `res-${Date.now().toString(36)}`,
+                            title: '',
+                            description: '',
+                            type: 'Script',
+                            tags: [],
+                            downloadCount: 0,
+                            content: '',
+                            codeBlock: '',
+                            fileUrl: '',
+                            isPremium: false,
+                          };
+                          setEditingResource(newRes);
+                          setResourceTagsInput('');
+                        }}
+                        className="bg-neutral-950 hover:bg-neutral-800 text-white text-[10px] px-3 py-1.5 font-bold uppercase tracking-wider flex items-center gap-1 cursor-pointer rounded-none"
+                      >
+                        <Plus className="w-3.5 h-3.5" /> New Resource
+                      </button>
+                    </div>
+
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="border-b border-neutral-200 bg-neutral-100/50">
+                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500 w-36">ID</th>
+                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500">Resource</th>
+                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500 w-28">Type</th>
+                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500 w-36">Tags</th>
+                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500 w-24">Downloads</th>
+                          <th className="p-4 w-28 text-right text-[10px] font-bold uppercase tracking-wider text-neutral-500">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {resources.filter(r => 
+                          r.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          r.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          r.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          (r.tags && r.tags.some(t => t.toLowerCase().includes(searchTerm.toLowerCase())))
+                        ).map((res) => (
+                          <tr key={res.id} className="border-b border-neutral-100 hover:bg-neutral-50/50 transition-colors">
+                            <td className="p-4 text-xs font-mono text-neutral-400">{res.id}</td>
+                            <td className="p-4">
+                              <div className="font-bold text-xs uppercase text-neutral-950">{res.title}</div>
+                              <div className="text-[11px] text-neutral-400 line-clamp-1">{res.description}</div>
+                            </td>
+                            <td className="p-4">
+                              <span className="text-[9px] font-mono font-bold uppercase px-2 py-0.5 border border-neutral-200 bg-neutral-50 text-neutral-700 rounded-none">
+                                {res.type}
+                              </span>
+                            </td>
+                            <td className="p-4">
+                              <div className="flex flex-wrap gap-1 max-w-xs">
+                                {(res.tags || []).slice(0, 3).map(tag => (
+                                  <span key={tag} className="text-[9px] font-mono px-1.5 py-0.5 bg-neutral-100 text-neutral-600 border border-neutral-200 rounded-none">
+                                    {tag}
+                                  </span>
+                                ))}
+                                {(res.tags || []).length > 3 && (
+                                  <span className="text-[9px] font-mono text-neutral-400">
+                                    +{res.tags.length - 3}
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td className="p-4 text-xs font-mono text-neutral-600">
+                              {res.downloadCount || 0}
+                            </td>
+                            <td className="p-4 text-right flex gap-1 justify-end">
+                              <button 
+                                onClick={() => {
+                                  setEditingResource(res);
+                                  setResourceTagsInput(res.tags ? res.tags.join(', ') : '');
+                                }}
+                                className="px-2.5 py-1 border border-neutral-200 text-[9px] font-bold uppercase hover:bg-neutral-100 transition rounded-none cursor-pointer"
+                              >
+                                Edit
+                              </button>
+                              <button 
+                                onClick={async () => {
+                                  if (confirm(`Delete resource "${res.title}"?`)) {
+                                    await deleteItem('resources', res.id);
                                   }
                                 }}
                                 className="p-1 text-neutral-400 hover:text-red-600 transition rounded-none cursor-pointer"

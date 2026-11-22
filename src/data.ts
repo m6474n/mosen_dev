@@ -538,12 +538,12 @@ export const SERVICES_FAQ: FaqItem[] = [
 ];
 
 export const PROCESS_STEPS: ProcessStep[] = [
-  { num: '01', title: 'DISCOVERY', desc: 'One focused call to understand your business, bottlenecks, and success parameters.' },
-  { num: '02', title: 'STRATEGY', desc: 'A custom scoped proposal with clear milestones, deliverables, and flat rates.' },
-  { num: '03', title: 'DESIGN', desc: 'High-fidelity wireframes approved before coding. You inspect the product early.' },
-  { num: '04', title: 'BUILD', desc: 'Robust development cycles with async-first status logs and clear check-ins.' },
-  { num: '05', title: 'LAUNCH', desc: 'Deployment with clear training metrics and complete guides handed over.' },
-  { num: '06', title: 'OPTIMIZE', desc: 'Post-launch feedback audits and integrations based on real runtime metrics.' },
+  { num: '1', title: 'DISCOVERY', desc: 'One focused call to understand your business, bottlenecks, and success parameters.' },
+  { num: '2', title: 'STRATEGY', desc: 'A custom scoped proposal with clear milestones, deliverables, and flat rates.' },
+  { num: '3', title: 'DESIGN', desc: 'High-fidelity wireframes approved before coding. You inspect the product early.' },
+  { num: '4', title: 'BUILD', desc: 'Robust development cycles with async-first status logs and clear check-ins.' },
+  { num: '5', title: 'LAUNCH', desc: 'Deployment with clear training metrics and complete guides handed over.' },
+  { num: '6', title: 'OPTIMIZE', desc: 'Post-launch feedback audits and integrations based on real runtime metrics.' },
 ];
 
 export const TESTIMONIALS: Testimonial[] = [

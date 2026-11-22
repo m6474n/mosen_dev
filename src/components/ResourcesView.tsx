@@ -91,7 +91,7 @@ export default function ResourcesView() {
               placeholder="SEARCH UTILITIES, SCRIPTS, OR STACKS..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full text-xs font-semibold tracking-wider text-neutral-900 bg-white border border-neutral-200 focus:border-neutral-950 pl-10 pr-4 py-3 outline-hidden rounded-none"
+              className="w-full text-xs font-semibold tracking-wider text-neutral-900 bg-white border border-neutral-200 focus:border-neutral-950 pl-10 pr-4 py-3 outline-hidden rounded-full"
               id="resource-search"
             />
           </div>
@@ -102,7 +102,7 @@ export default function ResourcesView() {
               <button
                 key={type}
                 onClick={() => setSelectedType(type)}
-                className={`px-4 py-2.5 text-[10px] font-bold tracking-wider transition-all rounded-none uppercase cursor-pointer border ${
+                className={`px-4 py-2.5 text-[10px] font-bold tracking-wider transition-all rounded-full uppercase cursor-pointer border ${
                   selectedType === type
                     ? 'bg-neutral-950 border-neutral-950 text-white'
                     : 'bg-white border-neutral-200 text-neutral-600 hover:border-neutral-400'

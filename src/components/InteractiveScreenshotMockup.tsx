@@ -61,10 +61,10 @@ function AppexBiddingTerminalMockup() {
   };
 
   return (
-    <div className="w-full max-w-[310px] mx-auto bg-neutral-950 border-[6px] border-neutral-900 rounded-none overflow-hidden shadow-2xl relative flex flex-col font-mono text-xs text-neutral-300 aspect-[9/18.5]">
+    <div className="w-full max-w-[310px] mx-auto bg-neutral-950 border-[6px] border-neutral-900 rounded-[2.5rem] overflow-hidden shadow-2xl relative flex flex-col font-mono text-xs text-neutral-300 aspect-[9/18.5]">
       {/* Phone Notch */}
       <div className="absolute top-0 inset-x-0 h-5 bg-neutral-950 flex items-center justify-center z-20">
-        <div className="w-24 h-3.5 bg-neutral-900 rounded-none"></div>
+        <div className="w-24 h-3.5 bg-neutral-900 rounded-full"></div>
       </div>
 
       {/* Phone Status Bar */}
@@ -376,7 +376,7 @@ function WeighbridgeOperationsMockup() {
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto bg-neutral-950 border border-neutral-800 rounded-none overflow-hidden shadow-2xl flex flex-col font-mono text-[11px] text-neutral-300 aspect-[16/9.5]">
+    <div className="w-full max-w-3xl mx-auto bg-neutral-950 border border-neutral-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col font-mono text-[11px] text-neutral-300 aspect-[16/9.5]">
       {/* Windows App Title Bar */}
       <div className="bg-neutral-900 border-b border-neutral-850 px-3 py-1.5 flex justify-between items-center select-none shrink-0">
         <div className="flex items-center gap-2">
@@ -549,10 +549,10 @@ function LeadsAlertMockup() {
   const currentLead = leadsData[selectedLead];
 
   return (
-    <div className="w-full max-w-[310px] mx-auto bg-neutral-950 border-[6px] border-neutral-900 rounded-none overflow-hidden shadow-2xl relative flex flex-col font-mono text-xs text-neutral-300 aspect-[9/18.5]">
+    <div className="w-full max-w-[310px] mx-auto bg-neutral-950 border-[6px] border-neutral-900 rounded-[2.5rem] overflow-hidden shadow-2xl relative flex flex-col font-mono text-xs text-neutral-300 aspect-[9/18.5]">
       {/* Phone Notch */}
       <div className="absolute top-0 inset-x-0 h-5 bg-neutral-950 flex items-center justify-center z-20">
-        <div className="w-24 h-3.5 bg-neutral-900 rounded-none"></div>
+        <div className="w-24 h-3.5 bg-neutral-900 rounded-full"></div>
       </div>
 
       {/* Phone Status bar */}
