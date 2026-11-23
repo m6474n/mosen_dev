@@ -117,55 +117,52 @@ export default function ResourcesView() {
 
         {/* UTILITIES GRID */}
         {filteredResources.length === 0 ? (
-          <div className="w-full text-center py-12 border border-dashed border-neutral-200">
-            <span className="text-xs text-neutral-400 font-bold uppercase tracking-widest">NO RESOURCES MATCH YOUR PARAMETERS</span>
+          <div className="w-full text-center py-16 border border-dashed border-neutral-200 rounded-3xl bg-neutral-50/50">
+            <span className="text-xs text-neutral-400 font-mono font-bold uppercase tracking-widest">NO RESOURCES MATCH YOUR PARAMETERS</span>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-12">
+          <div className="grid grid-cols-1 gap-8">
             {filteredResources.map((resource) => (
-              <ReusableCard
+              <div
                 key={resource.id}
-                hoverable={true}
-                variant="white"
-                className="grid grid-cols-1 lg:grid-cols-[1.2fr_2fr] gap-8 p-6 md:p-8"
+                className="group rounded-3xl border border-neutral-200/90 bg-white hover:border-neutral-950/40 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden grid grid-cols-1 lg:grid-cols-[1.1fr_1.9fr]"
                 id={`resource-${resource.id}`}
               >
-                {/* Info and action panel */}
-                <div className="flex flex-col justify-between">
+                {/* Info & Actions Column */}
+                <div className="p-7 sm:p-9 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-neutral-100 bg-white">
                   <div>
-                    <div className="flex items-center gap-3 mb-6">
-                      <span className="text-[10px] font-extrabold text-neutral-400 border border-neutral-200 px-2.5 py-1 uppercase tracking-wide bg-neutral-50">
+                    {/* Header badges */}
+                    <div className="flex items-center justify-between gap-3 mb-5">
+                      <span className="text-[9px] font-mono font-bold px-3 py-1 uppercase tracking-wider bg-neutral-100 text-neutral-800 rounded-full border border-neutral-200/80">
                         {resource.type.toUpperCase()}
                       </span>
-                      <span className="text-[10px] text-neutral-400 font-mono flex items-center gap-1">
-                        <Download className="w-3 h-3" /> INPUTS: {downloads[resource.id] || 0}
+                      <span className="text-[10px] text-neutral-400 font-mono flex items-center gap-1.5 font-semibold">
+                        <Download className="w-3.5 h-3.5 text-neutral-500" /> {downloads[resource.id] || 0} DOWNLOADS
                       </span>
                     </div>
 
-                    <h3 className="text-lg font-light text-neutral-950 tracking-tight mb-3 uppercase leading-snug">
-                      {resource.title.toUpperCase()}
+                    <h3 className="text-xl sm:text-2xl font-black text-neutral-950 tracking-tight mb-4 uppercase font-[family-name:var(--font-inter-tight)] leading-tight">
+                      {resource.title}
                     </h3>
 
-                    <p className="text-xs font-light text-neutral-600 leading-relaxed mb-6 whitespace-pre-wrap max-h-48 overflow-y-auto pr-2 selection:bg-neutral-900 selection:text-white">
-                      {resource.description || resource.content}
-                    </p>
-
-                    <div className="flex flex-wrap gap-1.5 mb-8">
-                       {resource.tags.map((tag, idx) => (
-                        <span key={idx} className="text-[9px] font-bold text-neutral-400 px-2 py-0.5 bg-neutral-100 uppercase tracking-wide">
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-1.5 mb-6">
+                      {resource.tags.map((tag, idx) => (
+                        <span key={idx} className="text-[9px] font-mono font-semibold text-neutral-500 px-2.5 py-0.5 bg-neutral-50 border border-neutral-200/60 rounded-md uppercase tracking-wide">
                           #{tag.toUpperCase()}
                         </span>
                       ))}
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-3 border-t border-neutral-100 pt-6 mt-4">
+                  {/* Action buttons */}
+                  <div className="flex flex-wrap items-center gap-2.5 pt-6 border-t border-neutral-100 mt-6">
                     {resource.liveUrl && (
                       <a
                         href={resource.liveUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="py-2.5 px-5 bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-bold tracking-wider flex items-center justify-center gap-2 rounded-full cursor-pointer uppercase transition-all shadow-xs"
+                        className="py-2.5 px-5 bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-mono font-bold tracking-wider flex items-center justify-center gap-1.5 rounded-full cursor-pointer uppercase transition-all shadow-xs"
                       >
                         <ExternalLink className="w-3.5 h-3.5" /> LIVE DEMO
                       </a>
@@ -175,14 +172,14 @@ export default function ResourcesView() {
                         href={resource.githubUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="py-2.5 px-5 border border-neutral-200 hover:border-neutral-950 text-neutral-950 text-xs font-bold tracking-wider flex items-center justify-center gap-2 rounded-full cursor-pointer uppercase transition-all"
+                        className="py-2.5 px-5 border border-neutral-200 hover:border-neutral-950 text-neutral-950 text-xs font-mono font-bold tracking-wider flex items-center justify-center gap-1.5 rounded-full cursor-pointer uppercase transition-all bg-white"
                       >
                         <Github className="w-3.5 h-3.5" /> GITHUB
                       </a>
                     )}
                     <button
                       onClick={() => handleDownloadMetric(resource.id)}
-                      className="py-2.5 px-5 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 text-xs font-bold tracking-wider flex items-center justify-center gap-2 rounded-full cursor-pointer uppercase transition-colors"
+                      className="py-2.5 px-5 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 text-xs font-mono font-bold tracking-wider flex items-center justify-center gap-1.5 rounded-full cursor-pointer uppercase transition-colors"
                       id={`download-btn-${resource.id}`}
                     >
                       <Download className="w-3.5 h-3.5" /> DOWNLOAD
@@ -190,16 +187,16 @@ export default function ResourcesView() {
                     {resource.codeBlock && (
                       <button
                         onClick={() => handleCopyCode(resource.id, resource.codeBlock || '')}
-                        className="py-2.5 px-5 border border-neutral-200 hover:border-neutral-900 text-neutral-900 text-xs font-bold tracking-wider flex items-center justify-center gap-2 rounded-full cursor-pointer uppercase transition-all"
+                        className="py-2.5 px-5 border border-neutral-200 hover:border-neutral-900 text-neutral-900 text-xs font-mono font-bold tracking-wider flex items-center justify-center gap-1.5 rounded-full cursor-pointer uppercase transition-all"
                         id={`copy-btn-${resource.id}`}
                       >
                         {copiedId === resource.id ? (
                           <>
-                            <Check className="w-3.5 h-3.5 text-emerald-600" /> COPIED!
+                            <Check className="w-3.5 h-3.5 text-emerald-600" /> COPIED
                           </>
                         ) : (
                           <>
-                            <Copy className="w-3.5 h-3.5" /> COPY CODE
+                            <Copy className="w-3.5 h-3.5" /> COPY CLONE
                           </>
                         )}
                       </button>
@@ -207,14 +204,14 @@ export default function ResourcesView() {
                   </div>
                 </div>
 
-                {/* Viewport: Defaults to README documentation, with toggle to Code */}
+                {/* Right Stage: Large README / Source Viewport */}
                 {(() => {
-                  const currentView = cardViews[resource.id] || (resource.content ? 'readme' : 'code');
+                  const currentView = cardViews[resource.id] || (resource.content || resource.description ? 'readme' : 'code');
                   return (
-                    <div className="bg-neutral-950 p-6 md:p-8 text-neutral-300 font-sans text-xs leading-relaxed relative border-l-4 border-neutral-800 overflow-x-auto max-h-[480px] max-w-full flex flex-col rounded-2xl">
-                      {/* Top View Switcher Bar */}
-                      <div className="flex items-center justify-between pb-3 mb-4 border-b border-neutral-800/80 shrink-0">
-                        <div className="flex items-center gap-1.5 p-1 bg-neutral-900 rounded-full border border-neutral-800">
+                    <div className="bg-neutral-950 p-6 sm:p-8 text-neutral-300 flex flex-col justify-between max-h-[520px] overflow-hidden">
+                      {/* View Switcher Top Bar */}
+                      <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-neutral-800 shrink-0">
+                        <div className="flex items-center gap-1 p-1 bg-neutral-900 rounded-full border border-neutral-800">
                           <button
                             type="button"
                             onClick={() => setCardViews(prev => ({ ...prev, [resource.id]: 'readme' }))}
@@ -241,16 +238,16 @@ export default function ResourcesView() {
                           )}
                         </div>
 
-                        <span className="text-[9px] font-mono uppercase tracking-widest text-neutral-500 hidden sm:inline">
-                          {currentView === 'readme' ? 'MARKDOWN GUIDE' : 'SOURCE SNIPPET'}
+                        <span className="text-[9px] font-mono uppercase tracking-widest text-neutral-500">
+                          {currentView === 'readme' ? 'MARKDOWN README' : 'SOURCE'}
                         </span>
                       </div>
 
-                      {/* Content Section */}
-                      <div className="flex-grow overflow-y-auto pr-2">
+                      {/* Scrollable Viewport */}
+                      <div className="flex-grow overflow-y-auto pr-3 custom-scrollbar">
                         {currentView === 'readme' ? (
-                          <div className="prose prose-invert prose-neutral max-w-none text-neutral-300 text-xs sm:text-[13px] leading-relaxed font-sans space-y-3 whitespace-pre-wrap selection:bg-white selection:text-neutral-950">
-                            {resource.content ? resource.content.trim() : resource.description}
+                          <div className="text-neutral-300 text-xs sm:text-[13px] leading-relaxed font-mono whitespace-pre-wrap selection:bg-white selection:text-neutral-950">
+                            {resource.description || resource.content || 'No README documentation provided.'}
                           </div>
                         ) : (
                           <pre className="font-mono text-[11px] leading-relaxed break-words whitespace-pre text-neutral-300 selection:bg-white selection:text-neutral-950">
@@ -261,7 +258,7 @@ export default function ResourcesView() {
                     </div>
                   );
                 })()}
-              </ReusableCard>
+              </div>
             ))}
           </div>
         )}
