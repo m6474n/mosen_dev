@@ -125,10 +125,10 @@ export default function ResourcesView() {
             {filteredResources.map((resource) => (
               <div
                 key={resource.id}
-                className="group rounded-3xl border border-neutral-200/90 bg-white hover:border-neutral-950/40 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden grid grid-cols-1 lg:grid-cols-[1.1fr_1.9fr]"
+                className="group rounded-3xl border border-neutral-200/90 bg-white hover:border-neutral-950/40 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden grid grid-cols-1 lg:grid-cols-[1.1fr_1.3fr]"
                 id={`resource-${resource.id}`}
               >
-                {/* Info & Actions Column */}
+                {/* Info & Actions Column (Left Side: Title, Description, Links) */}
                 <div className="p-7 sm:p-9 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-neutral-100 bg-white">
                   <div>
                     {/* Header badges */}
@@ -141,9 +141,14 @@ export default function ResourcesView() {
                       </span>
                     </div>
 
-                    <h3 className="text-xl sm:text-2xl font-black text-neutral-950 tracking-tight mb-4 uppercase font-[family-name:var(--font-inter-tight)] leading-tight">
+                    <h3 className="text-xl sm:text-2xl font-black text-neutral-950 tracking-tight mb-3 uppercase font-[family-name:var(--font-inter-tight)] leading-tight">
                       {resource.title}
                     </h3>
+
+                    {/* Description / Summary */}
+                    <p className="text-xs font-light text-neutral-600 leading-relaxed mb-6 whitespace-pre-wrap max-h-44 overflow-y-auto pr-2 selection:bg-neutral-900 selection:text-white">
+                      {resource.description || resource.content}
+                    </p>
 
                     {/* Tags */}
                     <div className="flex flex-wrap gap-1.5 mb-6">
@@ -155,7 +160,7 @@ export default function ResourcesView() {
                     </div>
                   </div>
 
-                  {/* Action buttons */}
+                  {/* Action buttons / Links */}
                   <div className="flex flex-wrap items-center gap-2.5 pt-6 border-t border-neutral-100 mt-6">
                     {resource.liveUrl && (
                       <a
@@ -204,60 +209,51 @@ export default function ResourcesView() {
                   </div>
                 </div>
 
-                {/* Right Stage: Large README / Source Viewport */}
-                {(() => {
-                  const currentView = cardViews[resource.id] || (resource.content || resource.description ? 'readme' : 'code');
-                  return (
-                    <div className="bg-neutral-950 p-6 sm:p-8 text-neutral-300 flex flex-col justify-between max-h-[520px] overflow-hidden">
-                      {/* View Switcher Top Bar */}
-                      <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-neutral-800 shrink-0">
-                        <div className="flex items-center gap-1 p-1 bg-neutral-900 rounded-full border border-neutral-800">
-                          <button
-                            type="button"
-                            onClick={() => setCardViews(prev => ({ ...prev, [resource.id]: 'readme' }))}
-                            className={`px-3 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider flex items-center gap-1.5 cursor-pointer transition-colors ${
-                              currentView === 'readme'
-                                ? 'bg-white text-neutral-950 font-bold shadow-2xs'
-                                : 'text-neutral-400 hover:text-white'
-                            }`}
-                          >
-                            <BookOpen className="w-3 h-3" /> README
-                          </button>
-                          {resource.codeBlock && (
-                            <button
-                              type="button"
-                              onClick={() => setCardViews(prev => ({ ...prev, [resource.id]: 'code' }))}
-                              className={`px-3 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider flex items-center gap-1.5 cursor-pointer transition-colors ${
-                                currentView === 'code'
-                                  ? 'bg-white text-neutral-950 font-bold shadow-2xs'
-                                  : 'text-neutral-400 hover:text-white'
-                              }`}
-                            >
-                              <Code2 className="w-3 h-3" /> CODE
-                            </button>
-                          )}
-                        </div>
+                {/* Right Stage: Featured Image Showcase */}
+                <div className="relative bg-neutral-950 min-h-[300px] sm:min-h-[360px] lg:min-h-full flex items-center justify-center overflow-hidden group/stage">
+                  {/* Subtle Ambient Lighting */}
+                  <div className="absolute top-0 inset-x-0 h-40 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(255,255,255,0.1),transparent_70%)] pointer-events-none" />
 
-                        <span className="text-[9px] font-mono uppercase tracking-widest text-neutral-500">
-                          {currentView === 'readme' ? 'MARKDOWN README' : 'SOURCE'}
-                        </span>
+                  {resource.imageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={resource.imageUrl}
+                      alt={resource.title}
+                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c';
+                      }}
+                    />
+                  ) : (
+                    // Fallback architectural preview with geometric stage
+                    <div className="w-full h-full p-8 flex flex-col justify-between relative z-10 bg-gradient-to-br from-neutral-900 via-neutral-950 to-neutral-900">
+                      <div className="flex items-center justify-between text-neutral-500 font-mono text-[9px] uppercase tracking-widest">
+                        <span>SYSTEM PREVIEW</span>
+                        <span>{resource.type}</span>
                       </div>
 
-                      {/* Scrollable Viewport */}
-                      <div className="flex-grow overflow-y-auto pr-3 custom-scrollbar">
-                        {currentView === 'readme' ? (
-                          <div className="text-neutral-300 text-xs sm:text-[13px] leading-relaxed font-mono whitespace-pre-wrap selection:bg-white selection:text-neutral-950">
-                            {resource.description || resource.content || 'No README documentation provided.'}
-                          </div>
-                        ) : (
-                          <pre className="font-mono text-[11px] leading-relaxed break-words whitespace-pre text-neutral-300 selection:bg-white selection:text-neutral-950">
-                            {resource.codeBlock ? resource.codeBlock.trim() : '// No code snippet attached.'}
-                          </pre>
-                        )}
+                      <div className="my-auto py-8 text-center space-y-3">
+                        <div className="w-14 h-14 rounded-2xl bg-neutral-900 border border-neutral-800 text-white flex items-center justify-center mx-auto shadow-inner">
+                          <Terminal className="w-6 h-6 text-neutral-400" />
+                        </div>
+                        <h4 className="text-base font-bold text-white uppercase tracking-tight font-sans">
+                          {resource.title}
+                        </h4>
+                        <p className="text-[11px] font-mono text-neutral-500 max-w-xs mx-auto line-clamp-2">
+                          {resource.tags.map(t => `#${t}`).join(' ')}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-between text-neutral-500 font-mono text-[9px] uppercase tracking-widest pt-4 border-t border-neutral-800/80">
+                        <span>ENGINEERED BY MOSEN</span>
+                        <span className="text-emerald-500 font-bold">READY</span>
                       </div>
                     </div>
-                  );
-                })()}
+                  )}
+
+                  {/* Gradient bottom shadow */}
+                  <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-neutral-950/60 to-transparent pointer-events-none" />
+                </div>
               </div>
             ))}
           </div>

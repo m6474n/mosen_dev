@@ -49,6 +49,7 @@ export interface Resource {
   fileUrl?: string;
   githubUrl?: string; // GitHub repository URL
   liveUrl?: string; // Deployed / live preview URL
+  imageUrl?: string; // Featured screenshot / preview image
   isPremium?: boolean;
 }
 

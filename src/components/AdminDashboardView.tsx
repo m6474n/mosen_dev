@@ -1173,7 +1173,7 @@ export default function AdminDashboardView() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                       <div className="flex flex-col gap-2">
                         <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Tags (comma-separated)</label>
                         <input 
@@ -1200,6 +1200,16 @@ export default function AdminDashboardView() {
                           value={editingResource.fileUrl || ''} 
                           onChange={e => setEditingResource({ ...editingResource, fileUrl: e.target.value })}
                           placeholder="https://... or /downloads/..."
+                          className="border border-neutral-200 px-3 py-2 text-xs bg-white font-mono rounded-none" 
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Featured Screenshot / Image URL</label>
+                        <input 
+                          type="text" 
+                          value={editingResource.imageUrl || ''} 
+                          onChange={e => setEditingResource({ ...editingResource, imageUrl: e.target.value })}
+                          placeholder="https://images.unsplash.com/... or uploaded URL"
                           className="border border-neutral-200 px-3 py-2 text-xs bg-white font-mono rounded-none" 
                         />
                       </div>
