@@ -299,7 +299,7 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        className="w-full relative h-[540px] sm:h-[580px] md:h-[620px] flex items-center justify-center overflow-visible cursor-grab active:cursor-grabbing touch-none"
+        className="w-full relative h-[540px] sm:h-[580px] md:h-[620px] flex items-center justify-center overflow-hidden cursor-grab active:cursor-grabbing touch-none"
         style={{ perspective: 1200, perspectiveOrigin: '50% 50%' }}
       >
         <div
