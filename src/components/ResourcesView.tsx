@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, Download, Copy, Check, Terminal, FileCode, Sliders, ExternalLink, Github } from 'lucide-react';
+import { Search, Download, Copy, Check, Terminal, FileCode, Sliders, ExternalLink, Github, BookOpen, Code2 } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { stripHtml } from '../lib/richText';
 import { Resource } from '../types';
@@ -17,6 +17,7 @@ export default function ResourcesView() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
   const [downloads, setDownloads] = useState<{ [key: string]: number }>({});
+  const [cardViews, setCardViews] = useState<{ [key: string]: 'readme' | 'code' }>({});
 
   useEffect(() => {
     const initial: { [key: string]: number } = {};
@@ -206,13 +207,60 @@ export default function ResourcesView() {
                   </div>
                 </div>
 
-                {/* Live Preview Codeblock viewport */}
-                <div className="bg-neutral-950 p-6 md:p-8 text-neutral-300 font-mono text-[11px] leading-relaxed relative border-l-4 border-neutral-800 overflow-x-auto select-all max-h-[460px] max-w-full">
-                  <div className="absolute top-4 right-4 text-[9px] text-neutral-500 font-bold uppercase tracking-wider select-none flex items-center gap-1 bg-neutral-900 px-2 py-1 border border-neutral-800">
-                    <Terminal className="w-3 h-3 text-neutral-400" /> LIVE SOURCE
-                  </div>
-                  <pre className="mt-4 break-words whitespace-pre">{resource.codeBlock ? resource.codeBlock.trim() : `// Documentation Only:\n${resource.content}`}</pre>
-                </div>
+                {/* Viewport: Defaults to README documentation, with toggle to Code */}
+                {(() => {
+                  const currentView = cardViews[resource.id] || (resource.content ? 'readme' : 'code');
+                  return (
+                    <div className="bg-neutral-950 p-6 md:p-8 text-neutral-300 font-sans text-xs leading-relaxed relative border-l-4 border-neutral-800 overflow-x-auto max-h-[480px] max-w-full flex flex-col rounded-2xl">
+                      {/* Top View Switcher Bar */}
+                      <div className="flex items-center justify-between pb-3 mb-4 border-b border-neutral-800/80 shrink-0">
+                        <div className="flex items-center gap-1.5 p-1 bg-neutral-900 rounded-full border border-neutral-800">
+                          <button
+                            type="button"
+                            onClick={() => setCardViews(prev => ({ ...prev, [resource.id]: 'readme' }))}
+                            className={`px-3 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider flex items-center gap-1.5 cursor-pointer transition-colors ${
+                              currentView === 'readme'
+                                ? 'bg-white text-neutral-950 font-bold shadow-2xs'
+                                : 'text-neutral-400 hover:text-white'
+                            }`}
+                          >
+                            <BookOpen className="w-3 h-3" /> README
+                          </button>
+                          {resource.codeBlock && (
+                            <button
+                              type="button"
+                              onClick={() => setCardViews(prev => ({ ...prev, [resource.id]: 'code' }))}
+                              className={`px-3 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider flex items-center gap-1.5 cursor-pointer transition-colors ${
+                                currentView === 'code'
+                                  ? 'bg-white text-neutral-950 font-bold shadow-2xs'
+                                  : 'text-neutral-400 hover:text-white'
+                              }`}
+                            >
+                              <Code2 className="w-3 h-3" /> CODE
+                            </button>
+                          )}
+                        </div>
+
+                        <span className="text-[9px] font-mono uppercase tracking-widest text-neutral-500 hidden sm:inline">
+                          {currentView === 'readme' ? 'MARKDOWN GUIDE' : 'SOURCE SNIPPET'}
+                        </span>
+                      </div>
+
+                      {/* Content Section */}
+                      <div className="flex-grow overflow-y-auto pr-2">
+                        {currentView === 'readme' ? (
+                          <div className="prose prose-invert prose-neutral max-w-none text-neutral-300 text-xs sm:text-[13px] leading-relaxed font-sans space-y-3 whitespace-pre-wrap selection:bg-white selection:text-neutral-950">
+                            {resource.content ? resource.content.trim() : resource.description}
+                          </div>
+                        ) : (
+                          <pre className="font-mono text-[11px] leading-relaxed break-words whitespace-pre text-neutral-300 selection:bg-white selection:text-neutral-950">
+                            {resource.codeBlock ? resource.codeBlock.trim() : '// No code snippet attached.'}
+                          </pre>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()}
               </ReusableCard>
             ))}
           </div>
