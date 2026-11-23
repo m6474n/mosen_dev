@@ -260,21 +260,37 @@ export default function AdminDashboardView() {
   const [isFetchingDirect, setIsFetchingDirect] = useState(false);
   const [githubFeedback, setGithubFeedback] = useState<string | null>(null);
 
+  // Helper for authenticated GitHub headers using NEXT_PUBLIC_GITHUB_TOKEN
+  const getGithubHeaders = (): HeadersInit => {
+    const token = process.env.NEXT_PUBLIC_GITHUB_TOKEN;
+    const headers: Record<string, string> = {
+      Accept: 'application/vnd.github.v3+json',
+    };
+    if (token && token.trim()) {
+      headers.Authorization = `Bearer ${token.trim()}`;
+    }
+    return headers;
+  };
+
   const fetchGithubRepoResource = async (repoInput: string): Promise<Resource> => {
     let clean = repoInput.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, '');
     const parts = clean.split('/');
     const owner = parts.length > 1 ? parts[0] : (githubUsername || 'm6474n');
     const repo = parts.length > 1 ? parts[1] : parts[0];
 
-    const repoRes = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
+    const repoRes = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+      headers: getGithubHeaders(),
+    });
     if (!repoRes.ok) {
-      throw new Error(`Repository "${owner}/${repo}" not found (${repoRes.status}). Ensure it is public.`);
+      throw new Error(`Repository "${owner}/${repo}" error (${repoRes.status}). Rate limit or invalid repo.`);
     }
     const repoData = await repoRes.json();
 
     let readmeContent = '';
     try {
-      const readmeRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/readme`);
+      const readmeRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/readme`, {
+        headers: getGithubHeaders(),
+      });
       if (readmeRes.ok) {
         const readmeJson = await readmeRes.json();
         if (readmeJson.content) {
@@ -370,7 +386,9 @@ export default function AdminDashboardView() {
     if (!username.trim()) return;
     setIsLoadingGithubRepos(true);
     try {
-      const res = await fetch(`https://api.github.com/users/${username.trim()}/repos?sort=updated&per_page=30`);
+      const res = await fetch(`https://api.github.com/users/${username.trim()}/repos?sort=updated&per_page=30`, {
+        headers: getGithubHeaders(),
+      });
       if (res.ok) {
         const data = await res.json();
         setGithubRepos(Array.isArray(data) ? data : []);
