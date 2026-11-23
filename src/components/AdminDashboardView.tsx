@@ -323,18 +323,9 @@ export default function AdminDashboardView() {
       inferredType = 'Template';
     }
 
-    let description = repoData.description || '';
-    if (!description && readmeContent) {
-      const cleanReadme = readmeContent
-        .replace(/#+\s+/g, '')
-        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-        .replace(/`{1,3}[^`]*`{1,3}/g, '')
-        .trim();
-      description = cleanReadme.slice(0, 160) + '...';
-    }
-    if (!description) {
-      description = `Open source repository by ${owner}`;
-    }
+    // Put full README in description (and fallback to repo description if readme empty)
+    const fullReadme = readmeContent || repoData.description || `Open source repository by ${owner}`;
+    const description = fullReadme;
 
     return {
       id: repoData.name.toLowerCase(),
@@ -343,7 +334,7 @@ export default function AdminDashboardView() {
       type: inferredType,
       tags,
       downloadCount: repoData.stargazers_count || 0,
-      content: readmeContent || description,
+      content: fullReadme,
       codeBlock: `git clone ${repoData.clone_url || repoData.html_url}.git`,
       fileUrl: `${repoData.html_url}/archive/refs/heads/${repoData.default_branch || 'main'}.zip`,
       githubUrl: repoData.html_url,

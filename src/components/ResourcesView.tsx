@@ -146,8 +146,8 @@ export default function ResourcesView() {
                       {resource.title.toUpperCase()}
                     </h3>
 
-                    <p className="text-xs font-light text-neutral-500 leading-relaxed mb-6">
-                      {stripHtml(resource.description)}
+                    <p className="text-xs font-light text-neutral-600 leading-relaxed mb-6 whitespace-pre-wrap max-h-48 overflow-y-auto pr-2 selection:bg-neutral-900 selection:text-white">
+                      {resource.description || resource.content}
                     </p>
 
                     <div className="flex flex-wrap gap-1.5 mb-8">
