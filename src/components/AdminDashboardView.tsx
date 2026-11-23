@@ -273,10 +273,13 @@ export default function AdminDashboardView() {
   };
 
   const fetchGithubRepoResource = async (repoInput: string): Promise<Resource> => {
-    let clean = repoInput.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, '');
-    const parts = clean.split('/');
+    let clean = repoInput.trim()
+      .replace(/^https?:\/\/github\.com\//, '')
+      .replace(/\.git$/, '')
+      .replace(/\/$/, '');
+    const parts = clean.split('/').filter(Boolean);
     const owner = parts.length > 1 ? parts[0] : (githubUsername || 'm6474n');
-    const repo = parts.length > 1 ? parts[1] : parts[0];
+    const repo = (parts.length > 1 ? parts[1] : parts[0]).replace(/\.git$/, '');
 
     const repoRes = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
       headers: getGithubHeaders(),
