@@ -32,3 +32,4 @@ export default async function ResourceDetailPage({ params }: { params: Promise<{
   const { slug } = await params;
   return <ResourceDetailView slug={slug} />;
 }
+

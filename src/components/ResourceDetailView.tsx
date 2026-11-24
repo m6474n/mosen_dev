@@ -381,3 +381,4 @@ export default function ResourceDetailView({ slug }: ResourceDetailViewProps) {
     </DefaultPageLayout>
   );
 }
+
