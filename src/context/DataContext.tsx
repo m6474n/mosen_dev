@@ -93,7 +93,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           const svcsList = svcsSnap.docs.map(d => ({ id: d.id, ...d.data() })) as any[];
 
           const resSnap = await getDocs(collection(db, 'resources'));
-          const resList = resSnap.docs.map(d => ({ id: d.id, ...d.data() })) as any[];
+          const rawResList = resSnap.docs.map(d => ({ id: d.id, ...d.data() })) as any[];
+          const dummyIds = new Set(['fastapi-enricher-script', 'flutter-serial-coms', 'tailwind-bento-card-utilities', 'n8n-gmail-filter-json']);
+          const resList = rawResList.filter(r => !dummyIds.has(r.id));
 
           const blogsSnap = await getDocs(collection(db, 'blogs'));
           const blogsList = blogsSnap.docs.map(d => ({ id: d.id, ...d.data() })) as any[];
@@ -169,10 +171,26 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem('mosen_services', JSON.stringify(SERVICES));
     }
 
-    // Resources
+    // Resources Fallback: filter out obsolete dummy IDs so stale localStorage caches auto-purge
     const storedRes = localStorage.getItem('mosen_resources');
-    if (storedRes) setResources(JSON.parse(storedRes));
-    else {
+    const dummyIds = new Set(['fastapi-enricher-script', 'flutter-serial-coms', 'tailwind-bento-card-utilities', 'n8n-gmail-filter-json']);
+    if (storedRes) {
+      try {
+        const parsed: Resource[] = JSON.parse(storedRes);
+        const cleaned = parsed.filter(r => !dummyIds.has(r.id));
+        // If all items were dummy mockups or cache is stale, hydrate with fresh real RESOURCES
+        if (cleaned.length === 0) {
+          setResources(RESOURCES);
+          localStorage.setItem('mosen_resources', JSON.stringify(RESOURCES));
+        } else {
+          setResources(cleaned);
+          localStorage.setItem('mosen_resources', JSON.stringify(cleaned));
+        }
+      } catch {
+        setResources(RESOURCES);
+        localStorage.setItem('mosen_resources', JSON.stringify(RESOURCES));
+      }
+    } else {
       setResources(RESOURCES);
       localStorage.setItem('mosen_resources', JSON.stringify(RESOURCES));
     }
