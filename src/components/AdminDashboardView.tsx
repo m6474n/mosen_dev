@@ -1216,14 +1216,17 @@ export default function AdminDashboardView() {
                     </div>
 
                     <div className="flex flex-col gap-2">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Short Summary</label>
+                      <div className="flex items-center justify-between">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Resource Description / Overview</label>
+                        <span className="text-[9px] font-mono text-neutral-400 uppercase">Displayed on Resource Card</span>
+                      </div>
                       <textarea 
-                        rows={2}
+                        rows={4}
                         value={editingResource.description} 
                         onChange={e => setEditingResource({ ...editingResource, description: e.target.value })}
                         required
-                        placeholder="Brief one or two sentence overview..."
-                        className="border border-neutral-200 p-3 text-xs bg-white rounded-none leading-relaxed" 
+                        placeholder="Comprehensive overview or architectural breakdown of the resource..."
+                        className="border border-neutral-200 p-3 text-xs bg-white rounded-none leading-relaxed font-mono" 
                       />
                     </div>
 

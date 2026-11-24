@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Search, Download, Copy, Check, Terminal, FileCode, Sliders, ExternalLink, Github, BookOpen, Code2 } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { stripHtml } from '../lib/richText';
@@ -12,6 +13,7 @@ import ReusableCard from './ReusableCard';
 import Button from './Button';
 
 export default function ResourcesView() {
+  const router = useRouter();
   const { resources } = useData();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState<string>('ALL');
@@ -126,31 +128,31 @@ export default function ResourcesView() {
             {filteredResources.map((resource) => (
               <div
                 key={resource.id}
-                className="group rounded-3xl border border-neutral-200/90 bg-white hover:border-neutral-950/40 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden grid grid-cols-1 lg:grid-cols-[1.1fr_1.3fr]"
+                onClick={() => router.push(`/resources/${resource.id}`)}
+                className="group relative rounded-3xl border border-neutral-200/90 bg-white hover:border-neutral-950/40 shadow-xs hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 overflow-hidden grid grid-cols-1 lg:grid-cols-[2fr_1fr] cursor-pointer"
                 id={`resource-${resource.id}`}
               >
-                {/* Info & Actions Column (Left Side: Title, Description, Links) */}
-                <div className="p-7 sm:p-9 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-neutral-100 bg-white">
+                {/* Info & Details Column (2/3 width on desktop) */}
+                <div className="p-7 sm:p-9 md:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-neutral-100 bg-white">
                   <div>
                     {/* Header badges */}
                     <div className="flex items-center justify-between gap-3 mb-5">
                       <span className="text-[9px] font-mono font-bold px-3 py-1 uppercase tracking-wider bg-neutral-100 text-neutral-800 rounded-full border border-neutral-200/80">
                         {resource.type.toUpperCase()}
                       </span>
-                      <span className="text-[10px] text-neutral-400 font-mono flex items-center gap-1.5 font-semibold">
-                        <Download className="w-3.5 h-3.5 text-neutral-500" /> {downloads[resource.id] || 0} DOWNLOADS
-                      </span>
+                      {Boolean(resource.downloadCount) && (
+                        <span className="text-[10px] text-neutral-400 font-mono flex items-center gap-1.5 font-semibold">
+                          <Download className="w-3.5 h-3.5 text-neutral-500" /> {downloads[resource.id] || resource.downloadCount} USES
+                        </span>
+                      )}
                     </div>
 
-                    <Link
-                      href={`/resources/${resource.id}`}
-                      className="text-xl sm:text-2xl font-black text-neutral-950 tracking-tight mb-3 uppercase font-[family-name:var(--font-inter-tight)] leading-tight hover:underline group-hover:text-neutral-800 transition-colors block"
-                    >
+                    <h3 className="text-2xl sm:text-3xl font-black text-neutral-950 tracking-tight mb-4 uppercase font-[family-name:var(--font-inter-tight)] leading-tight group-hover:text-neutral-700 transition-colors">
                       {resource.title}
-                    </Link>
+                    </h3>
 
-                    {/* Description / Summary */}
-                    <p className="text-xs font-light text-neutral-600 leading-relaxed mb-6 whitespace-pre-wrap max-h-44 overflow-y-auto pr-2 selection:bg-neutral-900 selection:text-white">
+                    {/* Extended Description */}
+                    <p className="text-xs sm:text-[13px] font-light text-neutral-600 leading-relaxed mb-6 whitespace-pre-wrap max-h-60 overflow-y-auto pr-2 selection:bg-neutral-900 selection:text-white">
                       {resource.description || resource.content}
                     </p>
 
@@ -165,12 +167,15 @@ export default function ResourcesView() {
                   </div>
 
                   {/* Action buttons / Links */}
-                  <div className="flex flex-wrap items-center gap-2.5 pt-6 border-t border-neutral-100 mt-6">
+                  <div
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex flex-wrap items-center gap-2.5 pt-6 border-t border-neutral-100 mt-6"
+                  >
                     <Link
                       href={`/resources/${resource.id}`}
                       className="py-2.5 px-5 bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-mono font-bold tracking-wider flex items-center justify-center gap-1.5 rounded-full cursor-pointer uppercase transition-all shadow-xs"
                     >
-                      <BookOpen className="w-3.5 h-3.5" /> DOCS
+                      <BookOpen className="w-3.5 h-3.5" /> READ SPEC & DOCS
                     </Link>
                     {resource.liveUrl && (
                       <a
@@ -179,7 +184,7 @@ export default function ResourcesView() {
                         rel="noreferrer"
                         className="py-2.5 px-5 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 text-xs font-mono font-bold tracking-wider flex items-center justify-center gap-1.5 rounded-full cursor-pointer uppercase transition-all"
                       >
-                        <ExternalLink className="w-3.5 h-3.5" /> DEMO
+                        <ExternalLink className="w-3.5 h-3.5" /> LIVE DEMO
                       </a>
                     )}
                     {resource.githubUrl && (
@@ -189,38 +194,26 @@ export default function ResourcesView() {
                         rel="noreferrer"
                         className="py-2.5 px-5 border border-neutral-200 hover:border-neutral-950 text-neutral-950 text-xs font-mono font-bold tracking-wider flex items-center justify-center gap-1.5 rounded-full cursor-pointer uppercase transition-all bg-white"
                       >
-                        <Github className="w-3.5 h-3.5" /> GITHUB
+                        <Github className="w-3.5 h-3.5" /> REPO
                       </a>
                     )}
-                    <button
-                      onClick={() => handleDownloadMetric(resource.id)}
-                      className="py-2.5 px-5 border border-neutral-200 hover:border-neutral-900 text-neutral-900 text-xs font-mono font-bold tracking-wider flex items-center justify-center gap-1.5 rounded-full cursor-pointer uppercase transition-colors"
-                      id={`download-btn-${resource.id}`}
-                    >
-                      <Download className="w-3.5 h-3.5" /> DOWNLOAD
-                    </button>
-                    {resource.codeBlock && (
-                      <button
-                        onClick={() => handleCopyCode(resource.id, resource.codeBlock || '')}
-                        className="py-2.5 px-5 border border-neutral-200 hover:border-neutral-900 text-neutral-900 text-xs font-mono font-bold tracking-wider flex items-center justify-center gap-1.5 rounded-full cursor-pointer uppercase transition-all"
-                        id={`copy-btn-${resource.id}`}
+                    {Boolean(resource.fileUrl && resource.fileUrl.trim()) && (
+                      <a
+                        href={resource.fileUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={() => handleDownloadMetric(resource.id)}
+                        className="py-2.5 px-5 border border-neutral-200 hover:border-neutral-900 text-neutral-900 text-xs font-mono font-bold tracking-wider flex items-center justify-center gap-1.5 rounded-full cursor-pointer uppercase transition-colors"
+                        id={`download-btn-${resource.id}`}
                       >
-                        {copiedId === resource.id ? (
-                          <>
-                            <Check className="w-3.5 h-3.5 text-emerald-600" /> COPIED
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-3.5 h-3.5" /> COPY CLONE
-                          </>
-                        )}
-                      </button>
+                        <Download className="w-3.5 h-3.5" /> DOWNLOAD FILE
+                      </a>
                     )}
                   </div>
                 </div>
 
-                {/* Right Stage: Featured Image Showcase */}
-                <div className="relative bg-neutral-950 min-h-[300px] sm:min-h-[360px] lg:min-h-full flex items-center justify-center overflow-hidden group/stage">
+                {/* Right Stage: Featured Image (1/3 width on desktop) */}
+                <div className="relative bg-neutral-950 min-h-[260px] sm:min-h-[320px] lg:min-h-full flex items-center justify-center overflow-hidden">
                   {/* Subtle Ambient Lighting */}
                   <div className="absolute top-0 inset-x-0 h-40 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(255,255,255,0.1),transparent_70%)] pointer-events-none" />
 
@@ -235,33 +228,33 @@ export default function ResourcesView() {
                       }}
                     />
                   ) : (
-                    // Fallback architectural preview with geometric stage
+                    // Fallback architectural preview
                     <div className="w-full h-full p-8 flex flex-col justify-between relative z-10 bg-gradient-to-br from-neutral-900 via-neutral-950 to-neutral-900">
                       <div className="flex items-center justify-between text-neutral-500 font-mono text-[9px] uppercase tracking-widest">
-                        <span>SYSTEM PREVIEW</span>
+                        <span>VAULT SPEC</span>
                         <span>{resource.type}</span>
                       </div>
 
                       <div className="my-auto py-8 text-center space-y-3">
-                        <div className="w-14 h-14 rounded-2xl bg-neutral-900 border border-neutral-800 text-white flex items-center justify-center mx-auto shadow-inner">
+                        <div className="w-14 h-14 rounded-2xl bg-neutral-900 border border-neutral-800 text-white flex items-center justify-center mx-auto shadow-inner group-hover:scale-110 transition-transform">
                           <Terminal className="w-6 h-6 text-neutral-400" />
                         </div>
-                        <h4 className="text-base font-bold text-white uppercase tracking-tight font-sans">
+                        <h4 className="text-sm font-bold text-white uppercase tracking-tight font-sans">
                           {resource.title}
                         </h4>
-                        <p className="text-[11px] font-mono text-neutral-500 max-w-xs mx-auto line-clamp-2">
+                        <p className="text-[10px] font-mono text-neutral-500 max-w-xs mx-auto line-clamp-2">
                           {resource.tags.map(t => `#${t}`).join(' ')}
                         </p>
                       </div>
 
                       <div className="flex items-center justify-between text-neutral-500 font-mono text-[9px] uppercase tracking-widest pt-4 border-t border-neutral-800/80">
-                        <span>ENGINEERED BY MOSEN</span>
-                        <span className="text-emerald-500 font-bold">READY</span>
+                        <span>OPEN SOURCE</span>
+                        <span className="text-emerald-500 font-bold">VERIFIED</span>
                       </div>
                     </div>
                   )}
 
-                  {/* Gradient bottom shadow */}
+                  {/* Gradient shadow overlay */}
                   <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-neutral-950/60 to-transparent pointer-events-none" />
                 </div>
               </div>
