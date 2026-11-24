@@ -57,9 +57,9 @@ const megaCategories: MegaCategory[] = [
         tag: 'AUTO',
       },
       {
-        name: 'Workflow Systems',
-        desc: 'End-to-end business automation design',
-        href: '/services',
+        name: 'Workflow Automation',
+        desc: 'End-to-end business automation pipelines',
+        href: '/contact',
         icon: Cpu,
       },
     ],
@@ -462,11 +462,11 @@ export default function Header() {
                                 → Production Apps & Systems
                               </Link>
                               <Link
-                                href="/services"
+                                href="/contact"
                                 onClick={() => setMobileMenuOpen(false)}
                                 className="block px-3 py-1.5 text-[11px] font-semibold text-neutral-900 uppercase hover:text-neutral-600"
                               >
-                                → Automation Services
+                                → Consultation & Booking
                               </Link>
                             </motion.div>
                           )}

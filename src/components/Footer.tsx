@@ -34,8 +34,8 @@ export default function Footer() {
               <ul className="flex flex-col gap-2.5 text-xs font-light text-neutral-400 list-none">
                 <li><Link href="/" className="hover:text-white transition-colors">HOME</Link></li>
                 <li><Link href="/about" className="hover:text-white transition-colors">ABOUT</Link></li>
-                <li><Link href="/services" className="hover:text-white transition-colors">SERVICES</Link></li>
-                <li><Link href="/case-studies" className="hover:text-white transition-colors">CASE STUDIES</Link></li>
+                <li><Link href="/projects" className="hover:text-white transition-colors">PROJECTS</Link></li>
+                <li><Link href="/resources" className="hover:text-white transition-colors">RESOURCES</Link></li>
               </ul>
             </div>
 

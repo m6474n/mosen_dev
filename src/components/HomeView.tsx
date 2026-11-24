@@ -279,10 +279,10 @@ export default function HomeView() {
                   </p>
                 </div>
                 <Link
-                  href="/services"
+                  href="/contact"
                   className="inline-flex items-center gap-1 text-[11px] font-bold text-neutral-400 hover:text-white tracking-widest uppercase transition-colors"
                 >
-                  EXPLORE {srv.title.toUpperCase()} <ArrowRight className="w-3 h-3 ml-1" />
+                  START {srv.title.toUpperCase()} <ArrowRight className="w-3 h-3 ml-1" />
                 </Link>
               </div>
             ))}
