@@ -151,9 +151,9 @@ export default function ResourcesView() {
                       {resource.title}
                     </h3>
 
-                    {/* Runtime-Cleaned Markdown Description: larger text size & 3x length */}
-                    <p className="text-sm sm:text-base font-light text-neutral-600 leading-relaxed mb-6 line-clamp-6 selection:bg-neutral-900 selection:text-white font-sans">
-                      {stripMarkdown(resource.content || resource.description)
+                    {/* Runtime-Cleaned Markdown Description: balanced text size & length (approx 2x) */}
+                    <p className="text-[13px] sm:text-sm font-light text-neutral-600 leading-relaxed mb-6 line-clamp-3 sm:line-clamp-4 selection:bg-neutral-900 selection:text-white font-sans">
+                      {stripMarkdown(resource.description || resource.content)
                         .split('\n')
                         .map((s) => s.trim())
                         .filter(Boolean)
