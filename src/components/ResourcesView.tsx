@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Search, Download, Copy, Check, Terminal, FileCode, Sliders, ExternalLink, Github, BookOpen, Code2 } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { stripHtml } from '../lib/richText';
@@ -141,9 +142,12 @@ export default function ResourcesView() {
                       </span>
                     </div>
 
-                    <h3 className="text-xl sm:text-2xl font-black text-neutral-950 tracking-tight mb-3 uppercase font-[family-name:var(--font-inter-tight)] leading-tight">
+                    <Link
+                      href={`/resources/${resource.id}`}
+                      className="text-xl sm:text-2xl font-black text-neutral-950 tracking-tight mb-3 uppercase font-[family-name:var(--font-inter-tight)] leading-tight hover:underline group-hover:text-neutral-800 transition-colors block"
+                    >
                       {resource.title}
-                    </h3>
+                    </Link>
 
                     {/* Description / Summary */}
                     <p className="text-xs font-light text-neutral-600 leading-relaxed mb-6 whitespace-pre-wrap max-h-44 overflow-y-auto pr-2 selection:bg-neutral-900 selection:text-white">
@@ -162,14 +166,20 @@ export default function ResourcesView() {
 
                   {/* Action buttons / Links */}
                   <div className="flex flex-wrap items-center gap-2.5 pt-6 border-t border-neutral-100 mt-6">
+                    <Link
+                      href={`/resources/${resource.id}`}
+                      className="py-2.5 px-5 bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-mono font-bold tracking-wider flex items-center justify-center gap-1.5 rounded-full cursor-pointer uppercase transition-all shadow-xs"
+                    >
+                      <BookOpen className="w-3.5 h-3.5" /> DOCS
+                    </Link>
                     {resource.liveUrl && (
                       <a
                         href={resource.liveUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="py-2.5 px-5 bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-mono font-bold tracking-wider flex items-center justify-center gap-1.5 rounded-full cursor-pointer uppercase transition-all shadow-xs"
+                        className="py-2.5 px-5 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 text-xs font-mono font-bold tracking-wider flex items-center justify-center gap-1.5 rounded-full cursor-pointer uppercase transition-all"
                       >
-                        <ExternalLink className="w-3.5 h-3.5" /> LIVE DEMO
+                        <ExternalLink className="w-3.5 h-3.5" /> DEMO
                       </a>
                     )}
                     {resource.githubUrl && (
@@ -184,7 +194,7 @@ export default function ResourcesView() {
                     )}
                     <button
                       onClick={() => handleDownloadMetric(resource.id)}
-                      className="py-2.5 px-5 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 text-xs font-mono font-bold tracking-wider flex items-center justify-center gap-1.5 rounded-full cursor-pointer uppercase transition-colors"
+                      className="py-2.5 px-5 border border-neutral-200 hover:border-neutral-900 text-neutral-900 text-xs font-mono font-bold tracking-wider flex items-center justify-center gap-1.5 rounded-full cursor-pointer uppercase transition-colors"
                       id={`download-btn-${resource.id}`}
                     >
                       <Download className="w-3.5 h-3.5" /> DOWNLOAD
