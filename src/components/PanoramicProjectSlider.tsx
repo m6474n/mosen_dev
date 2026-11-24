@@ -299,7 +299,7 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        className="w-full relative h-[540px] sm:h-[580px] md:h-[620px] flex items-center justify-center overflow-hidden cursor-grab active:cursor-grabbing touch-none"
+        className="w-full relative h-[560px] sm:h-[620px] md:h-[660px] lg:h-[680px] flex items-center justify-center overflow-hidden cursor-grab active:cursor-grabbing touch-none"
         style={{ perspective: 1200, perspectiveOrigin: '50% 50%' }}
       >
         <div
@@ -318,27 +318,25 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
             // Hide cards beyond 5-slide wide-angle visibility
             if (absDiff > 2.8) return null;
 
-            // ─── REVERSE WIDE-ANGLE PROJECTION MATH ───
-            // Center active slide slightly enlarged for visual presence; sides expand gradually
-            // d=0: scale: 0.92 (increased presence for active card)
-            // d=1: scale: 1.05
-            // d=2: scale: 1.20
-            const scale = 0.92 + Math.min(absDiff, 2.5) * 0.14;
+            // ─── NATURAL PERSPECTIVE PROJECTION MATH ───
+            // Center slide is dominant (1.0), side slides gracefully recede (0.86 down to 0.76)
+            // No clipping because side cards shrink naturally with distance instead of scaling up!
+            const scale = Math.max(0.74, 1 - absDiff * 0.1);
 
-            // Horizontal position across panoramic field - tighter near center, expanding outward
-            const x = diff * baseSpacing * (1 + absDiff * 0.18);
+            // Horizontal position across panoramic field
+            const x = diff * baseSpacing * (1 + absDiff * 0.08);
 
             // Angle inwards towards center (panoramic amphitheater curvature)
-            const rotateY = diff * -18 * (1 + absDiff * 0.15);
+            const rotateY = diff * -16 * (1 + absDiff * 0.1);
 
-            // Z-depth: push sides slightly back in space to maintain perspective curvature
-            const z = -Math.pow(absDiff, 1.4) * 45;
+            // Z-depth: push sides back in 3D space to match amphitheater depth
+            const z = -Math.pow(absDiff, 1.3) * 60;
 
             // Opacity & brightness: center is 1.0, sides slightly dimmed for contrast
-            const opacity = Math.max(0.25, 1 - absDiff * 0.22);
-            const brightness = Math.max(0.45, 1 - absDiff * 0.22);
+            const opacity = Math.max(0.3, 1 - absDiff * 0.22);
+            const brightness = Math.max(0.5, 1 - absDiff * 0.2);
 
-            // Higher zIndex for side cards so they expand over peripherals naturally
+            // Center card has highest zIndex so it sits cleanly on top of receding sides
             const zIndex = Math.round(50 - absDiff * 10);
             const isCenter = absDiff < 0.45;
 
@@ -362,7 +360,7 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
                   transformStyle: 'preserve-3d',
                   transition: isDraggingRef.current ? 'none' : 'filter 0.3s ease, border-color 0.3s ease',
                 }}
-                className={`absolute top-0 w-[295px] sm:w-[340px] md:w-[380px] lg:w-[410px] h-[500px] sm:h-[530px] md:h-[570px] cursor-pointer rounded-3xl border transition-all duration-300 ${isCenter
+                className={`absolute w-[290px] sm:w-[330px] md:w-[360px] lg:w-[390px] h-[480px] sm:h-[520px] md:h-[550px] cursor-pointer rounded-3xl border transition-all duration-300 ${isCenter
                   ? 'border-white/80 bg-neutral-900/95 shadow-[0_25px_80px_-10px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.4)] ring-1 ring-white/20'
                   : 'border-white/15 bg-neutral-900/80 shadow-[0_15px_45px_-10px_rgba(0,0,0,0.7)] hover:border-white/40'
                   } backdrop-blur-2xl flex flex-col justify-between overflow-hidden select-none`}
