@@ -42,18 +42,18 @@ const megaCategories: MegaCategory[] = [
     badge: 'SCRIPTS',
     items: [
       {
-        name: 'FastAPI Lead Agent',
-        desc: 'Playwright + Gemini AI scraping pipeline',
+        name: 'ClipForge AI Clipper',
+        desc: 'Offline local whisper transcription & reframing',
         href: '/resources',
         icon: Bot,
         tag: 'AI',
       },
       {
-        name: 'n8n Lead Router',
-        desc: 'Automated intent labeling & Slack triggers',
+        name: 'Kroma Browser Engine',
+        desc: 'Concurrent Chrome profile manager & scheduler',
         href: '/resources',
         icon: Workflow,
-        tag: 'n8n',
+        tag: 'AUTO',
       },
       {
         name: 'Workflow Systems',
@@ -88,21 +88,21 @@ const megaCategories: MegaCategory[] = [
     ],
   },
   {
-    title: 'TOOLS & GUIDES',
+    title: 'TOOLS & DOWNLOADS',
     badge: 'LIBRARY',
     items: [
       {
-        name: 'Swiss Bento Grids',
-        desc: 'Minimalist Tailwind card components',
-        href: '/resources',
-        icon: LayoutGrid,
-        tag: 'UI',
-      },
-      {
-        name: 'Hardware Serial Linker',
-        desc: 'Dart class for continuous scale streams',
+        name: 'YouTube Stream Downloader',
+        desc: 'yt-dlp 4K/1080p merging & MP3 audio extractor',
         href: '/resources',
         icon: Terminal,
+        tag: 'TOOL',
+      },
+      {
+        name: 'All Open Resources',
+        desc: 'Explore source code and README guides',
+        href: '/resources',
+        icon: LayoutGrid,
       },
       {
         name: 'Case Studies',

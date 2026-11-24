@@ -197,228 +197,91 @@ export const SERVICES: Service[] = [
 
 export const RESOURCES: Resource[] = [
   {
-    id: "fastapi-enricher-script",
-    title: "FastAPI Lead Enrichment Agent",
-    description: "A Python system using Playwright and Gemini to scrape, sanitize, and qualify target domains. Fits perfectly into automated lead collection schedules.",
-    type: "Script",
-    tags: ["Python", "FastAPI", "Gemini API", "Scrape"],
-    downloadCount: 421,
-    content: "Deploy this FastAPI microservice to scrape and enrich b2b prospects. It uses a headless browser to gather text copies and runs a precise JSON prompt inside the Gemini model to parse key ICP signals.",
-    codeBlock: `import os
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from playwright.async_api import async_playwright
-from google import genai
-from google.genai import types
+    id: "clipforge",
+    title: "ClipForge — Local AI Video Clipper",
+    description: "Turn any video URL into short, reframed, captioned clips entirely on your own machine. Runs whisper transcription, local heuristic viral scoring, and ffmpeg burning with zero cloud AI bills.",
+    type: "Product",
+    tags: ["Python", "FastAPI", "ffmpeg", "Whisper", "yt-dlp", "Ollama"],
+    downloadCount: 84,
+    content: `# ClipForge — Local AI Video Clipper
 
-app = FastAPI(title="Lead Enrichment Microservice")
+Turn any video URL into short, reframed, captioned clips — **entirely on your own machine**. No OpenAI/Anthropic/cloud AI calls.
 
-class DomainPayload(BaseModel):
-    url: str
+### Architecture Pipeline
+\`\`\`
+URL → download (yt-dlp) → transcribe w/ word timestamps (faster-whisper)
+    → select N clips (LOCAL heuristic; optional local Ollama)
+    → per clip: cut + reframe (crop-fill | rounded 1:1 square on 9:16) + burn styled captions (ASS) via ffmpeg
+    → .mp4 + preview/download URLs
+\`\`\`
 
-class QualificationResult(BaseModel):
-    is_good_fit: bool
-    confidence_score: float
-    summary: str
-    target_emails: list[str]
-
-@app.post("/enrich", response_model=QualificationResult)
-async def enrich_domain(payload: DomainPayload):
-    # Initialize the Gemini API client safely
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key:
-        raise HTTPException(status_code=500, detail="GEMINI_API_KEY is not configured")
-    
-    ai_client = genai.Client(api_key=api_key)
-    
-    # 1. Scrape content using Playwright
-    scraped_text = ""
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        try:
-            page = await browser.new_page()
-            # Set direct timeout limits to keep it speed-optimized
-            await page.goto(payload.url, timeout=12000, wait_until="domcontentloaded")
-            scraped_text = await page.evaluate("() => document.body.innerText")
-            scraped_text = " ".join(scraped_text.split()[:1200]) # Cap content bounds
-        except Exception as e:
-            raise HTTPException(status_code=400, detail=f"Failed to access URL: {str(e)}")
-        finally:
-            await browser.close()
-            
-    # 2. Score using Gemini Structured Output Schema
-    try:
-        response = ai_client.models.generate_content(
-            model='gemini-2.5-flash',
-            contents=f"Analyze this company website text for ICP fit matching: High-growth SaaS, Tech, or B2B Operations:\\n\\n{scraped_text}",
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-                response_schema=QualificationResult,
-                temperature=0.1
-            ),
-        )
-        return response.text
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"LLM Qualification error: {str(e)}")
-`
+### Key Features
+- **Zero API bills**: Whisper medium model loads on CUDA (or CPU fallback).
+- **Automated Reframing**: Crops 16:9 widescreen to 9:16 Reels/TikTok formats with centered auto-masks.
+- **Dynamic Word-by-Word Captions**: Burns styled kinetic subtitle animations via custom ASS ffmpeg filters.
+- **FastAPI Core**: Async background jobs with Server-Sent Events (SSE) progress streaming.`,
+    codeBlock: `git clone https://github.com/m6474n/clipforge.git
+cd clipforge
+python -m venv .venv
+source .venv/bin/activate # or .venv\\Scripts\\Activate.ps1
+pip install -r requirements.txt
+uvicorn app.main:app --reload`,
+    fileUrl: "https://github.com/m6474n/clipforge/archive/refs/heads/main.zip",
+    githubUrl: "https://github.com/m6474n/clipforge",
+    liveUrl: "https://github.com/m6474n/clipforge",
+    imageUrl: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=1200&auto=format&fit=crop",
+    isPremium: false,
   },
   {
-    id: "flutter-serial-coms",
-    title: "Flutter Serial Port Hardware Linker",
-    description: "Dart class to communicate with weighbridge indicators, microcontrollers, and serial interfaces securely with continuous stream handling.",
+    id: "kroma",
+    title: "Kroma — Concurrent Browser Profile Engine",
+    description: "Multi-account Chrome profile manager and concurrent browser automation engine with independent timers, OAuth linking, and live streaming dashboard.",
     type: "Script",
-    tags: ["Flutter", "Dart", "Serial Port", "Hardware"],
-    downloadCount: 184,
-    content: "Native serial reader class designed for Flutter Desktop environments. Configures continuous asynchronous checks and decodes bulk buffer feeds securely.",
-    codeBlock: `import 'dart:async';
-import 'dart:typed_data';
-import 'package:flutter_libserialport/flutter_libserialport';
+    tags: ["TypeScript", "Playwright", "Chrome", "Automation", "OAuth"],
+    downloadCount: 112,
+    content: `# Kroma — Browser Profile Automation Engine
 
-class SerialIndicatorStreamer {
-  final String portName;
-  final int baudRate;
-  
-  SerialPort? _port;
-  StreamController<String>? _controller;
-  StreamSubscription? _subscription;
-  bool _isRunning = false;
+Multi-account Chrome profile orchestrator built for high-scale browser tasks, independent session cookies, and concurrent profile executions.
 
-  SerialIndicatorStreamer({required this.portName, this.baudRate = 9600});
-
-  Stream<String> get weightStream {
-    _controller = StreamController<String>(
-      onStart: _startReading,
-      onCancel: _stopReading,
-    );
-    return _controller!.stream;
-  }
-
-  void _startReading() {
-    _port = SerialPort(portName);
-    if (!_port!.openReadWrite()) {
-      _controller?.addError("Failed to open serial port: \$portName");
-      return;
-    }
-
-    _port!.config = SerialPortConfig()
-      ..baudRate = baudRate
-      ..bits = 8
-      ..stopBits = 1
-      ..parity = SerialPortParity.none;
-
-    _isRunning = true;
-    _readLoop();
-  }
-
-  Future<void> _readLoop() async {
-    final reader = SerialPortReader(_port!);
-    StringBuffer buffer = StringBuffer();
-
-    await for (final Uint8List chunk in reader.stream) {
-      if (!_isRunning) break;
-      final String decoded = String.fromCharCodes(chunk);
-      buffer.write(decoded);
-
-      // Parse payload frames delimited by standard Carriage Return
-      if (buffer.toString().contains('\\r')) {
-        final parts = buffer.toString().split('\\r');
-        for (int i = 0; i < parts.length - 1; i++) {
-          final String frame = parts[i].trim();
-          if (frame.isNotEmpty) {
-            _controller?.add(frame);
-          }
-        }
-        buffer.clear();
-        buffer.write(parts.last);
-      }
-    }
-  }
-
-  void _stopReading() {
-    _isRunning = false;
-    _port?.close();
-    _controller?.close();
-  }
-}`
+### Capabilities
+- **Isolated Sandbox Environments**: Complete separation of localStorage, IndexedDB, cookies, and fingerprint headers.
+- **Concurrent Execution Controller**: Pool scheduler managing RAM footprints across heavy Chromium processes.
+- **OAuth Session Vault**: Secure credential storage and session persistence across automation workflows.`,
+    codeBlock: `git clone https://github.com/m6474n/kroma.git
+cd kroma
+npm install
+npm run build
+npm start`,
+    fileUrl: "https://github.com/m6474n/kroma/archive/refs/heads/main.zip",
+    githubUrl: "https://github.com/m6474n/kroma",
+    liveUrl: "https://github.com/m6474n/kroma",
+    imageUrl: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1200&auto=format&fit=crop",
+    isPremium: false,
   },
   {
-    id: "tailwind-bento-card-utilities",
-    title: "Tailwind Swiss Bento Grid Components",
-    description: "Ready-to-copy HTML & Tailwind utility CSS templates to set up gorgeous minimalist boards, cards, and structured headers.",
+    id: "youtube-video-downloader",
+    title: "Fast YouTube Video & Audio Downloader",
+    description: "Fast & reliable video/audio downloading engine powered by yt-dlp with 4K/1080p stream merging, high-bitrate MP3 extraction, and JS challenge bypass.",
     type: "Utility",
-    tags: ["Tailwind CSS", "React", "CSS", "Bento Grid"],
-    downloadCount: 619,
-    content: "Paste this markup component to instantly structure a Swiss-design grid complete with strict high-contrast lines, asymmetric scales, and elegant hovering callbacks.",
-    codeBlock: `import React from 'react';
+    tags: ["Python", "yt-dlp", "ffmpeg", "Audio", "Video"],
+    downloadCount: 156,
+    content: `# YouTube Stream Downloader & Merger
 
-export default function BentoShowcase() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-neutral-200 p-px">
-      {/* Featured Card */}
-      <div className="md:col-span-2 bg-white p-12 hover:bg-neutral-50 transition duration-300">
-        <span className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400">01 / BRAND</span>
-        <h3 className="mt-6 text-3xl font-light uppercase tracking-tight text-neutral-900">SYSTEM ARCHITECTURE</h3>
-        <p className="mt-4 text-sm font-light leading-relaxed text-neutral-500 max-w-md">
-          A rigid grid framework featuring pure white backgrounds, 1-pixel borders, and strong, capitalized typography accents.
-        </p>
-      </div>
+High-speed extraction pipeline for YouTube media, integrating audio/video muxing and automated ffmpeg remuxing.
 
-      {/* Stats Card */}
-      <div className="bg-white p-12 flex flex-col justify-between hover:bg-neutral-50 transition duration-300">
-        <span className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400">02 / OUTCOME</span>
-        <div className="my-8">
-          <div className="text-6xl font-light tracking-tight text-neutral-900">100%</div>
-          <div className="mt-2 text-xs font-semibold uppercase tracking-wider text-neutral-400">AUTOMATION COVERAGE</div>
-        </div>
-      </div>
-    </div>
-  );
-}`
-  },
-  {
-    id: "n8n-gmail-filter-json",
-    title: "n8n Outbox Leads Filter Workflow",
-    description: "Exportable JSON structure to set up automated labeling, custom Slack alerts, and lead state changes when high-intent prospects reply.",
-    type: "Template",
-    tags: ["n8n", "JSON", "Automation", "Workflow"],
-    downloadCount: 302,
-    content: "Copy this workflow JSON directly into your local n8n workflow editor. It establishes automated Webhooks, evaluates mail headers, and maps responses against client spreadsheets.",
-    codeBlock: `{
-  "nodes": [
-    {
-      "parameters": {
-        "pollTimes": {
-          "item": [{"mode": "everyMinute"}]
-        },
-        "simple": false,
-        "filters": {
-          "q": "is:unread label:inbox"
-        }
-      },
-      "name": "Gmail Trigger",
-      "type": "n8n-nodes-base.gmailTrigger",
-      "typeVersion": 1,
-      "position": [240, 300]
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "string": [
-            {
-              "value1": "={{ $node[\\"Gmail Trigger\\"].json[\\"snippet\\"] }}",
-              "operation": "contains",
-              "value2": "pricing"
-            }
-          ]
-        }
-      },
-      "name": "Check Intent",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 1,
-      "position": [460, 300]
-    }
-  ]
-}`
+### Highlights
+- **4K/1080p Stream Merging**: Bypasses separate DASH audio/video streams and remuxes into clean MP4.
+- **Lossless Audio Conversion**: Extracts audio tracks into 320kbps MP3s with full metadata tags.
+- **Challenge Solver**: Handles cipher signatures and age-gated media streams cleanly.`,
+    codeBlock: `git clone https://github.com/m6474n/youtube_video_downloader.git
+cd youtube_video_downloader
+pip install -r requirements.txt
+python main.py`,
+    fileUrl: "https://github.com/m6474n/youtube_video_downloader/archive/refs/heads/main.zip",
+    githubUrl: "https://github.com/m6474n/youtube_video_downloader",
+    liveUrl: "https://github.com/m6474n/youtube_video_downloader",
+    imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop",
+    isPremium: false,
   }
 ];
 
