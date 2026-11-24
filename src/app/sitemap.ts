@@ -2,6 +2,7 @@ import { MetadataRoute } from 'next';
 import { BASE_URL } from '@/lib/seo';
 import { getApps, initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { CASE_STUDIES, RESOURCES, BLOG_POSTS } from '@/data';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -28,55 +29,98 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === '' ? 1.0 : 0.8
   }));
 
-  let dynamicRoutes: MetadataRoute.Sitemap = [];
+  // Map to hold unique URLs
+  const dynamicMap = new Map<string, { url: string; lastModified: Date; changeFrequency: 'monthly'; priority: number }>();
 
-  // Try to load dynamic blogs, projects, and resources directly from Firestore/seed
+  // 1. Seed fallback dynamic items first (so sitemap is NEVER empty even during SSG build)
+  BLOG_POSTS.forEach(b => {
+    dynamicMap.set(`${BASE_URL}/blog/${b.slug}`, {
+      url: `${BASE_URL}/blog/${b.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7
+    });
+  });
+
+  CASE_STUDIES.forEach(cs => {
+    dynamicMap.set(`${BASE_URL}/projects/${cs.id}`, {
+      url: `${BASE_URL}/projects/${cs.id}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8
+    });
+  });
+
+  RESOURCES.forEach(r => {
+    dynamicMap.set(`${BASE_URL}/resources/${r.id}`, {
+      url: `${BASE_URL}/resources/${r.id}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7
+    });
+  });
+
+  // 2. Fetch live Firestore items if available to augment/override
   if (firebaseConfig.apiKey && firebaseConfig.projectId) {
     try {
       const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
       const db = getFirestore(app);
 
-      // Dynamic blogs URLs
-      const blogsSnap = await getDocs(collection(db, 'blogs'));
-      const blogUrls = blogsSnap.docs.map(doc => {
-        const data = doc.data();
-        return {
-          url: `${BASE_URL}/blog/${data.slug || doc.id}`,
-          lastModified: data.lastModified ? new Date(data.lastModified) : new Date(),
-          changeFrequency: 'monthly' as const,
-          priority: 0.7
-        };
-      });
+      const [blogsSnap, projectsSnap, resourcesSnap] = await Promise.all([
+        getDocs(collection(db, 'blogs')).catch(() => null),
+        getDocs(collection(db, 'projects')).catch(() => null),
+        getDocs(collection(db, 'resources')).catch(() => null),
+      ]);
 
-      // Dynamic projects URLs
-      const projectsSnap = await getDocs(collection(db, 'projects'));
-      const projectUrls = projectsSnap.docs.map(doc => {
-        const data = doc.data();
-        return {
-          url: `${BASE_URL}/projects/${data.slug || doc.id}`,
-          lastModified: data.lastModified ? new Date(data.lastModified) : new Date(),
-          changeFrequency: 'monthly' as const,
-          priority: 0.8
-        };
-      });
+      if (blogsSnap) {
+        blogsSnap.docs.forEach(doc => {
+          const data = doc.data();
+          const slug = data.slug || doc.id;
+          if (slug) {
+            dynamicMap.set(`${BASE_URL}/blog/${slug}`, {
+              url: `${BASE_URL}/blog/${slug}`,
+              lastModified: data.lastModified ? new Date(data.lastModified) : new Date(),
+              changeFrequency: 'monthly',
+              priority: 0.7
+            });
+          }
+        });
+      }
 
-      // Dynamic resources URLs
-      const resourcesSnap = await getDocs(collection(db, 'resources'));
-      const resourceUrls = resourcesSnap.docs.map(doc => {
-        const data = doc.data();
-        return {
-          url: `${BASE_URL}/resources/${data.id || doc.id}`,
-          lastModified: data.lastModified ? new Date(data.lastModified) : new Date(),
-          changeFrequency: 'monthly' as const,
-          priority: 0.7
-        };
-      });
+      if (projectsSnap) {
+        projectsSnap.docs.forEach(doc => {
+          const data = doc.data();
+          const slug = data.slug || doc.id;
+          if (slug) {
+            dynamicMap.set(`${BASE_URL}/projects/${slug}`, {
+              url: `${BASE_URL}/projects/${slug}`,
+              lastModified: data.lastModified ? new Date(data.lastModified) : new Date(),
+              changeFrequency: 'monthly',
+              priority: 0.8
+            });
+          }
+        });
+      }
 
-      dynamicRoutes = [...blogUrls, ...projectUrls, ...resourceUrls];
+      if (resourcesSnap) {
+        const dummyIds = new Set(['fastapi-enricher-script', 'flutter-serial-coms', 'tailwind-bento-card-utilities', 'n8n-gmail-filter-json']);
+        resourcesSnap.docs.forEach(doc => {
+          const data = doc.data();
+          const id = data.id || doc.id;
+          if (id && !dummyIds.has(id)) {
+            dynamicMap.set(`${BASE_URL}/resources/${id}`, {
+              url: `${BASE_URL}/resources/${id}`,
+              lastModified: data.lastModified ? new Date(data.lastModified) : new Date(),
+              changeFrequency: 'monthly',
+              priority: 0.7
+            });
+          }
+        });
+      }
     } catch (e) {
-      console.error('Error generating dynamic sitemap routes:', e);
+      console.warn('Sitemap live fetch warning:', e);
     }
   }
 
-  return [...staticRoutes, ...dynamicRoutes];
+  return [...staticRoutes, ...Array.from(dynamicMap.values())];
 }
