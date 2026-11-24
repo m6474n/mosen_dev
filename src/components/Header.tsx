@@ -20,6 +20,7 @@ import {
   BookOpen,
   Sparkles,
 } from 'lucide-react';
+import { useData } from '@/context/DataContext';
 import { Button } from '@/components/ui/button';
 
 interface MegaItem {
@@ -115,6 +116,7 @@ const megaCategories: MegaCategory[] = [
 ];
 
 export default function Header() {
+  const { resources } = useData();
   const pathname = usePathname();
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
@@ -295,7 +297,51 @@ export default function Header() {
               className="hidden md:block absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[calc(100vw-2rem)] max-w-4xl rounded-3xl border border-white/80 bg-white/85 backdrop-blur-2xl backdrop-saturate-180 shadow-[0_24px_60px_rgba(0,0,0,0.12)] ring-1 ring-black/[0.04] p-6 overflow-hidden pointer-events-auto"
             >
               <div className="grid grid-cols-3 gap-6">
-                {megaCategories.map((category) => (
+                {/* Column 1: Live Real Resources from Database/Store */}
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-neutral-200/60">
+                    <span className="text-[10px] font-extrabold tracking-widest text-neutral-400 uppercase">
+                      OPEN RESOURCES & SCRIPTS
+                    </span>
+                    <span className="text-[9px] font-mono text-neutral-400 font-bold tracking-wider">
+                      {resources.length} ITEMS
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    {resources.slice(0, 3).map((res) => (
+                      <Link
+                        key={res.id}
+                        href="/resources"
+                        onClick={() => setResourcesOpen(false)}
+                        className="group flex items-start gap-3 p-2.5 rounded-2xl transition-all duration-200 hover:bg-neutral-900/[0.04] border border-transparent hover:border-neutral-200/60"
+                      >
+                        <div className="w-8 h-8 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 text-neutral-700 group-hover:bg-neutral-950 group-hover:text-white transition-colors duration-200 mt-0.5">
+                          <Terminal className="w-4 h-4" />
+                        </div>
+                        <div className="flex flex-col min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs font-semibold text-neutral-900 group-hover:text-neutral-950 tracking-tight truncate">
+                              {res.title}
+                            </span>
+                            <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-neutral-100 text-neutral-600 group-hover:bg-neutral-200 shrink-0">
+                              {res.type}
+                            </span>
+                          </div>
+                          <span className="text-[11px] font-light text-neutral-500 leading-snug line-clamp-1">
+                            {res.description}
+                          </span>
+                        </div>
+                      </Link>
+                    ))}
+                    {resources.length === 0 && (
+                      <span className="text-[11px] text-neutral-400 p-2 font-mono">No resources published.</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Column 2 & 3: Production Apps and Case Studies */}
+                {megaCategories.slice(1).map((category) => (
                   <div key={category.title} className="flex flex-col gap-3">
                     <div className="flex items-center justify-between pb-2 border-b border-neutral-200/60">
                       <span className="text-[10px] font-extrabold tracking-widest text-neutral-400 uppercase">
