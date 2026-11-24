@@ -105,12 +105,6 @@ const megaCategories: MegaCategory[] = [
         href: '/resources',
         icon: LayoutGrid,
       },
-      {
-        name: 'Case Studies',
-        desc: 'Production teardowns & verified metrics',
-        href: '/case-studies',
-        icon: BookOpen,
-      },
     ],
   },
 ];
@@ -398,13 +392,6 @@ export default function Header() {
                 </div>
                 <div className="flex items-center gap-4">
                   <Link
-                    href="/case-studies"
-                    onClick={() => setResourcesOpen(false)}
-                    className="text-[11px] font-bold uppercase tracking-wider text-neutral-500 hover:text-neutral-950 transition-colors"
-                  >
-                    CASE STUDIES
-                  </Link>
-                  <Link
                     href="/resources"
                     onClick={() => setResourcesOpen(false)}
                     className="inline-flex items-center gap-1 font-bold uppercase tracking-wider text-neutral-950 hover:text-neutral-600 transition-colors text-[11px]"
@@ -480,13 +467,6 @@ export default function Header() {
                                 className="block px-3 py-1.5 text-[11px] font-semibold text-neutral-900 uppercase hover:text-neutral-600"
                               >
                                 → Automation Services
-                              </Link>
-                              <Link
-                                href="/case-studies"
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="block px-3 py-1.5 text-[11px] font-semibold text-neutral-900 uppercase hover:text-neutral-600"
-                              >
-                                → Production Case Studies
                               </Link>
                             </motion.div>
                           )}
