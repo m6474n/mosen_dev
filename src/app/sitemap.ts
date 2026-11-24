@@ -16,8 +16,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
     '',
     '/about',
+    '/projects',
     '/services',
-    '/case-studies',
     '/blog',
     '/resources',
     '/contact'
@@ -30,7 +30,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   let dynamicRoutes: MetadataRoute.Sitemap = [];
 
-  // Try to load dynamic blogs and case studies directly from Firestore to include in sitemap
+  // Try to load dynamic blogs, projects, and resources directly from Firestore/seed
   if (firebaseConfig.apiKey && firebaseConfig.projectId) {
     try {
       const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
@@ -41,26 +41,38 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const blogUrls = blogsSnap.docs.map(doc => {
         const data = doc.data();
         return {
-          url: `${BASE_URL}/blog/${data.slug}`,
+          url: `${BASE_URL}/blog/${data.slug || doc.id}`,
           lastModified: data.lastModified ? new Date(data.lastModified) : new Date(),
-          changeFrequency: 'monthly' as const,
-          priority: 0.6
-        };
-      });
-
-      // Dynamic case studies URLs
-      const csSnap = await getDocs(collection(db, 'case_studies'));
-      const csUrls = csSnap.docs.map(doc => {
-        const data = doc.data();
-        return {
-          url: `${BASE_URL}/case-studies/${doc.id}`,
-          lastModified: new Date(),
           changeFrequency: 'monthly' as const,
           priority: 0.7
         };
       });
 
-      dynamicRoutes = [...blogUrls, ...csUrls];
+      // Dynamic projects URLs
+      const projectsSnap = await getDocs(collection(db, 'projects'));
+      const projectUrls = projectsSnap.docs.map(doc => {
+        const data = doc.data();
+        return {
+          url: `${BASE_URL}/projects/${data.slug || doc.id}`,
+          lastModified: data.lastModified ? new Date(data.lastModified) : new Date(),
+          changeFrequency: 'monthly' as const,
+          priority: 0.8
+        };
+      });
+
+      // Dynamic resources URLs
+      const resourcesSnap = await getDocs(collection(db, 'resources'));
+      const resourceUrls = resourcesSnap.docs.map(doc => {
+        const data = doc.data();
+        return {
+          url: `${BASE_URL}/resources/${data.id || doc.id}`,
+          lastModified: data.lastModified ? new Date(data.lastModified) : new Date(),
+          changeFrequency: 'monthly' as const,
+          priority: 0.7
+        };
+      });
+
+      dynamicRoutes = [...blogUrls, ...projectUrls, ...resourceUrls];
     } catch (e) {
       console.error('Error generating dynamic sitemap routes:', e);
     }

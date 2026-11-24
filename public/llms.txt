@@ -31,9 +31,9 @@ GitHub: https://github.com/m6474n
 
 ## Content
 
-- Blog (technical essays on engineering & design): https://mosen.dev/blog
-- Case Studies (commercial system case analyses): https://mosen.dev/case-studies
-- Open Vault (developer resources & scripts): https://mosen.dev/resources
+- Projects (production apps, ERPs & trading platforms): https://mosen.dev/projects
+- Blog (technical essays on engineering & automation): https://mosen.dev/blog
+- Resources Vault (developer tools, CLI utilities & scripts): https://mosen.dev/resources
 
 ## Sitemap
 
