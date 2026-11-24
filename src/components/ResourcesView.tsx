@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Search, Download, Copy, Check, Terminal, FileCode, Sliders, ExternalLink, Github, BookOpen, Code2 } from 'lucide-react';
 import { useData } from '../context/DataContext';
-import { stripHtml } from '../lib/richText';
+import { stripHtml, stripMarkdown } from '../lib/richText';
 import { Resource } from '../types';
 import DefaultPageLayout, { Container } from './DefaultPageLayout';
 import DynamicPageHeader from './DynamicPageHeader';
@@ -151,10 +151,18 @@ export default function ResourcesView() {
                       {resource.title}
                     </h3>
 
-                    {/* Extended Description */}
-                    <p className="text-xs sm:text-[13px] font-light text-neutral-600 leading-relaxed mb-6 whitespace-pre-wrap max-h-60 overflow-y-auto pr-2 selection:bg-neutral-900 selection:text-white">
-                      {resource.description || resource.content}
-                    </p>
+                    {/* Runtime-Cleaned Markdown Description: full prose without raw formatting symbols */}
+                    <div className="text-xs sm:text-[13px] font-light text-neutral-600 leading-relaxed mb-6 max-h-72 overflow-y-auto pr-3 selection:bg-neutral-900 selection:text-white space-y-3 font-sans">
+                      {stripMarkdown(resource.description || resource.content)
+                        .split('\n\n')
+                        .filter(Boolean)
+                        .slice(0, 5)
+                        .map((paragraph, pIdx) => (
+                          <p key={pIdx} className="leading-relaxed">
+                            {paragraph}
+                          </p>
+                        ))}
+                    </div>
 
                     {/* Tags */}
                     <div className="flex flex-wrap gap-1.5 mb-6">
