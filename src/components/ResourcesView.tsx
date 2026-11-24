@@ -151,18 +151,14 @@ export default function ResourcesView() {
                       {resource.title}
                     </h3>
 
-                    {/* Runtime-Cleaned Markdown Description: full prose without raw formatting symbols */}
-                    <div className="text-xs sm:text-[13px] font-light text-neutral-600 leading-relaxed mb-6 max-h-72 overflow-y-auto pr-3 selection:bg-neutral-900 selection:text-white space-y-3 font-sans">
+                    {/* Runtime-Cleaned Markdown Description: formatted as continuous 3-4 line clamped text */}
+                    <p className="text-xs sm:text-[13px] font-light text-neutral-600 leading-relaxed mb-6 line-clamp-4 selection:bg-neutral-900 selection:text-white font-sans">
                       {stripMarkdown(resource.description || resource.content)
-                        .split('\n\n')
+                        .split('\n')
+                        .map((s) => s.trim())
                         .filter(Boolean)
-                        .slice(0, 5)
-                        .map((paragraph, pIdx) => (
-                          <p key={pIdx} className="leading-relaxed">
-                            {paragraph}
-                          </p>
-                        ))}
-                    </div>
+                        .join(' ')}
+                    </p>
 
                     {/* Tags */}
                     <div className="flex flex-wrap gap-1.5 mb-6">
