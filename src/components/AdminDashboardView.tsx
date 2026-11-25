@@ -35,7 +35,107 @@ import { marked } from 'marked';
 
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
-// ─── Cloudinary Image Uploader Widget ─────────────────────────────────────────
+// Helper function to extract metadata and body from raw pasted markdown / frontmatter
+function parseMarkdownWithFrontmatter(rawText: string): {
+  metadata: {
+    title?: string;
+    slug?: string;
+    description?: string;
+    category?: string;
+    tags?: string[];
+    reading_time?: string;
+    published_date?: string;
+  };
+  bodyHtml: string;
+  bodyMarkdown: string;
+} {
+  let text = rawText.trim();
+  const metadata: any = {};
+
+  // Check if starts with YAML frontmatter delimiter --- or key-value headers
+  const frontmatterRegex = /^(?:---[\r\n]+([\s\S]*?)[\r\n]+---|(?:title:\s*["'][^"']+["'][\s\S]*?(?:reading_time:\s*["'][^"']+["']|keywords:[\s\S]*?\n\n)))/i;
+  const match = text.match(frontmatterRegex);
+
+  let headerPart = '';
+  let bodyPart = text;
+
+  if (match) {
+    headerPart = match[1] || match[0];
+    bodyPart = text.slice(match[0].length).trim();
+  } else {
+    // If user pasted key-value headers directly at top without ---
+    const lines = text.split('\n');
+    let headerLines: string[] = [];
+    let splitIndex = -1;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (/^(title|slug|description|author|author_title|published_date|category|tags|keywords|reading_time):/i.test(line)) {
+        headerLines.push(line);
+      } else if (headerLines.length > 0 && /^[a-z0-9_\-\s]+$/i.test(line) && !line.startsWith('#')) {
+        // Multi-line list item under tags or keywords
+        headerLines.push(line);
+      } else if (headerLines.length > 0 && (line.startsWith('#') || line.length === 0)) {
+        // Start of markdown body
+        splitIndex = i;
+        break;
+      }
+    }
+
+    if (headerLines.length >= 2 && splitIndex !== -1) {
+      headerPart = headerLines.join('\n');
+      bodyPart = lines.slice(splitIndex).join('\n').trim();
+    }
+  }
+
+  // Parse header lines
+  if (headerPart) {
+    const titleMatch = headerPart.match(/title:\s*["']?([^"'\r\n]+)["']?/i);
+    if (titleMatch) metadata.title = titleMatch[1].trim();
+
+    const slugMatch = headerPart.match(/slug:\s*["']?([^"'\r\n]+)["']?/i);
+    if (slugMatch) metadata.slug = slugMatch[1].trim();
+
+    const descMatch = headerPart.match(/description:\s*["']?([^"'\r\n]+)["']?/i);
+    if (descMatch) metadata.description = descMatch[1].trim();
+
+    const catMatch = headerPart.match(/category:\s*["']?([^"'\r\n]+)["']?/i);
+    if (catMatch) metadata.category = catMatch[1].trim();
+
+    const readTimeMatch = headerPart.match(/reading_time:\s*["']?([^"'\r\n]+)["']?/i);
+    if (readTimeMatch) metadata.reading_time = readTimeMatch[1].trim();
+
+    const dateMatch = headerPart.match(/published_date:\s*["']?([^"'\r\n]+)["']?/i);
+    if (dateMatch) metadata.published_date = dateMatch[1].trim();
+
+    // Extract tags: either inline comma-separated or multi-line list
+    const tagsSection = headerPart.match(/tags:([\s\S]*?)(?:keywords:|reading_time:|author:|published_date:|$)/i);
+    if (tagsSection && tagsSection[1]) {
+      const rawTags = tagsSection[1]
+        .split('\n')
+        .map(t => t.replace(/^[-*]\s*/, '').trim())
+        .filter(t => t && !t.includes(':'));
+      if (rawTags.length > 0) {
+        metadata.tags = rawTags;
+      }
+    }
+  }
+
+  // If title was not in frontmatter, look for first H1 header
+  if (!metadata.title) {
+    const h1Match = bodyPart.match(/^#\s+(.+)$/m);
+    if (h1Match) metadata.title = h1Match[1].trim();
+  }
+
+  // Parse markdown body into styled HTML
+  const bodyHtml = marked.parse(bodyPart) as string;
+
+  return {
+    metadata,
+    bodyHtml,
+    bodyMarkdown: bodyPart,
+  };
+}
 const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'mosen-dcfde';
 const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'mosen_preset';
 
@@ -1012,8 +1112,35 @@ export default function AdminDashboardView() {
 
                       {blogEditorMode === 'markdown' && (
                         <div className="flex flex-col gap-2">
-                          <div className="text-[11px] text-neutral-500 font-mono bg-neutral-50 p-2.5 border border-neutral-200">
-                            💡 Paste raw GitHub/Obsidian Markdown here. Headers (#), code blocks (```), lists, and images will be parsed into styled HTML upon save.
+                          <div className="text-[11px] text-neutral-600 font-mono bg-neutral-50 p-3 border border-neutral-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                            <span>
+                              💡 <strong>Smart Importer:</strong> Paste any raw Markdown (with or without frontmatter). Title, slug, description, tags, and reading time will be extracted automatically into the fields above.
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (!markdownInput.trim()) return;
+                                const parsed = parseMarkdownWithFrontmatter(markdownInput);
+                                setEditingBlog(prev => {
+                                  if (!prev) return prev;
+                                  return {
+                                    ...prev,
+                                    title: parsed.metadata.title || prev.title,
+                                    slug: parsed.metadata.slug || prev.slug,
+                                    excerpt: parsed.metadata.description || prev.excerpt,
+                                    readTime: parsed.metadata.reading_time || prev.readTime,
+                                    categories: parsed.metadata.category ? [parsed.metadata.category] : prev.categories,
+                                    tags: parsed.metadata.tags && parsed.metadata.tags.length > 0 ? parsed.metadata.tags : prev.tags,
+                                    publishedAt: parsed.metadata.published_date || prev.publishedAt,
+                                    contentHtml: parsed.bodyHtml,
+                                  };
+                                });
+                                setMarkdownInput(parsed.bodyMarkdown);
+                              }}
+                              className="px-3 py-1 bg-neutral-950 hover:bg-neutral-800 text-white text-[10px] font-mono font-bold uppercase tracking-wider rounded-none cursor-pointer shrink-0"
+                            >
+                              Auto-Extract Fields
+                            </button>
                           </div>
                           <textarea
                             rows={15}
@@ -1021,9 +1148,24 @@ export default function AdminDashboardView() {
                             onChange={(e) => {
                               const val = e.target.value;
                               setMarkdownInput(val);
-                              setEditingBlog({ ...editingBlog, contentHtml: marked.parse(val) as string });
+                              // Auto parse on paste or change
+                              const parsed = parseMarkdownWithFrontmatter(val);
+                              setEditingBlog(prev => {
+                                if (!prev) return prev;
+                                return {
+                                  ...prev,
+                                  title: parsed.metadata.title || prev.title,
+                                  slug: parsed.metadata.slug || prev.slug,
+                                  excerpt: parsed.metadata.description || prev.excerpt,
+                                  readTime: parsed.metadata.reading_time || prev.readTime,
+                                  categories: parsed.metadata.category ? [parsed.metadata.category] : prev.categories,
+                                  tags: parsed.metadata.tags && parsed.metadata.tags.length > 0 ? parsed.metadata.tags : prev.tags,
+                                  publishedAt: parsed.metadata.published_date || prev.publishedAt,
+                                  contentHtml: parsed.bodyHtml,
+                                };
+                              });
                             }}
-                            placeholder="# My Technical Essay Title&#10;&#10;Paste markdown paragraphs, ## Subheadings, `inline code`, or code blocks here..."
+                            placeholder="Paste raw Markdown with or without YAML frontmatter here...&#10;&#10;title: &quot;My Article Title&quot;&#10;slug: &quot;my-article-title&quot;&#10;description: &quot;Short summary...&quot;&#10;&#10;# Article Body..."
                             className="w-full border border-neutral-200 p-4 text-xs bg-white rounded-none font-mono leading-relaxed resize-y focus:outline-hidden focus:border-neutral-950"
                           />
                         </div>
