@@ -238,7 +238,7 @@ body {
 
 .prose p {
   margin-bottom: 0;
-  line-height: 1;
+  line-height: 1.7;
 }
 
 .prose p:empty,
