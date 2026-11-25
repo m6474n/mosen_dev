@@ -140,9 +140,10 @@ function parseMarkdownWithFrontmatter(rawText: string): {
   // Parse markdown body into styled HTML
   const rawHtml = marked.parse(cleanedBody) as string;
 
-  // Clean empty HTML paragraphs like <p></p> or <p><br></p> produced by Quill or marked
+  // Clean empty HTML paragraphs and unwrap unnecessary loose <p> tags inside <li> items
   const bodyHtml = rawHtml
     .replace(/<p>\s*(?:<br\s*\/?>)?\s*<\/p>/gi, '')
+    .replace(/<li>\s*<p>([\s\S]*?)<\/p>\s*<\/li>/gi, (_match, content) => `<li>${content}</li>`)
     .trim();
 
   return {
@@ -367,7 +368,10 @@ export default function AdminDashboardView({ initialSection = 'dashboard' }: Adm
         finalHtml = parsed.bodyHtml;
       }
       if (finalHtml) {
-        finalHtml = finalHtml.replace(/<p>\s*(?:<br\s*\/?>)?\s*<\/p>/gi, '').trim();
+        finalHtml = finalHtml
+          .replace(/<p>\s*(?:<br\s*\/?>)?\s*<\/p>/gi, '')
+          .replace(/<li>\s*<p>([\s\S]*?)<\/p>\s*<\/li>/gi, (_match, content) => `<li>${content}</li>`)
+          .trim();
       }
       
       const cleanSlug = (editingBlog.slug || editingBlog.title || 'untitled-post')
