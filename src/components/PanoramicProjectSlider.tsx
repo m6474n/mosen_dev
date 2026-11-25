@@ -208,8 +208,8 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
   };
 
   // Wide-angle card spacing calculations (visible 5 cards: -2, -1, 0, 1, 2)
-  // Tightened spacing around active/center slide
-  const baseSpacing = Math.min(Math.max(windowWidth * 0.17, 210), 280);
+  // Adjusted spacing to comfortably accommodate wider slides across resolutions
+  const baseSpacing = Math.min(Math.max(windowWidth * 0.22, 260), 380);
 
   return (
     <section
@@ -361,7 +361,11 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
                   transformStyle: 'preserve-3d',
                   transition: isDraggingRef.current ? 'none' : 'filter 0.3s ease, border-color 0.3s ease',
                 }}
-                className={`absolute w-[290px] sm:w-[330px] md:w-[360px] lg:w-[390px] h-[480px] sm:h-[520px] md:h-[550px] cursor-pointer rounded-3xl border transition-all duration-300 ${isCenter
+                className={`absolute ${
+                  isCenter
+                    ? 'w-[330px] sm:w-[410px] md:w-[480px] lg:w-[540px] z-50'
+                    : 'w-[300px] sm:w-[360px] md:w-[420px] lg:w-[460px]'
+                } h-[490px] sm:h-[530px] md:h-[560px] cursor-pointer rounded-3xl border transition-all duration-300 ${isCenter
                   ? 'border-white/80 bg-neutral-900/95 shadow-[0_25px_80px_-10px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.4)] ring-1 ring-white/20'
                   : 'border-white/15 bg-neutral-900/80 shadow-[0_15px_45px_-10px_rgba(0,0,0,0.7)] hover:border-white/40'
                   } backdrop-blur-2xl flex flex-col justify-between overflow-hidden select-none`}
