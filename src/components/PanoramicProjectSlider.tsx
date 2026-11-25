@@ -400,57 +400,57 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
                 </div>
 
                 {/* ─── CARD LOWER HALF: INFORMATION & METRICS ─── */}
-                <div className="p-5 sm:p-6 flex flex-col justify-between flex-grow bg-neutral-900/90">
+                <div className="p-6 sm:p-7 flex flex-col justify-between flex-grow bg-neutral-900/90">
                   <div>
                     {/* Badge & Industry */}
-                    <div className="flex items-center justify-between gap-2 mb-2">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-white/10 text-white border border-white/15 uppercase">
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-mono font-bold px-3 py-1 rounded-full bg-white/10 text-white border border-white/20 uppercase tracking-wide">
                           {item.projectType || 'PROJECT'}
                         </span>
-                        <span className="text-[9px] font-mono text-neutral-400 uppercase truncate max-w-[100px]">
+                        <span className="text-[11px] font-mono text-neutral-400 uppercase tracking-wider truncate max-w-[130px]">
                           {cs?.industry || 'B2B'}
                         </span>
                       </div>
                       {isCenter && (
-                        <span className="text-[9px] font-mono text-emerald-400 font-bold tracking-wider flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> FOCUS
+                        <span className="text-[11px] font-mono text-emerald-400 font-bold tracking-wider flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950/40 border border-emerald-500/20">
+                          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> FOCUS
                         </span>
                       )}
                     </div>
 
                     {/* Title */}
-                    <h3 className="font-sans font-extrabold text-base sm:text-lg text-white tracking-tight uppercase line-clamp-1 leading-snug">
+                    <h3 className="font-sans font-extrabold text-lg sm:text-xl text-white tracking-tight uppercase line-clamp-1 leading-snug">
                       {item.title}
                     </h3>
 
                     {/* Description */}
-                    <p className="text-[11px] font-light text-neutral-400 leading-relaxed mt-1.5 line-clamp-2">
+                    <p className="text-xs font-light text-neutral-400 leading-relaxed mt-2 line-clamp-2">
                       {stripHtml(item.description)}
                     </p>
                   </div>
 
                   {/* Impact Metrics or Tech Pills */}
-                  <div className="mt-3 pt-3 border-t border-neutral-800/80 flex flex-col gap-3">
+                  <div className="mt-4 pt-4 border-t border-neutral-800/80 flex flex-col gap-3">
                     {results.length > 0 ? (
                       <div className="flex items-center justify-between">
                         {results.slice(0, 2).map((res, i) => (
                           <div key={i} className="flex flex-col">
-                            <span className="font-sans font-black text-sm text-white leading-none">
+                            <span className="font-sans font-black text-base text-white leading-none">
                               {res.value}
                             </span>
-                            <span className="text-[9px] font-mono text-neutral-500 uppercase mt-0.5 truncate max-w-[110px]">
+                            <span className="text-[10px] font-mono text-neutral-400 uppercase mt-1 truncate max-w-[130px]">
                               {res.label}
                             </span>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <div className="flex flex-wrap gap-1 max-w-full">
+                      <div className="flex flex-wrap gap-1.5 max-w-full">
                         {techList.slice(0, 3).map((tech) => (
                           <span
                             key={tech}
-                            className="text-[9px] font-mono text-neutral-400 px-1.5 py-0.5 rounded bg-neutral-800/60 border border-neutral-700/50"
+                            className="text-[10px] font-mono text-neutral-300 px-2.5 py-1 rounded-full bg-neutral-800/80 border border-neutral-700/60 font-medium"
                           >
                             {tech}
                           </span>
@@ -459,16 +459,16 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
                     )}
 
                     {/* Action buttons */}
-                    <div className="flex items-center gap-2 pt-1">
+                    <div className="flex items-center gap-2.5 pt-2">
                       {item.liveUrl && (
                         <a
                           href={item.liveUrl}
                           target="_blank"
                           rel="noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="px-3 py-1.5 rounded-full border border-neutral-700 hover:border-white text-[10px] font-bold uppercase tracking-wider text-neutral-300 hover:text-white transition-all flex items-center gap-1"
+                          className="px-4 py-2.5 rounded-full border border-neutral-700 hover:border-white text-[11px] font-bold uppercase tracking-wider text-neutral-200 hover:text-white transition-all flex items-center gap-1.5 shrink-0"
                         >
-                          <ExternalLink className="w-3 h-3" /> LIVE
+                          <ExternalLink className="w-3.5 h-3.5" /> LIVE
                         </a>
                       )}
                       <Link
@@ -479,13 +479,13 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
                             animateTo(Math.round(displayProgress + diff));
                           }
                         }}
-                        className={`flex-grow justify-center px-4 py-2 rounded-full text-[10px] font-extrabold uppercase tracking-widest transition-all flex items-center gap-1 shadow-sm ${isCenter
+                        className={`flex-grow justify-center px-5 py-2.5 rounded-full text-[11px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5 shadow-sm cursor-pointer ${isCenter
                           ? 'bg-white hover:bg-neutral-200 text-neutral-950'
                           : 'bg-neutral-800 hover:bg-white hover:text-neutral-950 text-white'
                           }`}
                       >
                         EXPLORE
-                        <ArrowUpRight className="w-3 h-3" />
+                        <ArrowUpRight className="w-4 h-4" />
                       </Link>
                     </div>
                   </div>
