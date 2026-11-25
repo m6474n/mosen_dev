@@ -61,14 +61,6 @@ body {
   color: #ffffff;
 }
 
-/* Hide native cursor when custom dynamic follow-pointer is enabled on fine pointer devices */
-@media (pointer: fine) {
-  html.custom-cursor-active,
-  html.custom-cursor-active * {
-    cursor: none !important;
-  }
-}
-
 /* Minimal Custom scrollbar utility */
 ::-webkit-scrollbar {
   width: 4px;

@@ -8,7 +8,6 @@ import { DataProvider } from '@/context/DataContext';
 import { AuthProvider } from '@/context/AuthContext';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import CustomPointer from '@/components/CustomPointer';
 import InitialPreloader from '@/components/InitialPreloader';
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Analytics } from "@vercel/analytics/next"
@@ -77,8 +76,6 @@ function RootLayoutInner({ children }: { children: React.ReactNode }) {
 
   const pageContent = (
     <>
-      {!isAdminRoute && <CustomPointer />}
-
       {!isAdminRoute && (
         <AnimatePresence mode="wait">
           {isLoading && (
