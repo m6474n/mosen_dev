@@ -320,21 +320,22 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
 
             const isCenter = absDiff < 0.45;
 
-            // ─── ULTRA WIDE-ANGLE (FISHEYE CONCAVE) PERSPECTIVE ───
-            // Center is clearly framed (scale ~0.95), flanking slides expand to ~1.05
-            const scale = Math.min(1.05, 0.95 + absDiff * 0.05);
+            // ─── SMOOTH PANORAMIC PROJECTION ───
+            // Scale stays uniform and natural (0.95 at center, tapering gently to 0.90 on sides)
+            // No vertical square squishing or abrupt size jump between dragging and snapping
+            const scale = Math.max(0.88, 1 - absDiff * 0.05);
 
             // Horizontal position across panoramic field
-            const x = diff * baseSpacing * (1 + absDiff * 0.05);
+            const x = diff * baseSpacing * (1 + absDiff * 0.04);
 
             // Angle inwards towards center (panoramic amphitheater curvature)
-            const rotateY = diff * -18 * (1 + absDiff * 0.08);
+            const rotateY = diff * -14 * (1 + absDiff * 0.06);
 
-            // Z-depth: active center sits slightly back, immediate flanking slides wrap in front
-            const z = absDiff === 0 ? -40 : Math.sin(Math.min(absDiff, 2) * Math.PI * 0.5) * 40 - Math.pow(absDiff, 1.4) * 35;
+            // Z-depth: receding slightly into depth
+            const z = -Math.pow(absDiff, 1.2) * 45;
 
             // Opacity & brightness: center is clear and bright; far edges soften
-            const opacity = Math.max(0.45, 1 - Math.max(0, absDiff - 1.2) * 0.35);
+            const opacity = Math.max(0.4, 1 - Math.max(0, absDiff - 1.2) * 0.35);
             const brightness = isCenter ? 1.05 : Math.max(0.65, 0.95 - absDiff * 0.12);
 
             // Center card has high zIndex so it never gets obscured by overlapping edges
@@ -360,11 +361,7 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
                   transformStyle: 'preserve-3d',
                   transition: isDraggingRef.current ? 'none' : 'filter 0.3s ease, border-color 0.3s ease',
                 }}
-                className={`absolute ${
-                  isCenter
-                    ? 'w-[330px] sm:w-[410px] md:w-[480px] lg:w-[540px] z-50'
-                    : 'w-[300px] sm:w-[360px] md:w-[420px] lg:w-[460px]'
-                } h-[490px] sm:h-[530px] md:h-[560px] cursor-pointer rounded-3xl border transition-all duration-300 ${isCenter
+                className={`absolute w-[320px] sm:w-[390px] md:w-[460px] lg:w-[500px] h-[500px] sm:h-[540px] md:h-[570px] cursor-pointer rounded-3xl border transition-all duration-300 ${isCenter
                   ? 'border-white/80 bg-neutral-900/95 shadow-[0_25px_80px_-10px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.4)] ring-1 ring-white/20'
                   : 'border-white/15 bg-neutral-900/80 shadow-[0_15px_45px_-10px_rgba(0,0,0,0.7)] hover:border-white/40'
                   } backdrop-blur-2xl flex flex-col justify-between overflow-hidden select-none`}
