@@ -104,13 +104,13 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
         style={{ scaleX }}
       />
 
-      <Container className="max-w-4xl pt-8 pb-24">
+      <Container className="max-w-4xl pt-4 pb-16">
         {/* Editorial Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="space-y-5 mb-10"
+          className="space-y-4 mb-6"
         >
           <div className="flex flex-wrap items-center justify-between gap-3 text-[10px] text-neutral-400 font-bold font-mono uppercase tracking-widest">
             <div className="flex flex-wrap items-center gap-3">
@@ -168,16 +168,16 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
           initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          className="rounded-3xl bg-white border border-neutral-200/90 p-8 sm:p-12 shadow-xs mb-16"
+          className="rounded-3xl bg-white border border-neutral-200/90 p-6 sm:p-10 shadow-xs mb-10"
         >
           <div
-            className="prose prose-neutral max-w-none text-neutral-800 leading-relaxed text-sm sm:text-base font-light font-sans tracking-wide ql-editor [&_p]:mb-0 [&_p]:py-0 [&_p]:my-0"
+            className="prose prose-neutral max-w-none text-neutral-800 leading-normal text-sm sm:text-base font-light font-sans tracking-wide ql-editor [&_p]:mb-0 [&_p]:py-0 [&_p]:my-0 [&_p]:leading-normal"
             id="article-content"
             dangerouslySetInnerHTML={{ __html: activePost.contentHtml }}
           />
 
           {/* Author Card Footer inside article */}
-          <div className="mt-14 pt-8 border-t border-neutral-100 flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-neutral-50/60 -mx-8 -mb-8 sm:-mx-12 sm:-mb-12 p-8 sm:p-10 rounded-b-3xl">
+          <div className="mt-8 pt-6 border-t border-neutral-100 flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-neutral-50/60 -mx-6 -mb-6 sm:-mx-10 sm:-mb-10 p-6 sm:p-8 rounded-b-3xl">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-full bg-neutral-950 flex items-center justify-center text-white font-mono text-sm font-black shadow-xs">
                 MM
