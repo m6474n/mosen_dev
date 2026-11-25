@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { Inter, Inter_Tight, Geist } from 'next/font/google';
-import { ReactLenis } from 'lenis/react';
 import { AnimatePresence } from 'motion/react';
 import { usePathname } from 'next/navigation';
 import { DataProvider } from '@/context/DataContext';
@@ -133,13 +132,7 @@ function RootLayoutInner({ children }: { children: React.ReactNode }) {
       <body>
         <AuthProvider>
           <DataProvider>
-            {isAdminRoute ? (
-              pageContent
-            ) : (
-              <ReactLenis root options={{ lerp: 0.1, duration: 1.2, smoothWheel: true }}>
-                {pageContent}
-              </ReactLenis>
-            )}
+            {pageContent}
           </DataProvider>
         </AuthProvider>
       </body>

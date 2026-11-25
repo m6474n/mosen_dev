@@ -459,16 +459,16 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
                     )}
 
                     {/* Action buttons */}
-                    <div className="flex items-center gap-2.5 pt-2">
+                    <div className="flex items-center gap-3 pt-2">
                       {item.liveUrl && (
                         <a
                           href={item.liveUrl}
                           target="_blank"
                           rel="noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="px-4 py-2.5 rounded-full border border-neutral-700 hover:border-white text-[11px] font-bold uppercase tracking-wider text-neutral-200 hover:text-white transition-all flex items-center gap-1.5 shrink-0"
+                          className="px-5 py-3 rounded-full border border-neutral-700 hover:border-white text-xs font-bold uppercase tracking-wider text-neutral-200 hover:text-white transition-all flex items-center gap-2 shrink-0"
                         >
-                          <ExternalLink className="w-3.5 h-3.5" /> LIVE
+                          <ExternalLink className="w-4 h-4" /> LIVE
                         </a>
                       )}
                       <Link
@@ -479,7 +479,7 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
                             animateTo(Math.round(displayProgress + diff));
                           }
                         }}
-                        className={`flex-grow justify-center px-5 py-2.5 rounded-full text-[11px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5 shadow-sm cursor-pointer ${isCenter
+                        className={`flex-grow justify-center px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 shadow-sm cursor-pointer ${isCenter
                           ? 'bg-white hover:bg-neutral-200 text-neutral-950'
                           : 'bg-neutral-800 hover:bg-white hover:text-neutral-950 text-white'
                           }`}

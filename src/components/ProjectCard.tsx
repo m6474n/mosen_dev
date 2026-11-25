@@ -163,12 +163,12 @@ export default function ProjectCard({ project, index, className = '', viewMode =
       </div>
 
       {/* Footer bar */}
-      <div className="px-6 md:px-7 py-4 border-t border-neutral-100/90 flex items-center justify-between text-[10px] font-mono text-neutral-500 mt-auto bg-neutral-50/50">
-        <span className="font-bold tracking-wider uppercase text-neutral-700 group-hover:text-neutral-950 transition-colors">
+      <div className="px-6 md:px-7 py-5 border-t border-neutral-100/90 flex items-center justify-between text-xs font-mono text-neutral-500 mt-auto bg-neutral-50/50">
+        <span className="font-bold tracking-wider uppercase text-neutral-800 group-hover:text-neutral-950 transition-colors">
           EXPLORE PROJECT
         </span>
-        <div className="w-7 h-7 rounded-full bg-white group-hover:bg-neutral-950 text-neutral-900 group-hover:text-white transition-all duration-300 flex items-center justify-center border border-neutral-200 group-hover:border-neutral-950 shadow-2xs">
-          <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+        <div className="w-9 h-9 rounded-full bg-white group-hover:bg-neutral-950 text-neutral-900 group-hover:text-white transition-all duration-300 flex items-center justify-center border border-neutral-200 group-hover:border-neutral-950 shadow-xs">
+          <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         </div>
       </div>
     </Link>
