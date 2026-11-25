@@ -275,7 +275,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           break;
         case 'blogs':
           setBlogs(prev => {
-            const list = prev.some(i => i.slug === updatedItem.slug) ? prev.map(i => i.slug === updatedItem.slug ? updatedItem : i) : [updatedItem, ...prev];
+            const list = prev.some(i => (i.slug === updatedItem.slug || (i as any).id === updatedItem.slug)) 
+              ? prev.map(i => (i.slug === updatedItem.slug || (i as any).id === updatedItem.slug) ? updatedItem : i) 
+              : [updatedItem, ...prev];
             localStorage.setItem('mosen_blogs', JSON.stringify(list));
             return list;
           });
@@ -286,7 +288,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     if (isFirebaseActive) {
       try {
         const collectionName = type;
-        const docId = type === 'blogs' ? item.slug : item.id;
+        const docId = type === 'blogs' ? (item.slug || item.id) : item.id;
+        if (!docId) {
+          throw new Error(`Missing unique identifier for item of type ${type}`);
+        }
         await setDoc(doc(db, collectionName, docId), item);
         updateLocalState(type, item);
         savedSuccessfully = true;

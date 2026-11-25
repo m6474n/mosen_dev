@@ -322,14 +322,20 @@ export default function AdminDashboardView({ initialSection = 'dashboard' }: Adm
   const totalLeads = messages.length;
   const unreadLeads = messages.filter(m => !m.read).length;
 
-  const handleSaveProject = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSaveProject = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!editingProject) return;
     setIsSaving(true);
     try {
-      const success = await saveItem('projects', editingProject);
+      const payload: Project = {
+        ...editingProject,
+        id: editingProject.id.trim(),
+        title: editingProject.title.trim(),
+      };
+      const success = await saveItem('projects', payload);
       if (success) {
         setEditingProject(null);
+        alert("Project saved successfully!");
       } else {
         alert("Could not save project. Check Firestore configuration/rules.");
       }
@@ -341,8 +347,8 @@ export default function AdminDashboardView({ initialSection = 'dashboard' }: Adm
     }
   };
 
-  const handleSaveBlog = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSaveBlog = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!editingBlog) return;
     setIsSaving(true);
     try {
@@ -351,27 +357,38 @@ export default function AdminDashboardView({ initialSection = 'dashboard' }: Adm
       if (blogEditorMode === 'markdown' && markdownInput.trim()) {
         finalHtml = marked.parse(markdownInput) as string;
       }
+      
+      const cleanSlug = (editingBlog.slug || editingBlog.title || 'untitled-post')
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9-]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
       const payload: BlogPost = {
         ...editingBlog,
-        contentHtml: finalHtml,
+        slug: cleanSlug,
+        title: editingBlog.title?.trim() || 'Untitled Post',
+        contentHtml: finalHtml || '<p></p>',
       };
+
       const success = await saveItem('blogs', payload);
       if (success) {
         setEditingBlog(null);
         setMarkdownInput('');
+        alert("Blog post saved successfully!");
       } else {
         alert("Could not save blog post.");
       }
     } catch (err) {
       console.error(err);
-      alert("Error saving blog.");
+      alert("Error saving blog: " + (err as any)?.message);
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleSaveResource = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSaveResource = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!editingResource) return;
     setIsSaving(true);
     try {
@@ -381,11 +398,13 @@ export default function AdminDashboardView({ initialSection = 'dashboard' }: Adm
         .filter(Boolean);
       const payload: Resource = {
         ...editingResource,
+        id: editingResource.id.trim(),
         tags: parsedTags,
       };
       const success = await saveItem('resources', payload);
       if (success) {
         setEditingResource(null);
+        alert("Resource saved successfully!");
       } else {
         alert("Could not save resource.");
       }
@@ -669,34 +688,36 @@ export default function AdminDashboardView({ initialSection = 'dashboard' }: Adm
             {activeTab === 'projects' && (
               <div className="space-y-6">
                 {editingProject ? (
-                  <Card className="bg-white border border-neutral-200/90 rounded-2xl shadow-xs p-6 sm:p-8 space-y-6">
-                    <div className="flex justify-between items-center border-b border-neutral-100 pb-4">
-                      <h3 className="font-bold text-xs uppercase tracking-widest text-neutral-800">
-                        {projects.some(p => p.id === editingProject.id) ? 'Modify Project' : 'Provision Project'}
-                      </h3>
-                      <div className="flex gap-2">
-                        <Button 
-                          type="button" 
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            setEditingProject(null);
-                            setIsCustomCategory(false);
-                          }} 
-                          className="rounded-full"
-                        >
-                          Cancel
-                        </Button>
-                        <Button 
-                          type="submit" 
-                          size="sm"
-                          disabled={isSaving}
-                          className="rounded-full"
-                        >
-                          {isSaving ? 'Saving...' : 'Save Project'}
-                        </Button>
+                  <form onSubmit={handleSaveProject}>
+                    <Card className="bg-white border border-neutral-200/90 rounded-2xl shadow-xs p-6 sm:p-8 space-y-6">
+                      <div className="flex justify-between items-center border-b border-neutral-100 pb-4">
+                        <h3 className="font-bold text-xs uppercase tracking-widest text-neutral-800">
+                          {projects.some(p => p.id === editingProject.id) ? 'Modify Project' : 'Provision Project'}
+                        </h3>
+                        <div className="flex gap-2">
+                          <Button 
+                            type="button" 
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setEditingProject(null);
+                              setIsCustomCategory(false);
+                            }} 
+                            className="rounded-full"
+                          >
+                            Cancel
+                          </Button>
+                          <Button 
+                            type="submit" 
+                            size="sm"
+                            disabled={isSaving}
+                            onClick={() => handleSaveProject()}
+                            className="rounded-full"
+                          >
+                            {isSaving ? 'Saving...' : 'Save Project'}
+                          </Button>
+                        </div>
                       </div>
-                    </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                       <div className="flex flex-col gap-2">
@@ -842,6 +863,7 @@ export default function AdminDashboardView({ initialSection = 'dashboard' }: Adm
                       </div>
                     </div>
                   </Card>
+                </form>
                 ) : (
                   <>
                     {/* Projects Stats Grid */}
@@ -976,31 +998,33 @@ export default function AdminDashboardView({ initialSection = 'dashboard' }: Adm
             {activeTab === 'blogs' && (
               <div className="space-y-6">
                 {editingBlog ? (
-                  <Card className="bg-white border border-neutral-200/90 rounded-2xl shadow-xs p-6 sm:p-8 space-y-6">
-                    <div className="flex justify-between items-center border-b border-neutral-100 pb-4">
-                      <h3 className="font-bold text-xs uppercase tracking-widest text-neutral-800">
-                        {blogs.some(b => b.slug === editingBlog.slug) ? 'Modify Blog Post' : 'Write Blog Post'}
-                      </h3>
-                      <div className="flex gap-2">
-                        <Button 
-                          type="button" 
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setEditingBlog(null)} 
-                          className="rounded-full"
-                        >
-                          Cancel
-                        </Button>
-                        <Button 
-                          type="submit" 
-                          size="sm"
-                          disabled={isSaving}
-                          className="rounded-full"
-                        >
-                          {isSaving ? 'Saving...' : 'Save Post'}
-                        </Button>
+                  <form onSubmit={handleSaveBlog}>
+                    <Card className="bg-white border border-neutral-200/90 rounded-2xl shadow-xs p-6 sm:p-8 space-y-6">
+                      <div className="flex justify-between items-center border-b border-neutral-100 pb-4">
+                        <h3 className="font-bold text-xs uppercase tracking-widest text-neutral-800">
+                          {blogs.some(b => b.slug === editingBlog.slug) ? 'Modify Blog Post' : 'Write Blog Post'}
+                        </h3>
+                        <div className="flex gap-2">
+                          <Button 
+                            type="button" 
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setEditingBlog(null)} 
+                            className="rounded-full"
+                          >
+                            Cancel
+                          </Button>
+                          <Button 
+                            type="submit" 
+                            size="sm"
+                            disabled={isSaving}
+                            onClick={() => handleSaveBlog()}
+                            className="rounded-full"
+                          >
+                            {isSaving ? 'Saving...' : 'Save Post'}
+                          </Button>
+                        </div>
                       </div>
-                    </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                       <div className="flex flex-col gap-2">
@@ -1244,6 +1268,7 @@ export default function AdminDashboardView({ initialSection = 'dashboard' }: Adm
                       )}
                     </div>
                   </Card>
+                </form>
                 ) : (
                   <Card className="bg-white border border-neutral-200/90 rounded-2xl shadow-xs overflow-hidden">
                     <div className="p-4 border-b border-neutral-100 flex justify-between items-center bg-neutral-50/70">
@@ -1359,34 +1384,36 @@ export default function AdminDashboardView({ initialSection = 'dashboard' }: Adm
                 )}
 
                 {editingResource ? (
-                  <Card className="bg-white border border-neutral-200/90 rounded-2xl shadow-xs p-6 sm:p-8 space-y-6">
-                    <div className="flex justify-between items-center border-b border-neutral-100 pb-4">
-                      <div className="flex items-center gap-2">
-                        <Terminal className="w-4 h-4 text-neutral-900" />
-                        <h3 className="font-bold text-xs uppercase tracking-widest text-neutral-800">
-                          {resources.some(r => r.id === editingResource.id) ? 'Modify Resource' : 'Add New Resource'}
-                        </h3>
+                  <form onSubmit={handleSaveResource}>
+                    <Card className="bg-white border border-neutral-200/90 rounded-2xl shadow-xs p-6 sm:p-8 space-y-6">
+                      <div className="flex justify-between items-center border-b border-neutral-100 pb-4">
+                        <div className="flex items-center gap-2">
+                          <Terminal className="w-4 h-4 text-neutral-900" />
+                          <h3 className="font-bold text-xs uppercase tracking-widest text-neutral-800">
+                            {resources.some(r => r.id === editingResource.id) ? 'Modify Resource' : 'Add New Resource'}
+                          </h3>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button 
+                            type="button" 
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setEditingResource(null)} 
+                            className="rounded-full"
+                          >
+                            Cancel
+                          </Button>
+                          <Button 
+                            type="submit" 
+                            size="sm"
+                            disabled={isSaving}
+                            onClick={() => handleSaveResource()}
+                            className="rounded-full"
+                          >
+                            {isSaving ? 'Saving...' : 'Save Resource'}
+                          </Button>
+                        </div>
                       </div>
-                      <div className="flex gap-2">
-                        <Button 
-                          type="button" 
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setEditingResource(null)} 
-                          className="rounded-full"
-                        >
-                          Cancel
-                        </Button>
-                        <Button 
-                          type="submit" 
-                          size="sm"
-                          disabled={isSaving}
-                          className="rounded-full"
-                        >
-                          {isSaving ? 'Saving...' : 'Save Resource'}
-                        </Button>
-                      </div>
-                    </div>
 
                     {/* Quick GitHub Auto-Fill Bar */}
                     <div className="bg-neutral-50 p-4 border border-neutral-200/90 rounded-xl flex flex-col sm:flex-row items-center gap-3">
@@ -1573,6 +1600,7 @@ export default function AdminDashboardView({ initialSection = 'dashboard' }: Adm
                       />
                     </div>
                   </Card>
+                </form>
                 ) : (
                   <Card className="bg-white border border-neutral-200/90 rounded-2xl overflow-hidden shadow-xs">
                     <div className="p-4 border-b border-neutral-200/90 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-neutral-50/70">
