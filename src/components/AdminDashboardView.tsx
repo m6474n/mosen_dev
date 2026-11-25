@@ -31,6 +31,7 @@ import {
 import { useData, MessageItemData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import { Project, BlogPost, Resource } from '../types';
+import { marked } from 'marked';
 
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
@@ -162,6 +163,8 @@ export default function AdminDashboardView() {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isCustomCategory, setIsCustomCategory] = useState(false);
   const [editingBlog, setEditingBlog] = useState<BlogPost | null>(null);
+  const [blogEditorMode, setBlogEditorMode] = useState<'rich' | 'markdown' | 'preview'>('markdown');
+  const [markdownInput, setMarkdownInput] = useState('');
   const [editingResource, setEditingResource] = useState<Resource | null>(null);
   const [resourceTagsInput, setResourceTagsInput] = useState('');
   const [activeLead, setActiveLead] = useState<MessageItemData | null>(null);
@@ -209,9 +212,19 @@ export default function AdminDashboardView() {
     if (!editingBlog) return;
     setIsSaving(true);
     try {
-      const success = await saveItem('blogs', editingBlog);
+      // If user was typing in markdown tab, convert to HTML before saving
+      let finalHtml = editingBlog.contentHtml;
+      if (blogEditorMode === 'markdown' && markdownInput.trim()) {
+        finalHtml = marked.parse(markdownInput) as string;
+      }
+      const payload: BlogPost = {
+        ...editingBlog,
+        contentHtml: finalHtml,
+      };
+      const success = await saveItem('blogs', payload);
       if (success) {
         setEditingBlog(null);
+        setMarkdownInput('');
       } else {
         alert("Could not save blog post.");
       }
@@ -938,16 +951,108 @@ export default function AdminDashboardView() {
                       />
                     </div>
 
-                    <div className="flex flex-col gap-2 min-h-[300px]">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Detailed Essay Body</label>
-                      <div className="flex-grow flex flex-col min-h-[250px] border border-neutral-200">
-                        <ReactQuill 
-                          theme="snow" 
-                          value={editingBlog.contentHtml}
-                          onChange={(val) => setEditingBlog({ ...editingBlog, contentHtml: val })}
-                          className="flex-grow flex flex-col font-sans text-sm bg-white"
-                        />
+                    <div className="flex flex-col gap-2 min-h-[380px]">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
+                          Essay Content
+                        </label>
+                        {/* Editor Mode Tabs */}
+                        <div className="flex items-center border border-neutral-200 p-0.5 bg-neutral-100">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              // If switching from markdown, sync HTML
+                              if (markdownInput.trim()) {
+                                setEditingBlog({ ...editingBlog, contentHtml: marked.parse(markdownInput) as string });
+                              }
+                              setBlogEditorMode('markdown');
+                            }}
+                            className={`px-3 py-1 text-[10px] font-mono font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                              blogEditorMode === 'markdown'
+                                ? 'bg-neutral-950 text-white shadow-2xs'
+                                : 'text-neutral-600 hover:text-neutral-950'
+                            }`}
+                          >
+                            Markdown (Paste)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (blogEditorMode === 'markdown' && markdownInput.trim()) {
+                                setEditingBlog({ ...editingBlog, contentHtml: marked.parse(markdownInput) as string });
+                              }
+                              setBlogEditorMode('rich');
+                            }}
+                            className={`px-3 py-1 text-[10px] font-mono font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                              blogEditorMode === 'rich'
+                                ? 'bg-neutral-950 text-white shadow-2xs'
+                                : 'text-neutral-600 hover:text-neutral-950'
+                            }`}
+                          >
+                            Rich Text Editor
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (blogEditorMode === 'markdown' && markdownInput.trim()) {
+                                setEditingBlog({ ...editingBlog, contentHtml: marked.parse(markdownInput) as string });
+                              }
+                              setBlogEditorMode('preview');
+                            }}
+                            className={`px-3 py-1 text-[10px] font-mono font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                              blogEditorMode === 'preview'
+                                ? 'bg-neutral-950 text-white shadow-2xs'
+                                : 'text-neutral-600 hover:text-neutral-950'
+                            }`}
+                          >
+                            Live Preview
+                          </button>
+                        </div>
                       </div>
+
+                      {blogEditorMode === 'markdown' && (
+                        <div className="flex flex-col gap-2">
+                          <div className="text-[11px] text-neutral-500 font-mono bg-neutral-50 p-2.5 border border-neutral-200">
+                            💡 Paste raw GitHub/Obsidian Markdown here. Headers (#), code blocks (```), lists, and images will be parsed into styled HTML upon save.
+                          </div>
+                          <textarea
+                            rows={15}
+                            value={markdownInput}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setMarkdownInput(val);
+                              setEditingBlog({ ...editingBlog, contentHtml: marked.parse(val) as string });
+                            }}
+                            placeholder="# My Technical Essay Title&#10;&#10;Paste markdown paragraphs, ## Subheadings, `inline code`, or code blocks here..."
+                            className="w-full border border-neutral-200 p-4 text-xs bg-white rounded-none font-mono leading-relaxed resize-y focus:outline-hidden focus:border-neutral-950"
+                          />
+                        </div>
+                      )}
+
+                      {blogEditorMode === 'rich' && (
+                        <div className="flex-grow flex flex-col min-h-[300px] border border-neutral-200">
+                          <ReactQuill 
+                            theme="snow" 
+                            value={editingBlog.contentHtml}
+                            onChange={(val) => setEditingBlog({ ...editingBlog, contentHtml: val })}
+                            className="flex-grow flex flex-col font-sans text-sm bg-white"
+                          />
+                        </div>
+                      )}
+
+                      {blogEditorMode === 'preview' && (
+                        <div className="border border-neutral-200 bg-white p-6 sm:p-8 min-h-[300px] overflow-y-auto max-h-[500px]">
+                          <div className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest pb-3 mb-4 border-b border-neutral-100">
+                            RENDERED BLOG PREVIEW
+                          </div>
+                          <div
+                            className="prose prose-neutral max-w-none text-neutral-800 leading-relaxed text-sm font-light font-sans tracking-wide space-y-4"
+                            dangerouslySetInnerHTML={{
+                              __html: editingBlog.contentHtml || '<p class="text-neutral-400 italic font-mono text-xs">No content to preview yet. Switch to Markdown tab and paste your content.</p>',
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
                   </form>
                 ) : (
@@ -964,19 +1069,23 @@ export default function AdminDashboardView() {
                         />
                       </div>
                       <button 
-                        onClick={() => setEditingBlog({
-                          slug: `essay-${Math.floor(Math.random() * 1000)}`,
-                          title: '',
-                          excerpt: '',
-                          publishedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
-                          readTime: '',
-                          tags: [],
-                          categories: [],
-                          contentHtml: '',
-                          coverImage: '',
-                          status: 'Published',
-                          lastModified: new Date().toISOString().split('T')[0]
-                        })}
+                        onClick={() => {
+                          setEditingBlog({
+                            slug: `essay-${Math.floor(Math.random() * 1000)}`,
+                            title: '',
+                            excerpt: '',
+                            publishedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+                            readTime: '5 MIN READ',
+                            tags: [],
+                            categories: ['Engineering'],
+                            contentHtml: '',
+                            coverImage: '',
+                            status: 'Published',
+                            lastModified: new Date().toISOString().split('T')[0]
+                          });
+                          setMarkdownInput('');
+                          setBlogEditorMode('markdown');
+                        }}
                         className="bg-neutral-950 hover:bg-neutral-800 text-white px-4 py-2 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 cursor-pointer rounded-none"
                       >
                         <Plus className="w-3.5 h-3.5" /> Write Essay
@@ -1008,7 +1117,11 @@ export default function AdminDashboardView() {
                             </td>
                             <td className="p-4 text-right flex gap-1 justify-end">
                               <button 
-                                onClick={() => setEditingBlog(blog)}
+                                onClick={() => {
+                                  setEditingBlog(blog);
+                                  setMarkdownInput('');
+                                  setBlogEditorMode(blog.contentHtml ? 'rich' : 'markdown');
+                                }}
                                 className="px-2.5 py-1 border border-neutral-200 text-[9px] font-bold uppercase hover:bg-neutral-100 transition rounded-none cursor-pointer"
                               >
                                 Edit
