@@ -318,27 +318,28 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
             // Hide cards beyond 5-slide wide-angle visibility
             if (absDiff > 2.8) return null;
 
-            // ─── NATURAL PERSPECTIVE PROJECTION MATH ───
-            // Center slide is dominant (1.0), side slides gracefully recede (0.86 down to 0.76)
-            // No clipping because side cards shrink naturally with distance instead of scaling up!
-            const scale = Math.max(0.74, 1 - absDiff * 0.1);
+            const isCenter = absDiff < 0.45;
+
+            // ─── ULTRA WIDE-ANGLE (FISHEYE CONCAVE) PERSPECTIVE ───
+            // In wide-angle optics: center appears recessed (scale ~0.86), while lateral
+            // flanking slides arch forward and loom taller (scale up to ~1.08)
+            const scale = Math.min(1.08, 0.86 + absDiff * 0.12);
 
             // Horizontal position across panoramic field
-            const x = diff * baseSpacing * (1 + absDiff * 0.08);
+            const x = diff * baseSpacing * (1 + absDiff * 0.05);
 
             // Angle inwards towards center (panoramic amphitheater curvature)
-            const rotateY = diff * -16 * (1 + absDiff * 0.1);
+            const rotateY = diff * -18 * (1 + absDiff * 0.08);
 
-            // Z-depth: push sides back in 3D space to match amphitheater depth
-            const z = -Math.pow(absDiff, 1.3) * 60;
+            // Z-depth: active center sits slightly back, immediate flanking slides wrap in front
+            const z = absDiff === 0 ? -40 : Math.sin(Math.min(absDiff, 2) * Math.PI * 0.5) * 40 - Math.pow(absDiff, 1.4) * 35;
 
-            // Opacity & brightness: center is 1.0, sides slightly dimmed for contrast
-            const opacity = Math.max(0.3, 1 - absDiff * 0.22);
-            const brightness = Math.max(0.5, 1 - absDiff * 0.2);
+            // Opacity & brightness: center is clear and bright; far edges soften
+            const opacity = Math.max(0.45, 1 - Math.max(0, absDiff - 1.2) * 0.35);
+            const brightness = isCenter ? 1.05 : Math.max(0.65, 0.95 - absDiff * 0.12);
 
-            // Center card has highest zIndex so it sits cleanly on top of receding sides
-            const zIndex = Math.round(50 - absDiff * 10);
-            const isCenter = absDiff < 0.45;
+            // Center card has high zIndex so it never gets obscured by overlapping edges
+            const zIndex = isCenter ? 60 : Math.round(40 - absDiff * 8);
 
             const cs = item.caseStudy;
             const techList = cs?.tech || ['Next.js', 'React', 'TypeScript', 'Tailwind'];
