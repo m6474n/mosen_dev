@@ -72,10 +72,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ]);
 
       if (blogsSnap) {
+        const dummyBlogSlugs = new Set(['automated-lead-gen-machine', 'case-against-handoffs', 'offline-first-background-sync', 'post-1', 'post-2']);
         blogsSnap.docs.forEach(doc => {
           const data = doc.data();
           const slug = data.slug || doc.id;
-          if (slug) {
+          if (slug && !dummyBlogSlugs.has(slug)) {
             dynamicMap.set(`${BASE_URL}/blog/${slug}`, {
               url: `${BASE_URL}/blog/${slug}`,
               lastModified: data.lastModified ? new Date(data.lastModified) : new Date(),

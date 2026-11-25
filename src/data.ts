@@ -285,56 +285,7 @@ python main.py`,
   }
 ];
 
-export const BLOG_POSTS: BlogPost[] = [
-  {
-    slug: "automated-lead-gen-machine",
-    title: "How I Built an Automated Lead Gen Machine Saving 8 Hours/Week",
-    excerpt: "A deep technical dive into orchestrating Playwright, Python agents, and Google Sheets into an autonomous ICP scout.",
-    publishedAt: "June 04, 2026",
-    readTime: "7 min read",
-    tags: ["Automation", "Python", "Gemini API", "Growth"],
-    contentHtml: `<p>Sales teams waste countless hours digging through lead profiles. Standard databases (ZoomInfo, Apollo) are generic and rarely reflect active product updates or accurate business offerings. To solve this for our outbound agency partners, I engineered an autonomous agent designed to qualify commercial prospects directly from live URL traces.</p>
-<h4>The Architecture Checklist</h4>
-<ul>
-  <li><strong>Ingestion Handler</strong>: Triggered via a web webhook, accepting lists of domains to explore.</li>
-  <li><strong>Scraping Isolates</strong>: Handled via Python Playwright to fetch homepage metrics, skipping heavy images and media libraries to prioritize millisecond delivery speeds.</li>
-  <li><strong>Token Simplifier</strong>: Converts markup content into standardized key-value outputs, saving token volume.</li>
-  <li><strong>Gemini Scoring</strong>: Evaluates prospects against rigid structured models.</li>
-</ul>
-<p>By delegating the initial web page crawls to scheduled serverless jobs, SDR teams only see pre-vetted leads showing active indicators. This saves over 8 hours of work week-over-week.</p>`
-  },
-  {
-    slug: "case-against-handoffs",
-    title: "The Case Against Handoffs: Why Code-First Design is the Future",
-    excerpt: "Figma is not the destination; code is. Why working across design and development creates better user experiences, faster.",
-    publishedAt: "May 20, 2026",
-    readTime: "5 min read",
-    tags: ["Product Design", "React", "UX Philosophy"],
-    contentHtml: `<p>In typical agencies, a product flows through a disjointed assembly line. A designer drafts a beautiful visual board in Figma. It gets shared with feedback widgets, is signed off, and is eventually exported to zip folders. Then, a frontend developer tries to rebuild it, finding that components don't match viewport limits, hover states are missing, and typography scales look robotic.</p>
-<h4>The Cost of Disconnection</h4>
-<p>This process is highly inefficient. When the worker designing the app does not understand code boundaries, the final build suffers. Conversely, when developers ignore the subtle rules of visual typography and structural pacing, the application feels unpolished and generic.</p>
-<h4>The Developer-Designer (Product Engineer) Resolution</h4>
-<p>By uniting design and engineering, we eliminate this friction. What you approve is what ships. Code is the primary canvas, and layouts are built with native components from day one. Interaction feedback, layout animations, and dark configurations become natural elements, not costly compromises.</p>`
-  },
-  {
-    slug: "offline-first-background-sync",
-    title: "Setting Up Offline-First Background Sync in Flutter Apps",
-    excerpt: "Solving sync conflicts, tracking state databases locally, and managing server writes over cellular networks.",
-    publishedAt: "May 11, 2026",
-    readTime: "10 min read",
-    tags: ["Flutter", "Offline-First", "Architecture"],
-    contentHtml: `<p>Building an app that expects continuous web access is a vulnerability. In warehouse loading gates, agricultural fields, or logistics shipping trucks, connectivity drops are expected. If your apps fail to work offline, they disrupt active company operations.</p>
-<h4>Data Synchronization Strategies</h4>
-<p>To implement zero data loss, we follow a strict offline-first blueprint:</p>
-<ol>
-  <li><strong>Mirror Local Keys</strong>: Keep records in an embedded cache database so screens load immediately in any state.</li>
-  <li><strong>Write to Queue First</strong>: Store user updates in an internal logs structure instead of calling immediate API post requests.</li>
-  <li><strong>Idempotency Tokens</strong>: Attach solid metadata tags to every transaction queue item to guarantee server processes run safely without duplicate record risks.</li>
-  <li><strong>Automatic Sync Jobs</strong>: Start background workers that verify internet health and upload transactions cleanly.</li>
-</ol>
-<p>By configuring client databases as the primary source of truth, apps stay absolutely reliable under any network constraints.</p>`
-  }
-];
+export const BLOG_POSTS: BlogPost[] = [];
 
 export const MOHSIN_BIO = {
   name: "Muhammad Mohsin",

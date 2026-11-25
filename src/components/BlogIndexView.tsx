@@ -53,66 +53,85 @@ export default function BlogIndexView() {
         </div>
 
         {/* Blog Posts grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {filteredBlogs.map((essay) => (
-            <ReusableCard
-              key={essay.slug}
-              hoverable={true}
-              variant="muted"
-              className="hover:bg-white transition-all flex flex-col justify-between p-6 border border-neutral-200"
-              id={`essay-card-${essay.slug}`}
-            >
-              <div>
-                {essay.coverImage && (
-                  <div className="w-full aspect-video overflow-hidden border border-neutral-100 bg-neutral-50 mb-6">
-                    <img 
-                      src={essay.coverImage} 
-                      alt={essay.title} 
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c';
-                      }}
-                    />
+        {filteredBlogs.length === 0 ? (
+          <div className="py-20 text-center border border-neutral-200/80 rounded-2xl bg-neutral-50/50">
+            <span className="text-[11px] font-mono font-bold tracking-widest text-neutral-400 uppercase block mb-2">
+              DISPATCHES PENDING
+            </span>
+            <p className="text-sm font-light text-neutral-600 max-w-sm mx-auto">
+              Essays and technical teardowns are currently being drafted. Check back soon or explore open resources.
+            </p>
+            <div className="mt-6">
+              <Link
+                href="/resources"
+                className="inline-flex items-center gap-1.5 py-2.5 px-5 bg-neutral-950 text-white text-xs font-mono font-bold tracking-wider rounded-full hover:bg-neutral-800 transition-colors uppercase"
+              >
+                BROWSE OPEN RESOURCES
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {filteredBlogs.map((essay) => (
+              <ReusableCard
+                key={essay.slug}
+                hoverable={true}
+                variant="muted"
+                className="hover:bg-white transition-all flex flex-col justify-between p-6 border border-neutral-200"
+                id={`essay-card-${essay.slug}`}
+              >
+                <div>
+                  {essay.coverImage && (
+                    <div className="w-full aspect-video overflow-hidden border border-neutral-100 bg-neutral-50 mb-6">
+                      <img 
+                        src={essay.coverImage} 
+                        alt={essay.title} 
+                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c';
+                        }}
+                      />
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center justify-between text-[9px] text-neutral-400 font-bold tracking-widest uppercase font-mono mb-4">
+                    <span>{essay.publishedAt.toUpperCase()}</span>
+                    <span>{essay.readTime.toUpperCase()}</span>
                   </div>
-                )}
-                
-                <div className="flex items-center justify-between text-[9px] text-neutral-400 font-bold tracking-widest uppercase font-mono mb-4">
-                  <span>{essay.publishedAt.toUpperCase()}</span>
-                  <span>{essay.readTime.toUpperCase()}</span>
+
+                  <h3 className="text-base font-light text-neutral-950 mb-3 uppercase tracking-tight hover:underline">
+                    <Link href={`/blog/${essay.slug}`}>{essay.title.toUpperCase()}</Link>
+                  </h3>
+
+                  <p className="text-xs font-light text-neutral-500 leading-relaxed mb-6">
+                    {stripHtml(essay.excerpt)}
+                  </p>
                 </div>
 
-                <h3 className="text-base font-light text-neutral-950 mb-3 uppercase tracking-tight hover:underline">
-                  <Link href={`/blog/${essay.slug}`}>{essay.title.toUpperCase()}</Link>
-                </h3>
-
-                <p className="text-xs font-light text-neutral-500 leading-relaxed mb-6">
-                  {stripHtml(essay.excerpt)}
-                </p>
-              </div>
-
-              <div className="pt-4 border-t border-neutral-100 flex items-center justify-between">
-                <div className="flex gap-2">
-                  {(essay.categories || []).slice(0, 1).map((cat, idx) => (
-                    <span key={idx} className="text-[9px] font-mono font-bold bg-neutral-950 text-white px-2 py-0.5 uppercase">
-                      {cat.toUpperCase()}
-                    </span>
-                  ))}
-                  {(essay.tags || []).slice(0, 2).map((t, idx) => (
-                    <span key={idx} className="text-[9px] font-mono font-bold text-neutral-400 uppercase pt-0.5">
-                      #{t.toUpperCase()}
-                    </span>
-                  ))}
+                <div className="pt-4 border-t border-neutral-100 flex items-center justify-between">
+                  <div className="flex gap-2">
+                    {(essay.categories || []).slice(0, 1).map((cat, idx) => (
+                      <span key={idx} className="text-[9px] font-mono font-bold bg-neutral-950 text-white px-2 py-0.5 uppercase">
+                        {cat.toUpperCase()}
+                      </span>
+                    ))}
+                    {(essay.tags || []).slice(0, 2).map((t, idx) => (
+                      <span key={idx} className="text-[9px] font-mono font-bold text-neutral-400 uppercase pt-0.5">
+                        #{t.toUpperCase()}
+                      </span>
+                    ))}
+                  </div>
+                  <Link
+                    href={`/blog/${essay.slug}`}
+                    className="text-xs font-bold tracking-wider text-neutral-950 hover:text-neutral-600 flex items-center gap-1 uppercase"
+                  >
+                    READ WRITEUP <ChevronRight className="w-4 h-4" />
+                  </Link>
                 </div>
-                <Link
-                  href={`/blog/${essay.slug}`}
-                  className="text-xs font-bold tracking-wider text-neutral-950 hover:text-neutral-600 flex items-center gap-1 uppercase"
-                >
-                  READ WRITEUP <ChevronRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </ReusableCard>
-          ))}
-        </div>
+              </ReusableCard>
+            ))}
+          </div>
+        )}
       </Container>
     </DefaultPageLayout>
   );

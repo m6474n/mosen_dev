@@ -98,7 +98,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           const resList = rawResList.filter(r => !dummyIds.has(r.id));
 
           const blogsSnap = await getDocs(collection(db, 'blogs'));
-          const blogsList = blogsSnap.docs.map(d => ({ id: d.id, ...d.data() })) as any[];
+          const rawBlogsList = blogsSnap.docs.map(d => ({ id: d.id, ...d.data() })) as any[];
+          const dummyBlogSlugs = new Set(['automated-lead-gen-machine', 'case-against-handoffs', 'offline-first-background-sync', 'post-1', 'post-2']);
+          const blogsList = rawBlogsList.filter(b => !dummyBlogSlugs.has(b.slug || b.id));
 
           const msgsSnap = await getDocs(collection(db, 'contact'));
           const msgsList = msgsSnap.docs.map(d => ({ id: d.id, ...d.data() })) as any[];
@@ -128,14 +130,17 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const loadLocalDataFallback = () => {
     // Blogs Fallback (converts slug to ID)
     const storedPosts = localStorage.getItem('mosen_posts');
-    if (storedPosts) setPosts(JSON.parse(storedPosts));
-    else {
-      const initPosts = [
-        { id: 'post-1', title: 'Architecting Server-to-Client background schedulers', status: 'Published', lastModified: '2026-06-12', type: 'posts', content: 'Standard deep dive info.' },
-        { id: 'post-2', title: 'State recovery under slow connections (2G/3G)', status: 'Published', lastModified: '2026-06-14', type: 'posts', content: 'Detailed review post.' }
-      ];
-      setPosts(initPosts);
-      localStorage.setItem('mosen_posts', JSON.stringify(initPosts));
+    if (storedPosts) {
+      try {
+        const parsed = JSON.parse(storedPosts);
+        const dummyPostIds = new Set(['post-1', 'post-2']);
+        setPosts(parsed.filter((p: any) => !dummyPostIds.has(p.id)));
+      } catch {
+        setPosts([]);
+      }
+    } else {
+      setPosts([]);
+      localStorage.setItem('mosen_posts', JSON.stringify([]));
     }
 
     // Case studies
@@ -197,17 +202,20 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
     // Blogs
     const storedBlogs = localStorage.getItem('mosen_blogs');
-    if (storedBlogs) setBlogs(JSON.parse(storedBlogs));
-    else {
-      const blogsList = BLOG_POSTS.map(bp => ({
-        ...bp,
-        id: bp.slug,
-        categories: bp.tags && bp.tags.length > 0 ? [bp.tags[0]] : ['Technology'],
-        status: 'Published' as const,
-        lastModified: bp.publishedAt
-      })) as any[];
-      setBlogs(blogsList);
-      localStorage.setItem('mosen_blogs', JSON.stringify(blogsList));
+    const dummyBlogSlugs = new Set(['automated-lead-gen-machine', 'case-against-handoffs', 'offline-first-background-sync', 'post-1', 'post-2']);
+    if (storedBlogs) {
+      try {
+        const parsed: BlogPost[] = JSON.parse(storedBlogs);
+        const cleaned = parsed.filter(b => !dummyBlogSlugs.has(b.slug || (b as any).id));
+        setBlogs(cleaned);
+        localStorage.setItem('mosen_blogs', JSON.stringify(cleaned));
+      } catch {
+        setBlogs([]);
+        localStorage.setItem('mosen_blogs', JSON.stringify([]));
+      }
+    } else {
+      setBlogs([]);
+      localStorage.setItem('mosen_blogs', JSON.stringify([]));
     }
 
     // Messages
