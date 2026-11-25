@@ -98,6 +98,8 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
   const [displayProgress, setDisplayProgress] = useState(0);
   const isDraggingRef = useRef(false);
   const dragStartXRef = useRef(0);
+  const dragStartYRef = useRef(0);
+  const hasMovedRef = useRef(false);
   const dragStartProgressRef = useRef(0);
   const stageRef = useRef<HTMLDivElement>(null);
   const tweenRef = useRef<gsap.core.Tween | null>(null);
@@ -181,14 +183,24 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
   const handlePointerDown = (e: React.PointerEvent) => {
     if (tweenRef.current) tweenRef.current.kill();
     isDraggingRef.current = true;
+    hasMovedRef.current = false;
     dragStartXRef.current = e.clientX;
+    dragStartYRef.current = e.clientY;
     dragStartProgressRef.current = progressRef.current.value;
-    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!isDraggingRef.current) return;
     const deltaX = e.clientX - dragStartXRef.current;
+    const deltaY = e.clientY - dragStartYRef.current;
+    
+    // Only engage drag tracking if moved more than 6px
+    if (Math.hypot(deltaX, deltaY) > 6) {
+      hasMovedRef.current = true;
+    }
+
+    if (!hasMovedRef.current) return;
+
     // Responsive drag sensitivity: ~300px per card
     const cardStep = Math.max(220, windowWidth * 0.22);
     const newProgress = dragStartProgressRef.current - deltaX / cardStep;
@@ -201,10 +213,12 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
   const handlePointerUp = (e: React.PointerEvent) => {
     if (!isDraggingRef.current) return;
     isDraggingRef.current = false;
-    (e.target as HTMLElement).releasePointerCapture?.(e.pointerId);
-    // Snap to nearest integer slide with smooth GSAP inertia
-    const nearest = Math.round(progressRef.current.value);
-    animateTo(nearest, 0.6);
+
+    // If user actually dragged, snap to nearest slide
+    if (hasMovedRef.current) {
+      const nearest = Math.round(progressRef.current.value);
+      animateTo(nearest, 0.6);
+    }
   };
 
   // Wide-angle card spacing calculations (visible 5 cards: -2, -1, 0, 1, 2)
@@ -348,8 +362,9 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
             return (
               <div
                 key={item.id}
-                onClick={() => {
-                  if (!isCenter) {
+                onClick={(e) => {
+                  // Only activate on click if user didn't drag
+                  if (!hasMovedRef.current) {
                     animateTo(Math.round(displayProgress + diff));
                   }
                 }}
