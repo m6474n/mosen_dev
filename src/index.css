@@ -110,8 +110,8 @@ body {
 .prose h4 { font-size: 1rem; }
 
 .prose p {
-  margin-bottom: 0.85rem;
-  line-height: 1.65;
+  margin-bottom: 0;
+  line-height: 1;
 }
 
 .prose strong {

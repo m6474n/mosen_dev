@@ -171,8 +171,8 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
           className="rounded-3xl bg-white border border-neutral-200/90 p-8 sm:p-12 shadow-xs mb-16"
         >
           <div
-            className="prose prose-neutral max-w-none text-neutral-800 leading-relaxed text-sm sm:text-base font-light font-sans tracking-wide ql-editor"
-            id="essay-content"
+            className="prose prose-neutral max-w-none text-neutral-800 text-sm sm:text-base font-light font-sans tracking-wide ql-editor [&_p]:leading-none [&_p]:mb-0"
+            id="article-content"
             dangerouslySetInnerHTML={{ __html: activePost.contentHtml }}
           />
 
