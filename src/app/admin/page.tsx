@@ -6,7 +6,11 @@ import { useAuth } from '@/context/AuthContext';
 import AdminDashboardView from '@/components/AdminDashboardView';
 import { Activity } from 'lucide-react';
 
-export default function AdminPage() {
+interface AdminPageProps {
+  defaultSection?: 'dashboard' | 'projects' | 'blogs' | 'resources' | 'leads';
+}
+
+export default function AdminPage({ defaultSection = 'dashboard' }: AdminPageProps) {
   const { user, loading } = useAuth();
   const router = useRouter();
 
@@ -29,5 +33,5 @@ export default function AdminPage() {
     return null;
   }
 
-  return <AdminDashboardView />;
+  return <AdminDashboardView initialSection={defaultSection} />;
 }

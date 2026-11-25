@@ -32,6 +32,13 @@ import { useData, MessageItemData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import { Project, BlogPost, Resource } from '../types';
 import { marked } from 'marked';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
 
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
@@ -233,9 +240,14 @@ function CloudinaryUploader({
   );
 }
 
+interface AdminDashboardViewProps {
+  initialSection?: 'dashboard' | 'projects' | 'blogs' | 'resources' | 'leads';
+}
+
 // ─── ADMIN DASHBOARD MAIN component ──────────────────────────────────────────
-export default function AdminDashboardView() {
+export default function AdminDashboardView({ initialSection = 'dashboard' }: AdminDashboardViewProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const { logout } = useAuth();
   const { 
     projects, 
@@ -254,7 +266,29 @@ export default function AdminDashboardView() {
     new Set(projects.map(p => p.projectType).filter(Boolean))
   ).sort();
 
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'projects' | 'blogs' | 'resources' | 'leads'>('dashboard');
+  // Determine active tab from current URL pathname or fallback prop
+  const currentSection = ((): 'dashboard' | 'projects' | 'blogs' | 'resources' | 'leads' => {
+    if (pathname.includes('/admin/projects')) return 'projects';
+    if (pathname.includes('/admin/blogs')) return 'blogs';
+    if (pathname.includes('/admin/resources')) return 'resources';
+    if (pathname.includes('/admin/leads')) return 'leads';
+    return initialSection;
+  })();
+
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'projects' | 'blogs' | 'resources' | 'leads'>(currentSection);
+
+  useEffect(() => {
+    setActiveTab(currentSection);
+  }, [currentSection]);
+
+  const navigateToSection = (section: 'dashboard' | 'projects' | 'blogs' | 'resources' | 'leads') => {
+    setActiveTab(section);
+    if (section === 'dashboard') {
+      router.push('/admin');
+    } else {
+      router.push(`/admin/${section}`);
+    }
+  };
   
   // Search state
   const [searchTerm, setSearchTerm] = useState('');
@@ -532,31 +566,31 @@ export default function AdminDashboardView() {
               icon={<LayoutDashboard className="w-4 h-4" />} 
               label="Dashboard" 
               active={activeTab === 'dashboard'} 
-              onClick={() => setActiveTab('dashboard')} 
+              onClick={() => navigateToSection('dashboard')} 
             />
             <SidebarItem 
               icon={<FolderGit className="w-4 h-4" />} 
               label="Projects" 
               active={activeTab === 'projects'} 
-              onClick={() => setActiveTab('projects')} 
+              onClick={() => navigateToSection('projects')} 
             />
             <SidebarItem 
               icon={<FileText className="w-4 h-4" />} 
               label="Blog Posts" 
               active={activeTab === 'blogs'} 
-              onClick={() => setActiveTab('blogs')} 
+              onClick={() => navigateToSection('blogs')} 
             />
             <SidebarItem 
               icon={<Terminal className="w-4 h-4" />} 
               label="Resources" 
               active={activeTab === 'resources'} 
-              onClick={() => setActiveTab('resources')} 
+              onClick={() => navigateToSection('resources')} 
             />
             <SidebarItem 
               icon={<MessageSquare className="w-4 h-4" />} 
               label="Queries / Leads" 
               active={activeTab === 'leads'} 
-              onClick={() => setActiveTab('leads')} 
+              onClick={() => navigateToSection('leads')} 
             />
           </nav>
         </div>
@@ -597,37 +631,37 @@ export default function AdminDashboardView() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                  <div className="bg-white border border-neutral-200 p-6 flex flex-col justify-between gap-4">
-                    <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">TOTAL PROJECTS</span>
-                    <span className="text-3xl font-extrabold text-neutral-950">{totalProjects}</span>
-                  </div>
-                  <div className="bg-white border border-neutral-200 p-6 flex flex-col justify-between gap-4">
-                    <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">TOTAL ESSAYS</span>
-                    <span className="text-3xl font-extrabold text-neutral-950">{totalBlogs}</span>
-                  </div>
-                  <div className="bg-white border border-neutral-200 p-6 flex flex-col justify-between gap-4">
-                    <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">RESOURCES</span>
-                    <span className="text-3xl font-extrabold text-neutral-950">{totalResources}</span>
-                  </div>
-                  <div className="bg-white border border-neutral-200 p-6 flex flex-col justify-between gap-4">
-                    <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">TOTAL LEADS</span>
-                    <span className="text-3xl font-extrabold text-neutral-950">{totalLeads}</span>
-                  </div>
-                  <div className="bg-white border border-neutral-200 p-6 flex flex-col justify-between gap-4">
-                    <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">UNREAD INQUIRIES</span>
-                    <span className="text-3xl font-extrabold text-rose-600">{unreadLeads}</span>
-                  </div>
+                  <Card className="p-6 flex flex-col justify-between gap-4 border border-neutral-200/90 shadow-xs bg-white rounded-2xl">
+                    <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest">TOTAL PROJECTS</span>
+                    <span className="text-3xl font-extrabold text-neutral-950 font-[family-name:var(--font-inter-tight)]">{totalProjects}</span>
+                  </Card>
+                  <Card className="p-6 flex flex-col justify-between gap-4 border border-neutral-200/90 shadow-xs bg-white rounded-2xl">
+                    <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest">TOTAL ESSAYS</span>
+                    <span className="text-3xl font-extrabold text-neutral-950 font-[family-name:var(--font-inter-tight)]">{totalBlogs}</span>
+                  </Card>
+                  <Card className="p-6 flex flex-col justify-between gap-4 border border-neutral-200/90 shadow-xs bg-white rounded-2xl">
+                    <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest">RESOURCES</span>
+                    <span className="text-3xl font-extrabold text-neutral-950 font-[family-name:var(--font-inter-tight)]">{totalResources}</span>
+                  </Card>
+                  <Card className="p-6 flex flex-col justify-between gap-4 border border-neutral-200/90 shadow-xs bg-white rounded-2xl">
+                    <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest">TOTAL LEADS</span>
+                    <span className="text-3xl font-extrabold text-neutral-950 font-[family-name:var(--font-inter-tight)]">{totalLeads}</span>
+                  </Card>
+                  <Card className="p-6 flex flex-col justify-between gap-4 border border-neutral-200/90 shadow-xs bg-white rounded-2xl">
+                    <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest">UNREAD INQUIRIES</span>
+                    <span className="text-3xl font-extrabold text-rose-600 font-[family-name:var(--font-inter-tight)]">{unreadLeads}</span>
+                  </Card>
                 </div>
 
                 {/* Cloudinary Info Panel */}
-                <div className="bg-white border border-neutral-200 p-6 space-y-3">
+                <Card className="border border-neutral-200/90 bg-white p-6 rounded-2xl shadow-xs space-y-3">
                   <h3 className="text-xs font-bold uppercase tracking-wider flex items-center gap-2 text-neutral-800">
-                    <Settings className="w-4 h-4" /> Cloudinary Configuration Help
+                    <Settings className="w-4 h-4" /> Cloudinary Configuration
                   </h3>
                   <p className="text-xs font-light text-neutral-500 leading-relaxed max-w-3xl">
                     To upload images directly, enter your Cloudinary configuration parameters inside any image upload box. These values will be persisted in your local workspace sandbox cache. Alternatively, configure `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` and `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` in your `.env` environment variables.
                   </p>
-                </div>
+                </Card>
               </div>
             )}
 
@@ -635,47 +669,50 @@ export default function AdminDashboardView() {
             {activeTab === 'projects' && (
               <div className="space-y-6">
                 {editingProject ? (
-                  <form onSubmit={handleSaveProject} className="bg-white border border-neutral-200 p-6 space-y-6">
+                  <Card className="bg-white border border-neutral-200/90 rounded-2xl shadow-xs p-6 sm:p-8 space-y-6">
                     <div className="flex justify-between items-center border-b border-neutral-100 pb-4">
                       <h3 className="font-bold text-xs uppercase tracking-widest text-neutral-800">
                         {projects.some(p => p.id === editingProject.id) ? 'Modify Project' : 'Provision Project'}
                       </h3>
                       <div className="flex gap-2">
-                        <button 
+                        <Button 
                           type="button" 
+                          variant="outline"
+                          size="sm"
                           onClick={() => {
                             setEditingProject(null);
                             setIsCustomCategory(false);
                           }} 
-                          className="px-3 py-1.5 border border-neutral-300 text-[10px] font-bold uppercase tracking-wider hover:bg-neutral-100 cursor-pointer rounded-none"
+                          className="rounded-full"
                         >
                           Cancel
-                        </button>
-                        <button 
+                        </Button>
+                        <Button 
                           type="submit" 
+                          size="sm"
                           disabled={isSaving}
-                          className="bg-neutral-950 hover:bg-neutral-800 text-white px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest cursor-pointer rounded-none disabled:opacity-50"
+                          className="rounded-full"
                         >
                           {isSaving ? 'Saving...' : 'Save Project'}
-                        </button>
+                        </Button>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Project Unique ID</label>
-                        <input 
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Project Unique ID</label>
+                        <Input 
                           type="text" 
                           value={editingProject.id} 
                           onChange={e => setEditingProject({ ...editingProject, id: e.target.value })}
                           required
                           disabled={projects.some(p => p.id === editingProject.id)}
-                          className="w-full border border-neutral-200 px-3 py-2 text-xs bg-neutral-50 disabled:text-neutral-400 rounded-none font-mono" 
+                          className="rounded-xl font-mono text-xs" 
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Project Title</label>
-                        <input 
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Project Title</label>
+                        <Input 
                           type="text" 
                           value={editingProject.title} 
                           onChange={e => {
@@ -692,11 +729,11 @@ export default function AdminDashboardView() {
                             }
                           }}
                           required
-                          className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none" 
+                          className="rounded-xl text-xs" 
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Project Type / Category</label>
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Project Type / Category</label>
                         <select
                           value={isCustomCategory ? '__NEW__' : (editingProject.projectType || '')}
                           onChange={e => {
@@ -709,7 +746,7 @@ export default function AdminDashboardView() {
                               setEditingProject({ ...editingProject, projectType: val });
                             }
                           }}
-                          className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none cursor-pointer"
+                          className="w-full border border-neutral-200/90 px-3 py-2 text-xs bg-white rounded-xl cursor-pointer"
                         >
                           <option value="">-- Select Category --</option>
                           {existingCategories.map(cat => (
@@ -720,25 +757,25 @@ export default function AdminDashboardView() {
 
                         {isCustomCategory && (
                           <div className="flex items-center gap-2 mt-2">
-                            <input 
+                            <Input 
                               type="text" 
                               value={editingProject.projectType} 
                               onChange={e => setEditingProject({ ...editingProject, projectType: e.target.value })}
-                              required
-                              autoFocus
-                              placeholder="Enter new custom category (e.g. Web3, AI Tools)..."
-                              className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none font-mono" 
+                              placeholder="Enter new custom category..."
+                              className="rounded-xl text-xs font-mono" 
                             />
-                            <button
+                            <Button
                               type="button"
+                              variant="outline"
+                              size="xs"
                               onClick={() => {
                                 setIsCustomCategory(false);
                                 setEditingProject({ ...editingProject, projectType: '' });
                               }}
-                              className="text-[10px] font-mono text-neutral-500 hover:text-neutral-800 uppercase px-2 py-2 border border-neutral-200 shrink-0"
+                              className="rounded-full shrink-0"
                             >
                               Cancel
-                            </button>
+                            </Button>
                           </div>
                         )}
                       </div>
@@ -746,57 +783,56 @@ export default function AdminDashboardView() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Publication Status</label>
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Publication Status</label>
                         <select 
                           value={editingProject.status} 
                           onChange={e => setEditingProject({ ...editingProject, status: e.target.value as any })}
-                          className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none cursor-pointer"
+                          className="w-full border border-neutral-200/90 px-3 py-2 text-xs bg-white rounded-xl cursor-pointer"
                         >
                           <option value="Draft">Draft (Hidden)</option>
                           <option value="Published">Published (Live)</option>
                         </select>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Featured status</label>
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Featured status</label>
                         <select 
                           value={editingProject.featured ? 'Featured' : 'Standard'} 
                           onChange={e => setEditingProject({ ...editingProject, featured: e.target.value === 'Featured' })}
-                          className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none cursor-pointer"
+                          className="w-full border border-neutral-200/90 px-3 py-2 text-xs bg-white rounded-xl cursor-pointer"
                         >
                           <option value="Standard">Standard</option>
                           <option value="Featured">Featured</option>
                         </select>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Live / Production URL</label>
-                        <input 
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Live / Production URL</label>
+                        <Input 
                           type="text" 
                           value={editingProject.liveUrl || ''} 
                           onChange={e => setEditingProject({ ...editingProject, liveUrl: e.target.value })}
-                          placeholder="e.g. App Store, Play Store or web link"
-                          className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none font-mono" 
+                          placeholder="e.g. App Store or web link"
+                          className="rounded-xl text-xs font-mono" 
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Screenshot URL</label>
-                        <input 
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Screenshot URL</label>
+                        <Input 
                           type="text" 
                           value={editingProject.screenshotUrl || ''} 
                           onChange={e => setEditingProject({ ...editingProject, screenshotUrl: e.target.value })}
                           placeholder="Enter URL or upload image below..."
-                          className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none font-mono" 
+                          className="rounded-xl text-xs font-mono"
                         />
                       </div>
                     </div>
-
                     <CloudinaryUploader 
                       currentUrl={editingProject.screenshotUrl}
                       onUploadSuccess={(url) => setEditingProject({ ...editingProject, screenshotUrl: url })}
                     />
 
                     <div className="flex flex-col gap-2 min-h-[300px]">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Detailed Description</label>
-                      <div className="flex-grow flex flex-col min-h-[250px] border border-neutral-200">
+                      <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Detailed Description</label>
+                      <div className="flex-grow flex flex-col min-h-[250px] border border-neutral-200/90 rounded-xl overflow-hidden">
                         <ReactQuill 
                           theme="snow" 
                           value={editingProject.description}
@@ -805,46 +841,47 @@ export default function AdminDashboardView() {
                         />
                       </div>
                     </div>
-                  </form>
+                  </Card>
                 ) : (
                   <>
                     {/* Projects Stats Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
-                      <div className="bg-white border border-neutral-200 p-6 flex flex-col justify-between gap-4">
-                        <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">TOTAL PROJECTS</span>
-                        <span className="text-3xl font-extrabold text-neutral-950">{projects.length}</span>
-                      </div>
-                      <div className="bg-white border border-neutral-200 p-6 flex flex-col justify-between gap-4">
-                        <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">PUBLISHED (LIVE)</span>
-                        <span className="text-3xl font-extrabold text-neutral-950">
+                      <Card className="p-6 flex flex-col justify-between gap-4 border border-neutral-200/90 rounded-2xl bg-white shadow-xs">
+                        <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest">TOTAL PROJECTS</span>
+                        <span className="text-3xl font-extrabold text-neutral-950 font-[family-name:var(--font-inter-tight)]">{projects.length}</span>
+                      </Card>
+                      <Card className="p-6 flex flex-col justify-between gap-4 border border-neutral-200/90 rounded-2xl bg-white shadow-xs">
+                        <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest">PUBLISHED (LIVE)</span>
+                        <span className="text-3xl font-extrabold text-neutral-950 font-[family-name:var(--font-inter-tight)]">
                           {projects.filter(p => p.status === 'Published').length}
                         </span>
-                      </div>
-                      <div className="bg-white border border-neutral-200 p-6 flex flex-col justify-between gap-4">
-                        <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">DRAFTS (HIDDEN)</span>
-                        <span className="text-3xl font-extrabold text-neutral-500">
+                      </Card>
+                      <Card className="p-6 flex flex-col justify-between gap-4 border border-neutral-200/90 rounded-2xl bg-white shadow-xs">
+                        <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest">DRAFTS (HIDDEN)</span>
+                        <span className="text-3xl font-extrabold text-neutral-500 font-[family-name:var(--font-inter-tight)]">
                           {projects.filter(p => p.status === 'Draft').length}
                         </span>
-                      </div>
-                      <div className="bg-white border border-neutral-200 p-6 flex flex-col justify-between gap-4">
-                        <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">CATEGORIES</span>
-                        <span className="text-3xl font-extrabold text-neutral-950">{existingCategories.length}</span>
-                      </div>
+                      </Card>
+                      <Card className="p-6 flex flex-col justify-between gap-4 border border-neutral-200/90 rounded-2xl bg-white shadow-xs">
+                        <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest">CATEGORIES</span>
+                        <span className="text-3xl font-extrabold text-neutral-950 font-[family-name:var(--font-inter-tight)]">{existingCategories.length}</span>
+                      </Card>
                     </div>
 
-                    <div className="bg-white border border-neutral-200 rounded-none shadow-xs overflow-hidden">
-                      <div className="p-4 border-b border-neutral-100 flex justify-between items-center bg-neutral-50">
+                    <Card className="bg-white border border-neutral-200/90 rounded-2xl shadow-xs overflow-hidden">
+                      <div className="p-4 border-b border-neutral-100 flex justify-between items-center bg-neutral-50/70">
                       <div className="relative">
                         <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-                        <input 
+                        <Input 
                           type="text" 
                           value={searchTerm}
                           onChange={e => setSearchTerm(e.target.value)}
                           placeholder="Search projects..."
-                          className="pl-9 pr-4 py-1.5 border border-neutral-200 text-xs w-64 focus:outline-hidden focus:border-neutral-950 bg-white font-mono"
+                          className="pl-9 pr-4 py-1.5 text-xs w-64 bg-white rounded-xl font-mono"
                         />
                       </div>
-                      <button 
+                      <Button 
+                        size="sm"
                         onClick={() => {
                           setIsCustomCategory(false);
                           setEditingProject({
@@ -859,20 +896,20 @@ export default function AdminDashboardView() {
                             featured: false
                           });
                         }}
-                        className="bg-neutral-950 hover:bg-neutral-800 text-white px-4 py-2 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 cursor-pointer rounded-none"
+                        className="rounded-full flex items-center gap-1.5"
                       >
                         <Plus className="w-3.5 h-3.5" /> New Project
-                      </button>
+                      </Button>
                     </div>
 
                     <table className="w-full text-left border-collapse">
                       <thead>
                         <tr className="border-b border-neutral-200 bg-neutral-100/50">
-                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500 w-36">ID</th>
-                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500">Title</th>
-                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500 w-32">Type</th>
-                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500 w-28">Status</th>
-                          <th className="p-4 w-28 text-right text-[10px] font-bold uppercase tracking-wider text-neutral-500">Actions</th>
+                          <th className="p-4 text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-500 w-36">ID</th>
+                          <th className="p-4 text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-500">Title</th>
+                          <th className="p-4 text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-500 w-32">Type</th>
+                          <th className="p-4 text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-500 w-28">Status</th>
+                          <th className="p-4 w-28 text-right text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-500">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -883,46 +920,53 @@ export default function AdminDashboardView() {
                                <div className="flex items-center gap-2 flex-wrap">
                                  <span>{project.title}</span>
                                  {project.featured && (
-                                   <span className="text-[9px] font-mono font-bold text-amber-600 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-none">
+                                   <Badge variant="outline" className="text-[9px] font-mono font-bold text-amber-600 bg-amber-50 border-amber-200 rounded-full px-2">
                                      ★ FEATURED
-                                   </span>
+                                   </Badge>
                                  )}
                                </div>
                              </td>
                             <td className="p-4 text-xs text-neutral-500 font-mono uppercase">{project.projectType}</td>
                             <td className="p-4">
-                              <span className={`text-[9px] font-mono font-bold uppercase px-2 py-0.5 border rounded-none ${
-                                project.status === 'Draft' ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200'
-                              }`}>
+                              <Badge 
+                                variant="outline"
+                                className={`text-[9px] font-mono font-bold uppercase rounded-full px-2.5 ${
+                                  project.status === 'Draft' ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200'
+                                }`}
+                              >
                                 {project.status}
-                              </span>
+                              </Badge>
                             </td>
-                            <td className="p-4 text-right flex gap-1 justify-end">
-                              <button 
+                            <td className="p-4 text-right flex gap-1.5 justify-end">
+                              <Button 
+                                variant="outline"
+                                size="xs"
                                 onClick={() => {
                                   setIsCustomCategory(Boolean(project.projectType && !existingCategories.includes(project.projectType)));
                                   setEditingProject(project);
                                 }}
-                                className="px-2.5 py-1 border border-neutral-200 text-[9px] font-bold uppercase hover:bg-neutral-100 transition rounded-none cursor-pointer"
+                                className="rounded-full text-[10px]"
                               >
                                 Edit
-                              </button>
-                              <button 
+                              </Button>
+                              <Button 
+                                variant="ghost"
+                                size="icon-xs"
                                 onClick={async () => {
                                   if (confirm("Delete project?")) {
                                     await deleteItem('projects', project.id);
                                   }
                                 }}
-                                className="p-1 text-neutral-400 hover:text-red-600 transition rounded-none cursor-pointer"
+                                className="text-neutral-400 hover:text-red-600 rounded-full"
                               >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </Button>
                             </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
-                  </div>
+                  </Card>
                 </>
               )}
               </div>
@@ -932,92 +976,95 @@ export default function AdminDashboardView() {
             {activeTab === 'blogs' && (
               <div className="space-y-6">
                 {editingBlog ? (
-                  <form onSubmit={handleSaveBlog} className="bg-white border border-neutral-200 p-6 space-y-6">
+                  <Card className="bg-white border border-neutral-200/90 rounded-2xl shadow-xs p-6 sm:p-8 space-y-6">
                     <div className="flex justify-between items-center border-b border-neutral-100 pb-4">
                       <h3 className="font-bold text-xs uppercase tracking-widest text-neutral-800">
                         {blogs.some(b => b.slug === editingBlog.slug) ? 'Modify Blog Post' : 'Write Blog Post'}
                       </h3>
                       <div className="flex gap-2">
-                        <button 
+                        <Button 
                           type="button" 
+                          variant="outline"
+                          size="sm"
                           onClick={() => setEditingBlog(null)} 
-                          className="px-3 py-1.5 border border-neutral-300 text-[10px] font-bold uppercase tracking-wider hover:bg-neutral-100 cursor-pointer rounded-none"
+                          className="rounded-full"
                         >
                           Cancel
-                        </button>
-                        <button 
+                        </Button>
+                        <Button 
                           type="submit" 
+                          size="sm"
                           disabled={isSaving}
-                          className="bg-neutral-950 hover:bg-neutral-800 text-white px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest cursor-pointer rounded-none disabled:opacity-50"
+                          className="rounded-full"
                         >
                           {isSaving ? 'Saving...' : 'Save Post'}
-                        </button>
+                        </Button>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">SEO Route Slug (ID)</label>
-                        <input 
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">SEO Route Slug (ID)</label>
+                        <Input 
                           type="text" 
                           value={editingBlog.slug} 
                           onChange={e => setEditingBlog({ ...editingBlog, slug: e.target.value })}
                           required
                           disabled={blogs.some(b => b.slug === editingBlog.slug)}
                           placeholder="e.g. building-scalable-systems"
-                          className="w-full border border-neutral-200 px-3 py-2 text-xs bg-neutral-50 disabled:text-neutral-400 rounded-none font-mono" 
+                          className="rounded-xl font-mono text-xs" 
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Post Title</label>
-                        <input 
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Post Title</label>
+                        <Input 
                           type="text" 
                           value={editingBlog.title} 
                           onChange={e => setEditingBlog({ ...editingBlog, title: e.target.value })}
                           required
-                          className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none" 
+                          className="rounded-xl text-xs" 
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Read Time Indicator</label>
-                        <input 
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Read Time Indicator</label>
+                        <Input 
                           type="text" 
                           value={editingBlog.readTime} 
                           onChange={e => setEditingBlog({ ...editingBlog, readTime: e.target.value })}
                           required
                           placeholder="e.g. 5 MIN READ"
-                          className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none" 
+                          className="rounded-xl text-xs" 
                         />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Categories (Comma-separated)</label>
-                        <input 
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Categories (Comma-separated)</label>
+                        <Input 
                           type="text" 
                           value={(editingBlog.categories || []).join(', ')} 
                           onChange={e => setEditingBlog({ ...editingBlog, categories: e.target.value.split(',').map(c => c.trim()).filter(Boolean) })}
                           placeholder="e.g. Design, Architecture"
-                          className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none font-semibold font-sans" 
+                          className="rounded-xl text-xs font-sans" 
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Tags (Comma-separated)</label>
-                        <input 
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Tags (Comma-separated)</label>
+                        <Input 
                           type="text" 
                           value={(editingBlog.tags || []).join(', ')} 
                           onChange={e => setEditingBlog({ ...editingBlog, tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean) })}
                           placeholder="e.g. TECH, DEV"
-                          className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none font-mono" 
+                          className="rounded-xl font-mono text-xs" 
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Status</label>
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Status</label>
                         <select 
                           value={editingBlog.status} 
                           onChange={e => setEditingBlog({ ...editingBlog, status: e.target.value as any })}
-                          className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none cursor-pointer font-semibold"
+                          className="w-full border border-neutral-200/90 px-3 py-2 text-xs bg-white rounded-xl cursor-pointer font-semibold"
                         >
                           <option value="Draft">Draft (Hidden)</option>
                           <option value="Published">Published (Live)</option>
@@ -1026,13 +1073,13 @@ export default function AdminDashboardView() {
                     </div>
 
                     <div className="flex flex-col gap-2">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Cover Image Link / Uploader</label>
-                      <input 
+                      <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Cover Image Link / Uploader</label>
+                      <Input 
                         type="text" 
                         value={editingBlog.coverImage || ''} 
                         onChange={e => setEditingBlog({ ...editingBlog, coverImage: e.target.value })}
                         placeholder="Enter direct URL or upload below..."
-                        className="w-full border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none font-mono mb-2" 
+                        className="rounded-xl text-xs font-mono mb-2" 
                       />
                       <CloudinaryUploader 
                         currentUrl={editingBlog.coverImage}
@@ -1041,13 +1088,13 @@ export default function AdminDashboardView() {
                     </div>
 
                     <div className="flex flex-col gap-2">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Short Summary Excerpt</label>
-                      <textarea 
+                      <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Short Summary Excerpt</label>
+                      <Textarea 
                         rows={2} 
                         value={editingBlog.excerpt} 
                         onChange={e => setEditingBlog({ ...editingBlog, excerpt: e.target.value })}
                         required
-                        className="w-full border border-neutral-200 p-3 text-xs bg-white rounded-none font-sans" 
+                        className="rounded-xl text-xs font-sans" 
                       />
                     </div>
 
@@ -1166,13 +1213,13 @@ export default function AdminDashboardView() {
                               });
                             }}
                             placeholder="Paste raw Markdown with or without YAML frontmatter here...&#10;&#10;title: &quot;My Article Title&quot;&#10;slug: &quot;my-article-title&quot;&#10;description: &quot;Short summary...&quot;&#10;&#10;# Article Body..."
-                            className="w-full border border-neutral-200 p-4 text-xs bg-white rounded-none font-mono leading-relaxed resize-y focus:outline-hidden focus:border-neutral-950"
+                            className="w-full border border-neutral-200/90 p-4 text-xs bg-white rounded-xl font-mono leading-relaxed resize-y focus:outline-hidden focus:border-neutral-950"
                           />
                         </div>
                       )}
 
                       {blogEditorMode === 'rich' && (
-                        <div className="flex-grow flex flex-col min-h-[300px] border border-neutral-200">
+                        <div className="flex-grow flex flex-col min-h-[300px] border border-neutral-200/90 rounded-xl overflow-hidden">
                           <ReactQuill 
                             theme="snow" 
                             value={editingBlog.contentHtml}
@@ -1183,7 +1230,7 @@ export default function AdminDashboardView() {
                       )}
 
                       {blogEditorMode === 'preview' && (
-                        <div className="border border-neutral-200 bg-white p-6 sm:p-8 min-h-[300px] overflow-y-auto max-h-[500px]">
+                        <div className="border border-neutral-200/90 bg-white p-6 sm:p-8 min-h-[300px] rounded-xl overflow-y-auto max-h-[500px]">
                           <div className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest pb-3 mb-4 border-b border-neutral-100">
                             RENDERED BLOG PREVIEW
                           </div>
@@ -1196,21 +1243,22 @@ export default function AdminDashboardView() {
                         </div>
                       )}
                     </div>
-                  </form>
+                  </Card>
                 ) : (
-                  <div className="bg-white border border-neutral-200 rounded-none shadow-xs overflow-hidden">
-                    <div className="p-4 border-b border-neutral-100 flex justify-between items-center bg-neutral-50">
+                  <Card className="bg-white border border-neutral-200/90 rounded-2xl shadow-xs overflow-hidden">
+                    <div className="p-4 border-b border-neutral-100 flex justify-between items-center bg-neutral-50/70">
                       <div className="relative">
                         <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-                        <input 
+                        <Input 
                           type="text" 
                           value={searchTerm}
                           onChange={e => setSearchTerm(e.target.value)}
                           placeholder="Search essays..."
-                          className="pl-9 pr-4 py-1.5 border border-neutral-200 text-xs w-64 focus:outline-hidden focus:border-neutral-950 bg-white font-mono"
+                          className="pl-9 pr-4 py-1.5 text-xs w-64 bg-white rounded-xl font-mono"
                         />
                       </div>
-                      <button 
+                      <Button 
+                        size="sm"
                         onClick={() => {
                           setEditingBlog({
                             slug: `essay-${Math.floor(Math.random() * 1000)}`,
@@ -1228,20 +1276,20 @@ export default function AdminDashboardView() {
                           setMarkdownInput('');
                           setBlogEditorMode('markdown');
                         }}
-                        className="bg-neutral-950 hover:bg-neutral-800 text-white px-4 py-2 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 cursor-pointer rounded-none"
+                        className="rounded-full flex items-center gap-1.5"
                       >
                         <Plus className="w-3.5 h-3.5" /> Write Essay
-                      </button>
+                      </Button>
                     </div>
 
                     <table className="w-full text-left border-collapse">
                       <thead>
                         <tr className="border-b border-neutral-200 bg-neutral-100/50">
-                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500 w-36">Slug</th>
-                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500">Title</th>
-                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500 w-36">Categories</th>
-                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500 w-28">Status</th>
-                          <th className="p-4 w-28 text-right text-[10px] font-bold uppercase tracking-wider text-neutral-500">Actions</th>
+                          <th className="p-4 text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-500 w-36">Slug</th>
+                          <th className="p-4 text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-500">Title</th>
+                          <th className="p-4 text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-500 w-36">Categories</th>
+                          <th className="p-4 text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-500 w-28">Status</th>
+                          <th className="p-4 w-28 text-right text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-500">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1251,39 +1299,46 @@ export default function AdminDashboardView() {
                             <td className="p-4 text-xs font-bold uppercase text-neutral-950">{blog.title}</td>
                             <td className="p-4 text-xs text-neutral-500 font-mono uppercase">{(blog.categories || []).join(', ')}</td>
                             <td className="p-4">
-                              <span className={`text-[9px] font-mono font-bold uppercase px-2 py-0.5 border rounded-none ${
-                                blog.status === 'Draft' ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200'
-                              }`}>
+                              <Badge 
+                                variant="outline"
+                                className={`text-[9px] font-mono font-bold uppercase rounded-full px-2.5 ${
+                                  blog.status === 'Draft' ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200'
+                                }`}
+                              >
                                 {blog.status}
-                              </span>
+                              </Badge>
                             </td>
-                            <td className="p-4 text-right flex gap-1 justify-end">
-                              <button 
+                            <td className="p-4 text-right flex gap-1.5 justify-end">
+                              <Button 
+                                variant="outline"
+                                size="xs"
                                 onClick={() => {
                                   setEditingBlog(blog);
                                   setMarkdownInput('');
                                   setBlogEditorMode(blog.contentHtml ? 'rich' : 'markdown');
                                 }}
-                                className="px-2.5 py-1 border border-neutral-200 text-[9px] font-bold uppercase hover:bg-neutral-100 transition rounded-none cursor-pointer"
+                                className="rounded-full text-[10px]"
                               >
                                 Edit
-                              </button>
-                              <button 
+                              </Button>
+                              <Button 
+                                variant="ghost"
+                                size="icon-xs"
                                 onClick={async () => {
                                   if (confirm("Delete blog?")) {
                                     await deleteItem('blogs', blog.slug);
                                   }
                                 }}
-                                className="p-1 text-neutral-400 hover:text-red-600 transition rounded-none cursor-pointer"
+                                className="text-neutral-400 hover:text-red-600 rounded-full"
                               >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </Button>
                             </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
-                  </div>
+                  </Card>
                 )}
               </div>
             )}
@@ -1304,7 +1359,7 @@ export default function AdminDashboardView() {
                 )}
 
                 {editingResource ? (
-                  <form onSubmit={handleSaveResource} className="bg-white border border-neutral-200 p-6 space-y-6 rounded-none">
+                  <Card className="bg-white border border-neutral-200/90 rounded-2xl shadow-xs p-6 sm:p-8 space-y-6">
                     <div className="flex justify-between items-center border-b border-neutral-100 pb-4">
                       <div className="flex items-center gap-2">
                         <Terminal className="w-4 h-4 text-neutral-900" />
@@ -1313,41 +1368,45 @@ export default function AdminDashboardView() {
                         </h3>
                       </div>
                       <div className="flex gap-2">
-                        <button 
+                        <Button 
                           type="button" 
+                          variant="outline"
+                          size="sm"
                           onClick={() => setEditingResource(null)} 
-                          className="border border-neutral-200 text-neutral-600 hover:bg-neutral-100 text-[10px] px-3 py-2 font-bold uppercase tracking-wider cursor-pointer rounded-none"
+                          className="rounded-full"
                         >
                           Cancel
-                        </button>
-                        <button 
+                        </Button>
+                        <Button 
                           type="submit" 
+                          size="sm"
                           disabled={isSaving}
-                          className="bg-neutral-950 hover:bg-neutral-800 text-white text-[10px] px-4 py-2 font-bold uppercase tracking-widest disabled:opacity-50 cursor-pointer rounded-none"
+                          className="rounded-full"
                         >
                           {isSaving ? 'Saving...' : 'Save Resource'}
-                        </button>
+                        </Button>
                       </div>
                     </div>
 
                     {/* Quick GitHub Auto-Fill Bar */}
-                    <div className="bg-neutral-50 p-4 border border-neutral-200 flex flex-col sm:flex-row items-center gap-3">
+                    <div className="bg-neutral-50 p-4 border border-neutral-200/90 rounded-xl flex flex-col sm:flex-row items-center gap-3">
                       <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-neutral-800 shrink-0">
                         <Github className="w-4 h-4" /> Quick Import from GitHub:
                       </div>
                       <div className="flex-grow flex items-center gap-2 w-full">
-                        <input 
+                        <Input 
                           type="text" 
                           value={githubDirectInput} 
                           onChange={e => setGithubDirectInput(e.target.value)} 
                           placeholder="e.g. https://github.com/m6474n/my-repo or owner/repo"
-                          className="flex-grow border border-neutral-200 px-3 py-1.5 text-xs bg-white font-mono rounded-none"
+                          className="flex-grow rounded-xl text-xs font-mono bg-white"
                         />
-                        <button
+                        <Button
                           type="button"
+                          size="sm"
                           disabled={isFetchingDirect || !githubDirectInput.trim()}
                           onClick={() => handleFetchAndPopulate(githubDirectInput)}
-                          className="bg-neutral-900 hover:bg-neutral-800 text-white text-[10px] font-bold uppercase tracking-wider px-3.5 py-2 cursor-pointer disabled:opacity-50 rounded-none shrink-0 flex items-center gap-1.5"
+                          className="rounded-full shrink-0 flex items-center gap-1.5"
                         >
                           {isFetchingDirect ? (
                             <>
@@ -1358,40 +1417,40 @@ export default function AdminDashboardView() {
                               <RefreshCw className="w-3.5 h-3.5" /> Fetch & Auto-Fill
                             </>
                           )}
-                        </button>
+                        </Button>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Resource ID</label>
-                        <input 
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Resource ID</label>
+                        <Input 
                           type="text" 
                           value={editingResource.id} 
                           onChange={e => setEditingResource({ ...editingResource, id: e.target.value })}
                           required
                           disabled={resources.some(r => r.id === editingResource.id)}
                           placeholder="e.g. fastapi-lead-scraper"
-                          className="border border-neutral-200 px-3 py-2 text-xs bg-neutral-50 font-mono disabled:opacity-60 rounded-none" 
+                          className="rounded-xl text-xs font-mono bg-neutral-50" 
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Title</label>
-                        <input 
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Title</label>
+                        <Input 
                           type="text" 
                           value={editingResource.title} 
                           onChange={e => setEditingResource({ ...editingResource, title: e.target.value })}
                           required
                           placeholder="e.g. FastAPI Lead Enrichment Agent"
-                          className="border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none" 
+                          className="rounded-xl text-xs" 
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Type / Classification</label>
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Type / Classification</label>
                         <select 
                           value={editingResource.type || 'Script'} 
                           onChange={e => setEditingResource({ ...editingResource, type: e.target.value as any })}
-                          className="border border-neutral-200 px-3 py-2 text-xs bg-white rounded-none font-mono"
+                          className="border border-neutral-200/90 px-3 py-2 text-xs bg-white rounded-xl font-mono cursor-pointer"
                         >
                           <option value="Script">Script</option>
                           <option value="Template">Template</option>
@@ -1403,128 +1462,128 @@ export default function AdminDashboardView() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 flex items-center gap-1.5">
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400 flex items-center gap-1.5">
                           <Github className="w-3.5 h-3.5" /> GitHub Repository URL
                         </label>
-                        <input 
+                        <Input 
                           type="text" 
                           value={editingResource.githubUrl || ''} 
                           onChange={e => setEditingResource({ ...editingResource, githubUrl: e.target.value })}
                           placeholder="https://github.com/m6474n/repo-name"
-                          className="border border-neutral-200 px-3 py-2 text-xs bg-white font-mono rounded-none" 
+                          className="rounded-xl text-xs font-mono" 
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 flex items-center gap-1.5">
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400 flex items-center gap-1.5">
                           <ExternalLink className="w-3.5 h-3.5" /> Live / Deployed Demo URL
                         </label>
-                        <input 
+                        <Input 
                           type="text" 
                           value={editingResource.liveUrl || ''} 
                           onChange={e => setEditingResource({ ...editingResource, liveUrl: e.target.value })}
                           placeholder="https://my-app.vercel.app"
-                          className="border border-neutral-200 px-3 py-2 text-xs bg-white font-mono rounded-none" 
+                          className="rounded-xl text-xs font-mono" 
                         />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Tags (comma-separated)</label>
-                        <input 
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Tags (comma-separated)</label>
+                        <Input 
                           type="text" 
                           value={resourceTagsInput} 
                           onChange={e => setResourceTagsInput(e.target.value)}
                           placeholder="Python, FastAPI, Gemini API, Playwright"
-                          className="border border-neutral-200 px-3 py-2 text-xs bg-white font-mono rounded-none" 
+                          className="rounded-xl text-xs font-mono" 
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Download / Star Count</label>
-                        <input 
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Download / Star Count</label>
+                        <Input 
                           type="number" 
                           value={editingResource.downloadCount ?? 0} 
                           onChange={e => setEditingResource({ ...editingResource, downloadCount: parseInt(e.target.value, 10) || 0 })}
-                          className="border border-neutral-200 px-3 py-2 text-xs bg-white font-mono rounded-none" 
+                          className="rounded-xl text-xs font-mono" 
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Downloadable Archive / File URL</label>
-                        <input 
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Downloadable Archive / File URL</label>
+                        <Input 
                           type="text" 
                           value={editingResource.fileUrl || ''} 
                           onChange={e => setEditingResource({ ...editingResource, fileUrl: e.target.value })}
-                          placeholder="https://... or /downloads/..."
-                          className="border border-neutral-200 px-3 py-2 text-xs bg-white font-mono rounded-none" 
+                          placeholder="Direct zip/tar/asset URL..."
+                          className="rounded-xl text-xs font-mono"
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Featured Screenshot / Image URL</label>
-                        <input 
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Featured Image URL</label>
+                        <Input 
                           type="text" 
                           value={editingResource.imageUrl || ''} 
                           onChange={e => setEditingResource({ ...editingResource, imageUrl: e.target.value })}
-                          placeholder="https://images.unsplash.com/... or uploaded URL"
-                          className="border border-neutral-200 px-3 py-2 text-xs bg-white font-mono rounded-none" 
+                          placeholder="Banner image URL..."
+                          className="rounded-xl text-xs font-mono"
                         />
                       </div>
                     </div>
 
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center justify-between">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Resource Description / Overview</label>
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Resource Description / Overview</label>
                         <span className="text-[9px] font-mono text-neutral-400 uppercase">Displayed on Resource Card</span>
                       </div>
-                      <textarea 
+                      <Textarea 
                         rows={4}
                         value={editingResource.description} 
                         onChange={e => setEditingResource({ ...editingResource, description: e.target.value })}
                         required
                         placeholder="Comprehensive overview or architectural breakdown of the resource..."
-                        className="border border-neutral-200 p-3 text-xs bg-white rounded-none leading-relaxed font-mono" 
+                        className="rounded-xl p-3 text-xs bg-white leading-relaxed font-mono" 
                       />
                     </div>
 
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center justify-between">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Copyable Code / Clone Snippet</label>
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Copyable Code / Clone Snippet</label>
                         <span className="text-[9px] font-mono text-neutral-400 uppercase">Optional Code Block</span>
                       </div>
-                      <textarea 
+                      <Textarea 
                         rows={6}
                         value={editingResource.codeBlock || ''} 
                         onChange={e => setEditingResource({ ...editingResource, codeBlock: e.target.value })}
                         placeholder="# Paste code snippet, clone command, or configuration block..."
-                        className="border border-neutral-800 p-4 font-mono text-xs bg-neutral-950 text-neutral-100 rounded-none leading-relaxed" 
+                        className="rounded-xl p-4 font-mono text-xs bg-neutral-950 text-neutral-100 leading-relaxed border-neutral-800" 
                       />
                     </div>
 
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center justify-between">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Detailed Guide / README Content</label>
+                        <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">Detailed Guide / README Content</label>
                         <span className="text-[9px] font-mono text-neutral-400 uppercase">Full Documentation</span>
                       </div>
-                      <textarea 
+                      <Textarea 
                         rows={8}
                         value={editingResource.content} 
                         onChange={e => setEditingResource({ ...editingResource, content: e.target.value })}
                         required
                         placeholder="Detailed installation, parameters, deployment guide or README markdown..."
-                        className="border border-neutral-200 p-3 text-xs bg-white rounded-none leading-relaxed font-mono" 
+                        className="rounded-xl p-3 text-xs bg-white leading-relaxed font-mono" 
                       />
                     </div>
-                  </form>
+                  </Card>
                 ) : (
-                  <div className="bg-white border border-neutral-200 rounded-none overflow-hidden">
-                    <div className="p-4 border-b border-neutral-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-neutral-50/50">
+                  <Card className="bg-white border border-neutral-200/90 rounded-2xl overflow-hidden shadow-xs">
+                    <div className="p-4 border-b border-neutral-200/90 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-neutral-50/70">
                       <div className="relative w-full sm:w-72">
                         <Search className="w-3.5 h-3.5 absolute left-3 top-3 text-neutral-400" />
-                        <input 
+                        <Input 
                           type="text" 
                           value={searchTerm}
                           onChange={e => setSearchTerm(e.target.value)}
-                          placeholder="Search resources by title, tag..."
-                          className="w-full border border-neutral-200 pl-9 pr-3 py-1.5 text-xs bg-white font-mono rounded-none"
+                          placeholder="Filter vault resources..."
+                          className="pl-9 rounded-xl text-xs font-mono bg-white"
                         />
                       </div>
                       <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
@@ -1653,7 +1712,7 @@ export default function AdminDashboardView() {
                         ))}
                       </tbody>
                     </table>
-                  </div>
+                  </Card>
                 )}
 
                 {/* ─── GITHUB REPOSITORY BROWSER MODAL ─── */}
@@ -1898,22 +1957,22 @@ export default function AdminDashboardView() {
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-white border border-neutral-200 rounded-none shadow-xs overflow-hidden">
-                    <div className="p-4 border-b border-neutral-100 flex justify-between items-center bg-neutral-50">
+                  <Card className="bg-white border border-neutral-200/90 rounded-2xl shadow-xs overflow-hidden">
+                    <div className="p-4 border-b border-neutral-100 flex justify-between items-center bg-neutral-50/70">
                       <h3 className="font-bold text-xs uppercase tracking-widest text-neutral-700">Queries / Leads Inbox</h3>
-                      <span className="text-[10px] font-mono font-bold bg-rose-50 text-rose-600 px-3 py-1 border border-rose-100">
+                      <Badge variant="outline" className="text-[10px] font-mono font-bold bg-rose-50 text-rose-600 border-rose-200 rounded-full px-2.5">
                         {unreadLeads} UNREAD
-                      </span>
+                      </Badge>
                     </div>
 
                     <table className="w-full text-left border-collapse">
                       <thead>
                         <tr className="border-b border-neutral-200 bg-neutral-100/50">
-                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500 w-28">Ref Code</th>
-                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500">Sender Name</th>
-                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500">Subject</th>
-                          <th className="p-4 text-[10px] font-bold uppercase tracking-wider text-neutral-500 w-36">Received At</th>
-                          <th className="p-4 w-24 text-right text-[10px] font-bold uppercase tracking-wider text-neutral-500">Actions</th>
+                          <th className="p-4 text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-500 w-28">Ref Code</th>
+                          <th className="p-4 text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-500">Sender Name</th>
+                          <th className="p-4 text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-500">Subject</th>
+                          <th className="p-4 text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-500 w-36">Received At</th>
+                          <th className="p-4 w-24 text-right text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-500">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1927,17 +1986,19 @@ export default function AdminDashboardView() {
                             <td className="p-4 text-xs text-neutral-500 max-w-[200px] truncate">{lead.subject}</td>
                             <td className="p-4 text-xs text-neutral-400 font-mono">{lead.time}</td>
                             <td className="p-4 text-right">
-                              <button 
+                              <Button 
+                                variant="outline"
+                                size="xs"
                                 onClick={async () => {
                                   setActiveLead(lead);
                                   if (!lead.read) {
                                     await toggleMessageRead(lead.id);
                                   }
                                 }}
-                                className="px-3 py-1 border border-neutral-200 text-[9px] font-bold uppercase hover:bg-neutral-950 hover:text-white transition rounded-none cursor-pointer"
+                                className="rounded-full text-[10px]"
                               >
                                 View
-                              </button>
+                              </Button>
                             </td>
                           </tr>
                         ))}
@@ -1950,7 +2011,7 @@ export default function AdminDashboardView() {
                         )}
                       </tbody>
                     </table>
-                  </div>
+                  </Card>
                 )}
               </div>
             )}
