@@ -214,7 +214,7 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
   return (
     <section
       id="panoramic-work-showcase"
-      className="w-full relative overflow-hidden bg-neutral-950 text-white py-16 md:py-24 select-none"
+      className="w-full relative overflow-x-clip overflow-y-visible bg-neutral-950 text-white py-16 md:py-24 select-none"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onWheel={handleWheel}
@@ -299,7 +299,7 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        className="w-full relative h-[600px] sm:h-[660px] md:h-[700px] lg:h-[720px] flex items-center justify-center overflow-visible cursor-grab active:cursor-grabbing touch-none py-6"
+        className="w-full relative h-[620px] sm:h-[680px] md:h-[720px] lg:h-[750px] flex items-center justify-center overflow-visible cursor-grab active:cursor-grabbing touch-none py-8"
         style={{ perspective: 1400, perspectiveOrigin: '50% 50%' }}
       >
         <div
@@ -321,9 +321,8 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
             const isCenter = absDiff < 0.45;
 
             // ─── ULTRA WIDE-ANGLE (FISHEYE CONCAVE) PERSPECTIVE ───
-            // In wide-angle optics: center appears recessed (scale ~0.86), while lateral
-            // flanking slides arch forward and loom taller (scale up to ~1.08)
-            const scale = Math.min(1.08, 0.86 + absDiff * 0.12);
+            // Center is clearly framed (scale ~0.95), flanking slides expand to ~1.05
+            const scale = Math.min(1.05, 0.95 + absDiff * 0.05);
 
             // Horizontal position across panoramic field
             const x = diff * baseSpacing * (1 + absDiff * 0.05);
