@@ -14,14 +14,14 @@ export async function generateMetadata(
   return {
     ...DEFAULT_METADATA,
     title: `${readableTitle} — Mosen Blog`,
-    description: `Read the technical essay: "${readableTitle}" by Muhammad Mohsin. Explorations into product engineering, automation, and design systems.`,
+    description: `Read the technical article: "${readableTitle}" by Muhammad Mohsin. Explorations into product engineering, automation, and design systems.`,
     alternates: {
       canonical: `${BASE_URL}/blog/${slug}`,
     },
     openGraph: {
       ...(DEFAULT_METADATA.openGraph as object),
       title: `${readableTitle} — Mosen Blog`,
-      description: `Read the technical essay: "${readableTitle}" by Muhammad Mohsin.`,
+      description: `Read the technical article: "${readableTitle}" by Muhammad Mohsin.`,
       url: `${BASE_URL}/blog/${slug}`,
       type: 'article',
     },

@@ -30,8 +30,8 @@ export default function BlogIndexView() {
       <Container>
         <DynamicPageHeader
           badge="WRITEUPS"
-          title="THOUGHTS & ESSAYS"
-          subtitle="Explorations into automation architecture paradigms, digital layouts engineering, and the developer-designer methodology behind systems."
+          title="THOUGHTS & ARTICLES"
+          subtitle="Explorations into automation architecture paradigms, digital layouts engineering, and product engineering methodology behind systems."
           hasBorder={true}
         />
 
@@ -59,7 +59,7 @@ export default function BlogIndexView() {
               DISPATCHES PENDING
             </span>
             <p className="text-sm font-light text-neutral-600 max-w-sm mx-auto">
-              Essays and technical teardowns are currently being drafted. Check back soon or explore open resources.
+              Articles and technical teardowns are currently being drafted. Check back soon or explore open resources.
             </p>
             <div className="mt-6">
               <Link
@@ -72,20 +72,20 @@ export default function BlogIndexView() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {filteredBlogs.map((essay) => (
+            {filteredBlogs.map((article) => (
               <ReusableCard
-                key={essay.slug}
+                key={article.slug}
                 hoverable={true}
                 variant="muted"
                 className="hover:bg-white transition-all flex flex-col justify-between p-6 border border-neutral-200"
-                id={`essay-card-${essay.slug}`}
+                id={`article-card-${article.slug}`}
               >
                 <div>
-                  {essay.coverImage && (
+                  {article.coverImage && (
                     <div className="w-full aspect-video overflow-hidden border border-neutral-100 bg-neutral-50 mb-6">
                       <img 
-                        src={essay.coverImage} 
-                        alt={essay.title} 
+                        src={article.coverImage} 
+                        alt={article.title} 
                         className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c';
@@ -95,37 +95,37 @@ export default function BlogIndexView() {
                   )}
                   
                   <div className="flex items-center justify-between text-[9px] text-neutral-400 font-bold tracking-widest uppercase font-mono mb-4">
-                    <span>{essay.publishedAt.toUpperCase()}</span>
-                    <span>{essay.readTime.toUpperCase()}</span>
+                    <span>{article.publishedAt.toUpperCase()}</span>
+                    <span>{article.readTime.toUpperCase()}</span>
                   </div>
 
                   <h3 className="text-base font-light text-neutral-950 mb-3 uppercase tracking-tight hover:underline">
-                    <Link href={`/blog/${essay.slug}`}>{essay.title.toUpperCase()}</Link>
+                    <Link href={`/blog/${article.slug}`}>{article.title.toUpperCase()}</Link>
                   </h3>
 
                   <p className="text-xs font-light text-neutral-500 leading-relaxed mb-6">
-                    {stripHtml(essay.excerpt)}
+                    {stripHtml(article.excerpt)}
                   </p>
                 </div>
 
                 <div className="pt-4 border-t border-neutral-100 flex items-center justify-between">
                   <div className="flex gap-2">
-                    {(essay.categories || []).slice(0, 1).map((cat, idx) => (
+                    {(article.categories || []).slice(0, 1).map((cat, idx) => (
                       <span key={idx} className="text-[9px] font-mono font-bold bg-neutral-950 text-white px-2 py-0.5 uppercase">
                         {cat.toUpperCase()}
                       </span>
                     ))}
-                    {(essay.tags || []).slice(0, 2).map((t, idx) => (
+                    {(article.tags || []).slice(0, 2).map((t, idx) => (
                       <span key={idx} className="text-[9px] font-mono font-bold text-neutral-400 uppercase pt-0.5">
                         #{t.toUpperCase()}
                       </span>
                     ))}
                   </div>
                   <Link
-                    href={`/blog/${essay.slug}`}
+                    href={`/blog/${article.slug}`}
                     className="text-xs font-bold tracking-wider text-neutral-950 hover:text-neutral-600 flex items-center gap-1 uppercase"
                   >
-                    READ WRITEUP <ChevronRight className="w-4 h-4" />
+                    READ ARTICLE <ChevronRight className="w-4 h-4" />
                   </Link>
                 </div>
               </ReusableCard>

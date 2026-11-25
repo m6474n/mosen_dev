@@ -35,7 +35,7 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
 
   const activePost = blogs.find((b) => b.slug === slug);
 
-  // Next essay peek finder
+  // Next article peek finder
   const currentIndex = blogs.findIndex((b) => b.slug === slug);
   const nextPost =
     currentIndex >= 0 && currentIndex < blogs.length - 1
@@ -49,7 +49,7 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: activePost?.title || 'Mosen Essay',
+          title: activePost?.title || 'Mosen Article',
           url: window.location.href,
         });
       } else {
@@ -69,7 +69,7 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
         <Container className="items-center justify-center py-32 text-center">
           <div className="w-6 h-6 border-2 border-neutral-950 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-xs font-mono text-neutral-400 uppercase tracking-widest">
-            Loading essay...
+            Loading article...
           </p>
         </Container>
       </DefaultPageLayout>
@@ -81,15 +81,15 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
     return (
       <DefaultPageLayout>
         <Container className="items-center justify-center py-20 text-center">
-          <h2 className="text-xl font-light uppercase mb-4">ESSAY NOT FOUND</h2>
+          <h2 className="text-xl font-light uppercase mb-4">ARTICLE NOT FOUND</h2>
           <p className="text-sm font-light text-neutral-500 mb-8">
-            The requested essay slug does not exist on this channel.
+            The requested article slug does not exist on this channel.
           </p>
           <Link
             href="/blog"
             className="px-6 py-3 bg-neutral-950 text-white text-xs font-bold tracking-wider uppercase rounded-full shadow-xs hover:bg-neutral-800 transition-colors"
           >
-            Back to Blog
+            Back to Articles
           </Link>
         </Container>
       </DefaultPageLayout>
@@ -123,7 +123,7 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
               </span>
               <span>•</span>
               <span className="inline-flex items-center gap-1 text-neutral-900 font-bold">
-                <BookOpen className="w-3 h-3" /> EDITORIAL ESSAY
+                <BookOpen className="w-3 h-3" /> EDITORIAL ARTICLE
               </span>
             </div>
 
@@ -196,13 +196,13 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
               href="/contact"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-neutral-950 text-white font-mono text-[10px] font-bold uppercase tracking-wider hover:bg-neutral-800 transition-colors shadow-2xs self-start sm:self-auto"
             >
-              <span>DISCUSS ESSAY</span>
+              <span>DISCUSS ARTICLE</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </motion.article>
 
-        {/* Next Essay Peek Card */}
+        {/* Next Article Peek Card */}
         {nextPost && (
           <Link
             href={`/blog/${nextPost.slug}`}
@@ -212,7 +212,7 @@ export default function BlogPostView({ slug }: BlogPostViewProps) {
             <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
               <div>
                 <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400 block mb-2">
-                  NEXT ESSAY WRITEUP
+                  NEXT ARTICLE WRITEUP
                 </span>
                 <h3 className="text-xl sm:text-2xl font-bold uppercase tracking-tight text-white group-hover:text-neutral-300 transition-colors max-w-xl">
                   {nextPost.title}

@@ -667,7 +667,7 @@ export default function AdminDashboardView({ initialSection = 'dashboard' }: Adm
                     <span className="text-3xl font-extrabold text-neutral-950 font-[family-name:var(--font-inter-tight)]">{totalProjects}</span>
                   </Card>
                   <Card className="p-6 flex flex-col justify-between gap-4 border border-neutral-200/90 shadow-xs bg-white rounded-2xl">
-                    <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest">TOTAL ESSAYS</span>
+                    <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest">TOTAL ARTICLES</span>
                     <span className="text-3xl font-extrabold text-neutral-950 font-[family-name:var(--font-inter-tight)]">{totalBlogs}</span>
                   </Card>
                   <Card className="p-6 flex flex-col justify-between gap-4 border border-neutral-200/90 shadow-xs bg-white rounded-2xl">
@@ -1137,7 +1137,7 @@ export default function AdminDashboardView({ initialSection = 'dashboard' }: Adm
                     <div className="flex flex-col gap-2 min-h-[380px]">
                       <div className="flex items-center justify-between">
                         <label className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
-                          Essay Content
+                          Article Content
                         </label>
                         {/* Editor Mode Tabs */}
                         <div className="flex items-center border border-neutral-200 p-0.5 bg-neutral-100">
@@ -1292,7 +1292,7 @@ export default function AdminDashboardView({ initialSection = 'dashboard' }: Adm
                           type="text" 
                           value={searchTerm}
                           onChange={e => setSearchTerm(e.target.value)}
-                          placeholder="Search essays..."
+                          placeholder="Search articles..."
                           className="pl-9 pr-4 py-1.5 text-xs w-64 bg-white rounded-xl font-mono"
                         />
                       </div>
@@ -1317,7 +1317,7 @@ export default function AdminDashboardView({ initialSection = 'dashboard' }: Adm
                         }}
                         className="rounded-full flex items-center gap-1.5"
                       >
-                        <Plus className="w-3.5 h-3.5" /> Write Essay
+                        <Plus className="w-3.5 h-3.5" /> Write Article
                       </Button>
                     </div>
 
