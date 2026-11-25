@@ -134,8 +134,16 @@ function parseMarkdownWithFrontmatter(rawText: string): {
     if (h1Match) metadata.title = h1Match[1].trim();
   }
 
+  // Normalize extra consecutive blank lines in markdown body
+  const cleanedBody = bodyPart.replace(/\r\n/g, '\n').replace(/\n{3,}/g, '\n\n');
+
   // Parse markdown body into styled HTML
-  const bodyHtml = marked.parse(bodyPart) as string;
+  const rawHtml = marked.parse(cleanedBody) as string;
+
+  // Clean empty HTML paragraphs like <p></p> or <p><br></p> produced by Quill or marked
+  const bodyHtml = rawHtml
+    .replace(/<p>\s*(?:<br\s*\/?>)?\s*<\/p>/gi, '')
+    .trim();
 
   return {
     metadata,
@@ -355,7 +363,11 @@ export default function AdminDashboardView({ initialSection = 'dashboard' }: Adm
       // If user was typing in markdown tab, convert to HTML before saving
       let finalHtml = editingBlog.contentHtml;
       if (blogEditorMode === 'markdown' && markdownInput.trim()) {
-        finalHtml = marked.parse(markdownInput) as string;
+        const parsed = parseMarkdownWithFrontmatter(markdownInput);
+        finalHtml = parsed.bodyHtml;
+      }
+      if (finalHtml) {
+        finalHtml = finalHtml.replace(/<p>\s*(?:<br\s*\/?>)?\s*<\/p>/gi, '').trim();
       }
       
       const cleanSlug = (editingBlog.slug || editingBlog.title || 'untitled-post')
@@ -1150,7 +1162,8 @@ export default function AdminDashboardView({ initialSection = 'dashboard' }: Adm
                             type="button"
                             onClick={() => {
                               if (blogEditorMode === 'markdown' && markdownInput.trim()) {
-                                setEditingBlog({ ...editingBlog, contentHtml: marked.parse(markdownInput) as string });
+                                const parsed = parseMarkdownWithFrontmatter(markdownInput);
+                                setEditingBlog({ ...editingBlog, contentHtml: parsed.bodyHtml });
                               }
                               setBlogEditorMode('rich');
                             }}
@@ -1166,7 +1179,8 @@ export default function AdminDashboardView({ initialSection = 'dashboard' }: Adm
                             type="button"
                             onClick={() => {
                               if (blogEditorMode === 'markdown' && markdownInput.trim()) {
-                                setEditingBlog({ ...editingBlog, contentHtml: marked.parse(markdownInput) as string });
+                                const parsed = parseMarkdownWithFrontmatter(markdownInput);
+                                setEditingBlog({ ...editingBlog, contentHtml: parsed.bodyHtml });
                               }
                               setBlogEditorMode('preview');
                             }}

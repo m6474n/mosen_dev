@@ -210,7 +210,7 @@ export default function ProjectDetailView({ slug }: ProjectDetailViewProps) {
             </div>
 
             <div
-              className="prose prose-neutral max-w-none text-neutral-800 leading-relaxed text-sm font-light font-sans tracking-wide space-y-6 ql-editor"
+              className="prose prose-neutral max-w-none text-neutral-800 leading-relaxed text-sm font-light font-sans tracking-wide ql-editor"
               id="project-content"
               dangerouslySetInnerHTML={{ __html: project.description }}
             />
