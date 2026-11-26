@@ -376,13 +376,13 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
                   transformStyle: 'preserve-3d',
                   transition: isDraggingRef.current ? 'none' : 'filter 0.3s ease, border-color 0.3s ease',
                 }}
-                className={`absolute w-[320px] sm:w-[390px] md:w-[460px] lg:w-[500px] h-[500px] sm:h-[540px] md:h-[570px] cursor-pointer rounded-3xl border transition-all duration-300 ${isCenter
+                className={`absolute w-[320px] sm:w-[390px] md:w-[460px] lg:w-[500px] h-[520px] sm:h-[560px] md:h-[600px] cursor-pointer rounded-3xl border transition-all duration-300 ${isCenter
                   ? 'border-white/80 bg-neutral-900/95 shadow-[0_25px_80px_-10px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.4)] ring-1 ring-white/20'
                   : 'border-white/15 bg-neutral-900/80 shadow-[0_15px_45px_-10px_rgba(0,0,0,0.7)] hover:border-white/40'
                   } backdrop-blur-2xl flex flex-col justify-between overflow-hidden select-none`}
               >
                 {/* ─── CARD UPPER HALF: VISUAL STAGE ─── */}
-                <div className="relative w-full h-[52%] bg-neutral-950 border-b border-neutral-800/80 overflow-hidden flex flex-col shrink-0">
+                <div className="relative w-full h-[44%] bg-neutral-950 border-b border-neutral-800/80 overflow-hidden flex flex-col shrink-0">
                   {/* Screenshot / Mockup Preview */}
                   <div className="relative w-full h-full overflow-hidden flex items-center justify-center bg-gradient-to-b from-neutral-950 to-neutral-900">
                     {item.screenshotUrl ? (
@@ -415,10 +415,10 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
                 </div>
 
                 {/* ─── CARD LOWER HALF: INFORMATION & METRICS ─── */}
-                <div className="p-6 sm:p-7 flex flex-col justify-between flex-grow bg-neutral-900/90">
+                <div className="p-5 sm:p-6 pb-6 sm:pb-7 flex flex-col justify-between flex-grow bg-neutral-900/90 gap-3">
                   <div>
                     {/* Badge & Industry */}
-                    <div className="flex items-center justify-between gap-2 mb-3">
+                    <div className="flex items-center justify-between gap-2 mb-2">
                       <div className="flex items-center gap-2">
                         <span className="text-[11px] font-mono font-bold px-3 py-1 rounded-full bg-white/10 text-white border border-white/20 uppercase tracking-wide">
                           {item.projectType || 'PROJECT'}
@@ -440,13 +440,13 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
                     </h3>
 
                     {/* Description */}
-                    <p className="text-xs font-light text-neutral-400 leading-relaxed mt-2 line-clamp-2">
+                    <p className="text-xs font-light text-neutral-400 leading-relaxed mt-1.5 line-clamp-2">
                       {stripHtml(item.description)}
                     </p>
                   </div>
 
                   {/* Impact Metrics or Tech Pills */}
-                  <div className="mt-4 pt-4 border-t border-neutral-800/80 flex flex-col gap-3">
+                  <div className="pt-3 border-t border-neutral-800/80 flex flex-col gap-3">
                     {results.length > 0 ? (
                       <div className="flex items-center justify-between">
                         {results.slice(0, 2).map((res, i) => (
@@ -454,7 +454,7 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
                             <span className="font-sans font-black text-base text-white leading-none">
                               {res.value}
                             </span>
-                            <span className="text-[10px] font-mono text-neutral-400 uppercase mt-1 truncate max-w-[130px]">
+                            <span className="text-[10px] font-mono text-neutral-400 uppercase mt-0.5 truncate max-w-[130px]">
                               {res.label}
                             </span>
                           </div>
@@ -474,7 +474,7 @@ export default function PanoramicProjectSlider({ projects }: PanoramicProjectSli
                     )}
 
                     {/* Action buttons */}
-                    <div className="flex items-center gap-3 pt-2">
+                    <div className="flex items-center gap-3 pt-1">
                       {item.liveUrl && (
                         <a
                           href={item.liveUrl}

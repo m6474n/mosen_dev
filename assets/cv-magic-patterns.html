@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CV — Muhammad Mohsin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700;900&family=Inter:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F1F1F1;
+    --paper: #FFFFFF;
+    --ink: #000000;
+    --muted: #6B6B6B;
+    --line: #D9D9D9;
+    --line-soft: #E9E9E9;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- Toolbar (screen only) ---------- */
+  .toolbar{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:14px 20px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+  .toolbar-inner{
+    width:100%;
+    max-width: 900px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .toolbar-title{
+    font-family:'DM Sans', sans-serif;
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color: var(--muted);
+  }
+  .btn{
+    font-family:'DM Sans', sans-serif;
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:0.02em;
+    border:1.5px solid var(--ink);
+    background: var(--ink);
+    color:#fff;
+    padding:10px 20px;
+    border-radius:999px;
+    cursor:pointer;
+    transition: opacity .15s ease;
+  }
+  .btn:hover{ opacity:.8; }
+  .btn.secondary{
+    background: transparent;
+    color: var(--ink);
+  }
+  .btn-row{ display:flex; gap:10px; }
+
+  /* Links inside the CV — stay monochrome, just underlined */
+  .sheet a{
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: var(--line);
+    text-underline-offset: 2px;
+  }
+  .sheet a:hover{ text-decoration-color: var(--ink); }
+
+  /* ---------- Page / paper ---------- */
+  .page-wrap{
+    display:flex;
+    justify-content:center;
+    padding: 36px 16px 80px;
+  }
+
+  .sheet{
+    position:relative;
+    width: 210mm;
+    background: var(--paper);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 12px 40px rgba(0,0,0,0.08);
+    padding: 16mm 16mm 18mm;
+  }
+
+  .ring-deco{
+    position:absolute;
+    top:-60px;
+    left:-60px;
+    width:220px;
+    height:220px;
+    border-radius:50%;
+    border:1px solid rgba(0,0,0,0.035);
+    pointer-events:none;
+  }
+  .ring-deco::before{
+    content:'';
+    position:absolute;
+    inset:24px;
+    border-radius:50%;
+    border:1px solid rgba(0,0,0,0.035);
+  }
+
+  /* ---------- Editable field styling ---------- */
+  [contenteditable="true"]{
+    outline: none;
+    border-radius:4px;
+    transition: background .12s ease;
+  }
+  [contenteditable="true"]:hover{
+    background: rgba(0,0,0,0.03);
+  }
+  [contenteditable="true"]:focus{
+    background: rgba(0,0,0,0.045);
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+  }
+  [contenteditable="true"]:empty:before{
+    content: attr(data-placeholder);
+    color:#B3B3B3;
+    font-style:italic;
+  }
+
+  /* ---------- Header ---------- */
+  .cv-header{
+    margin-bottom: 26px;
+    padding-bottom: 0;
+  }
+  .cv-name{
+    font-family:'DM Sans', sans-serif;
+    font-weight:900;
+    font-size:34px;
+    letter-spacing:-0.015em;
+    line-height:1.05;
+  }
+  .cv-title{
+    font-family:'Inter', sans-serif;
+    font-style:italic;
+    font-size:14px;
+    color: var(--muted);
+    margin-top:6px;
+  }
+  .cv-contact{
+    display:flex;
+    flex-wrap:wrap;
+    gap:0;
+    margin-top:16px;
+    font-size:12px;
+  }
+  .cv-contact span{
+    padding:0 12px;
+    border-left:1px solid var(--line-soft);
+  }
+  .cv-contact span:first-child{
+    padding-left:0;
+    border-left:none;
+  }
+
+  /* ---------- Sections ---------- */
+  .section{
+    margin-bottom: 28px;
+  }
+  .section-title{
+    font-family:'Inter', sans-serif;
+    font-style:italic;
+    font-size:11px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color: var(--muted);
+    padding-bottom:8px;
+    margin-bottom:18px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .summary-text{
+    font-size:13px;
+    line-height:1.75;
+    color:#1A1A1A;
+  }
+
+  /* ---------- Experience / Projects / Education entries ---------- */
+  .entry{
+    margin-bottom:20px;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    position:relative;
+  }
+  .entry:last-child{ margin-bottom:0; }
+
+  .entry-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:16px;
+    margin-bottom:3px;
+  }
+  .entry-title-block{ flex:1; }
+  .entry-role{
+    font-family:'DM Sans', sans-serif;
+    font-weight:700;
+    font-size:14.5px;
+    letter-spacing:-0.005em;
+  }
+  .entry-org{
+    font-size:12.5px;
+    color:#2B2B2B;
+    margin-top:2px;
+  }
+  .entry-org .org-name{ font-weight:600; }
+  .entry-date{
+    font-family:'Inter', sans-serif;
+    font-style:italic;
+    font-size:11.5px;
+    color: var(--muted);
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+
+  .bullet-list{
+    list-style:none;
+    margin:10px 0 0;
+    padding:0;
+  }
+  .bullet-item{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    font-size:12.5px;
+    line-height:1.6;
+    color:#1A1A1A;
+    padding:2px 0;
+  }
+  .bullet-item::before{
+    content:'—';
+    color: var(--muted);
+    flex-shrink:0;
+  }
+  .bullet-text{
+    flex:1;
+    min-width:0;
+  }
+  .bullet-del{
+    background:transparent;
+    border:none;
+    color:#C7C7C7;
+    cursor:pointer;
+    font-size:14px;
+    line-height:1;
+    padding:0 4px;
+    flex-shrink:0;
+  }
+  .bullet-del:hover{ color:#B3261E; }
+
+  .add-bullet-btn, .add-entry-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:transparent;
+    border:1.5px dashed var(--line);
+    color: var(--muted);
+    font-family:'Inter', sans-serif;
+    font-size:11.5px;
+    padding:6px 12px;
+    border-radius:6px;
+    cursor:pointer;
+    margin-top:8px;
+  }
+  .add-bullet-btn:hover, .add-entry-btn:hover{ border-color: var(--ink); color: var(--ink); }
+  .add-entry-btn{ margin-top:14px; font-size:12px; padding:8px 14px; }
+
+  .entry-del{
+    position:absolute;
+    top:0;
+    right:0;
+    background:transparent;
+    border:none;
+    color:#C7C7C7;
+    cursor:pointer;
+    font-size:16px;
+    line-height:1;
+    padding:2px 6px;
+  }
+  .entry-del:hover{ color:#B3261E; }
+
+  /* ---------- Education specific ---------- */
+  .edu-degree{
+    font-family:'DM Sans', sans-serif;
+    font-weight:700;
+    font-size:14px;
+  }
+  .edu-school{
+    font-size:12.5px;
+    color:#2B2B2B;
+    margin-top:2px;
+  }
+
+  /* ---------- Skills ---------- */
+  .skill-row{
+    display:flex;
+    gap:14px;
+    font-size:12.5px;
+    line-height:1.7;
+    padding:6px 0;
+    position:relative;
+  }
+  .skill-cat{
+    font-family:'Inter', sans-serif;
+    font-style:italic;
+    font-weight:400;
+    color: var(--ink);
+    width:230px;
+    flex-shrink:0;
+  }
+  .skill-vals{
+    flex:1;
+    color:#2B2B2B;
+  }
+  .skill-del{
+    position:absolute;
+    right:-4px;
+    top:4px;
+    background:transparent;
+    border:none;
+    color:#C7C7C7;
+    cursor:pointer;
+    font-size:14px;
+  }
+  .skill-del:hover{ color:#B3261E; }
+
+  .entry-title-row{
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .link-edit-btn{
+    background:transparent;
+    border:none;
+    cursor:pointer;
+    font-size:12px;
+    color: var(--muted);
+    padding:0;
+    line-height:1;
+    flex-shrink:0;
+    opacity:.55;
+  }
+  .link-edit-btn:hover{ opacity:1; color: var(--ink); }
+  a.project-link{
+    color:inherit;
+    text-decoration:none;
+    cursor:text;
+  }
+  a.project-link[href]:not([href="#"]){
+    text-decoration:underline;
+    text-decoration-color: var(--line);
+    text-underline-offset:2px;
+    cursor:pointer;
+  }
+  a.project-link[href]:not([href="#"]):hover{ text-decoration-color: var(--ink); }
+
+  /* ---------- Print ---------- */
+  @media print{
+    @page{
+      size: A4;
+      margin: 16mm 16mm 16mm 16mm;
+    }
+    html, body{
+      background: #fff !important;
+    }
+    .toolbar{ display:none !important; }
+    .page-wrap{ padding:0; }
+    .sheet{
+      box-shadow:none;
+      width:auto;
+      padding: 0;
+      margin:0;
+    }
+    .no-print{ display:none !important; }
+    [contenteditable="true"]:hover{ background:transparent; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="toolbar no-print">
+    <div class="toolbar-inner">
+      <span class="toolbar-title">mosen. — CV builder</span>
+      <div class="btn-row">
+        <button class="btn secondary" onmousedown="event.preventDefault()" onclick="addLink()">+ Add Link</button>
+        <button class="btn secondary" onmousedown="event.preventDefault()" onclick="removeLink()">Remove Link</button>
+        <button class="btn" onclick="window.print()">Print / Save as PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-wrap">
+    <div class="sheet" id="sheet">
+      <div class="ring-deco"></div>
+
+      <!-- Header -->
+      <div class="cv-header">
+        <div class="cv-name" contenteditable="true" data-placeholder="Full Name">Muhammad Mohsin</div>
+        <div class="cv-title" contenteditable="true" data-placeholder="Professional Title">Full Stack Software Engineer | Flutter • Python • Next.js • Firebase • AI Automation</div>
+        <div class="cv-contact">
+          <span contenteditable="true" data-placeholder="City, Country">Gujrat, Pakistan</span>
+          <span contenteditable="true" data-placeholder="email@domain.com">hello@mosen.dev</span>
+          <span contenteditable="true" data-placeholder="+00 000 0000000">+92 348 1422055</span>
+          <span contenteditable="true" data-placeholder="linkedin.com/in/username">linkedin.com/in/mosen</span>
+          <span contenteditable="true" data-placeholder="github.com/username">github.com/mosen</span>
+          <span contenteditable="true" data-placeholder="yourportfolio.com">mosen.dev</span>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="section">
+        <div class="section-title">Professional Summary</div>
+        <div class="summary-text" contenteditable="true" data-placeholder="A short, results-focused summary of your experience and specialization.">Full-stack engineer and AI agent builder with 3+ years shipping production software end-to-end — from concept to deployment. Built autonomous AI agent workflows (n8n + LLM-based candidate screening, scoring, and interview automation) and real-time collaborative systems spanning Flutter, React/Next.js, Firebase, and Ruby on Rails. Uses AI tools daily as part of the build process, not just as a feature. Delivered 20+ commercial products across SaaS, ERP, and automation platforms, with a bias toward fast iteration, first-principles problem-solving, and craftsmanship over ceremony.</div>
+      </div>
+
+      <!-- Work Experience -->
+      <div class="section">
+        <div class="section-title">Work Experience</div>
+        <div id="experienceBody"></div>
+        <button class="add-entry-btn no-print" onclick="addExperience()">+ Add experience</button>
+      </div>
+
+      <!-- Projects -->
+      <div class="section">
+        <div class="section-title">Selected Projects</div>
+        <div id="projectsBody"></div>
+        <button class="add-entry-btn no-print" onclick="addProject()">+ Add project</button>
+      </div>
+
+      <!-- Education -->
+      <div class="section">
+        <div class="section-title">Education</div>
+        <div id="educationBody"></div>
+        <button class="add-entry-btn no-print" onclick="addEducation()">+ Add education</button>
+      </div>
+
+      <!-- Certifications -->
+      <div class="section">
+        <div class="section-title">Certifications</div>
+        <div id="certificationsBody"></div>
+        <button class="add-entry-btn no-print" onclick="addCertification()">+ Add certification</button>
+      </div>
+
+      <!-- Skills -->
+      <div class="section">
+        <div class="section-title">Technical Skills</div>
+        <div id="skillsBody"></div>
+        <button class="add-entry-btn no-print" onclick="addSkillRow()">+ Add skill category</button>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+  /* ---------------- Generic bullet helpers ---------------- */
+  function createBulletLi(text){
+    const li = document.createElement('li');
+    li.className = 'bullet-item';
+    li.innerHTML = `
+      <span class="bullet-text" contenteditable="true" data-placeholder="Describe an achievement or responsibility">${text}</span>
+      <button class="bullet-del no-print" onclick="this.closest('li').remove()" title="Remove bullet">&times;</button>
+    `;
+    return li;
+  }
+
+  function addBullet(btn){
+    const ul = btn.previousElementSibling;
+    const li = createBulletLi('');
+    ul.appendChild(li);
+    li.querySelector('.bullet-text').focus();
+  }
+
+  /* ---------------- Experience ---------------- */
+  function createExperienceEntry(role, org, location, date, bullets){
+    const div = document.createElement('div');
+    div.className = 'entry';
+    div.innerHTML = `
+      <button class="entry-del no-print" onclick="this.closest('.entry').remove()" title="Remove entry">&times;</button>
+      <div class="entry-head">
+        <div class="entry-title-block">
+          <div class="entry-role" contenteditable="true" data-placeholder="Job Title">${role}</div>
+          <div class="entry-org"><span class="org-name" contenteditable="true" data-placeholder="Company Name">${org}</span><span contenteditable="true" data-placeholder=", Location"> ${location}</span></div>
+        </div>
+        <div class="entry-date" contenteditable="true" data-placeholder="Mon Year – Present">${date}</div>
+      </div>
+      <ul class="bullet-list"></ul>
+      <button class="add-bullet-btn no-print" onclick="addBullet(this)">+ Add bullet</button>
+    `;
+    const ul = div.querySelector('.bullet-list');
+    bullets.forEach(b => ul.appendChild(createBulletLi(b)));
+    return div;
+  }
+
+  function addExperience(role = '', org = '', location = '', date = '', bullets = ['']){
+    document.getElementById('experienceBody').appendChild(createExperienceEntry(role, org, location, date, bullets));
+  }
+
+  /* ---------------- Projects ---------------- */
+  function handleLinkClick(e){
+    if(e.metaKey || e.ctrlKey || e.button === 1) return true; // allow opening in new tab
+    e.preventDefault();
+    return false;
+  }
+
+  function editProjectLink(btn){
+    const a = btn.nextElementSibling;
+    const current = a.getAttribute('href');
+    const input = prompt('Project link (URL):', current && current !== '#' ? current : 'https://');
+    if(input === null) return;
+    const url = input.trim();
+    if(url === ''){ a.setAttribute('href', '#'); }
+    else { a.setAttribute('href', /^https?:\/\//i.test(url) ? url : 'https://' + url); }
+  }
+
+  function createProjectEntry(title, bullets, url = ''){
+    const div = document.createElement('div');
+    div.className = 'entry';
+    const href = url ? (/^https?:\/\//i.test(url) ? url : 'https://' + url) : '#';
+    div.innerHTML = `
+      <button class="entry-del no-print" onclick="this.closest('.entry').remove()" title="Remove entry">&times;</button>
+      <div class="entry-title-row">
+        <button class="link-edit-btn no-print" onclick="editProjectLink(this)" title="Add / edit project link">🔗</button>
+        <a class="entry-role project-link" href="${href}" target="_blank" rel="noopener" contenteditable="true" data-placeholder="Project Name" onclick="return handleLinkClick(event)">${title}</a>
+      </div>
+      <ul class="bullet-list"></ul>
+      <button class="add-bullet-btn no-print" onclick="addBullet(this)">+ Add bullet</button>
+    `;
+    const ul = div.querySelector('.bullet-list');
+    bullets.forEach(b => ul.appendChild(createBulletLi(b)));
+    return div;
+  }
+
+  function addProject(title = '', bullets = [''], url = ''){
+    document.getElementById('projectsBody').appendChild(createProjectEntry(title, bullets, url));
+  }
+
+  /* ---------------- Education ---------------- */
+  function createEducationEntry(degree, school, date){
+    const div = document.createElement('div');
+    div.className = 'entry';
+    div.innerHTML = `
+      <button class="entry-del no-print" onclick="this.closest('.entry').remove()" title="Remove entry">&times;</button>
+      <div class="entry-head">
+        <div class="entry-title-block">
+          <div class="edu-degree" contenteditable="true" data-placeholder="Degree / Program">${degree}</div>
+          <div class="edu-school" contenteditable="true" data-placeholder="Institution Name">${school}</div>
+        </div>
+        <div class="entry-date" contenteditable="true" data-placeholder="Graduated: Year">${date}</div>
+      </div>
+    `;
+    return div;
+  }
+
+  function addEducation(degree = '', school = '', date = ''){
+    document.getElementById('educationBody').appendChild(createEducationEntry(degree, school, date));
+  }
+
+  /* ---------------- Certifications ---------------- */
+  function createCertificationEntry(name, issuer, date, url = ''){
+    const div = document.createElement('div');
+    div.className = 'entry';
+    const href = url ? (/^https?:\/\//i.test(url) ? url : 'https://' + url) : '#';
+    div.innerHTML = `
+      <button class="entry-del no-print" onclick="this.closest('.entry').remove()" title="Remove entry">&times;</button>
+      <div class="entry-head">
+        <div class="entry-title-block">
+          <div class="entry-title-row">
+            <button class="link-edit-btn no-print" onclick="editProjectLink(this)" title="Add / edit credential link">🔗</button>
+            <a class="edu-degree project-link" href="${href}" target="_blank" rel="noopener" contenteditable="true" data-placeholder="Certification Name" onclick="return handleLinkClick(event)">${name}</a>
+          </div>
+          <div class="edu-school" contenteditable="true" data-placeholder="Issuing Organization">${issuer}</div>
+        </div>
+        <div class="entry-date" contenteditable="true" data-placeholder="Issued: Month Year">${date}</div>
+      </div>
+    `;
+    return div;
+  }
+
+  function addCertification(name = '', issuer = '', date = '', url = ''){
+    document.getElementById('certificationsBody').appendChild(createCertificationEntry(name, issuer, date, url));
+  }
+
+  /* ---------------- Skills ---------------- */
+  function createSkillRow(cat, vals){
+    const div = document.createElement('div');
+    div.className = 'skill-row';
+    div.innerHTML = `
+      <button class="skill-del no-print" onclick="this.closest('.skill-row').remove()" title="Remove category">&times;</button>
+      <div class="skill-cat" contenteditable="true" data-placeholder="Category">${cat}</div>
+      <div class="skill-vals" contenteditable="true" data-placeholder="Comma-separated skills">${vals}</div>
+    `;
+    return div;
+  }
+
+  function addSkillRow(cat = '', vals = ''){
+    document.getElementById('skillsBody').appendChild(createSkillRow(cat, vals));
+  }
+
+  /* ---------------- Init with resume content ---------------- */
+  addExperience(
+    'Full Stack Engineer',
+    'Twinspider Technologies',
+    ', Gujrat, Pakistan',
+    'January 2024 – Present',
+    [
+      'Built a multi-tenant SaaS administration platform (Next.js + Firebase Admin SDK) to centrally manage isolated Firebase environments across independent business deployments',
+      'Engineered an industrial IoT automation system integrating serial-port weighbridge scales and RTSP IP cameras with a Ruby on Rails ERP via real-time Firebase streams, automating gatepass generation for flour mill operations',
+      'Designed offline-first synchronization architectures with custom ownership-validation logic, rejecting unauthorized offline writes after employee access changes',
+      'Delivered 20+ production-grade Flutter mobile, desktop, and web applications across ERP, POS, industrial automation, and field-operations systems for manufacturing, retail, healthcare, and logistics clients',
+      'Implemented role-based access control and real-time data workflows across multiple enterprise mobile applications integrated with Ruby on Rails backends',
+      'Integrated secure payment gateways (Paystack, JazzCash, Easypaisa) and built cross-platform apps and admin dashboards, streamlining release pipelines and improving operational efficiency'
+    ]
+  );
+  addExperience(
+    'WordPress Developer (Freelance)',
+    'Fiverr',
+    '',
+    'May 2023 – Present',
+    [
+      'Delivered responsive websites including landing pages, eCommerce stores, and corporate sites for international clients',
+      'Customized themes and plugins to meet client-specific requirements',
+      'Improved website performance and SEO structure, increasing client visibility and engagement',
+      'Managed full deployment lifecycle including hosting, domain setup, and migrations'
+    ]
+  );
+  addExperience(
+    'Graphic Designer (Freelance)',
+    'Fiverr',
+    '',
+    'April 2021 – Present',
+    [
+      'Designed brand identities, marketing materials, and social media assets for global clients',
+      'Delivered high-conversion creatives aligned with brand strategy and user psychology',
+      'Maintained strong client retention through consistent delivery and quality'
+    ]
+  );
+
+  addProject('AI HR Agent – Autonomous Recruitment Automation', [
+    'Built an n8n-based AI agent that autonomously screens inbound candidates, scores them against role criteria using an LLM, and books qualified candidates directly into interview slots',
+    'Designed multi-step agent logic (screening → scoring → scheduling) with human-in-the-loop approval gates for edge cases, balancing autonomy with reliability',
+    'Packaged as a reusable product concept for small businesses, demonstrating end-to-end AI agent design from prompt engineering through workflow orchestration'
+  ]);
+  addProject('Spider POS Web Admin – Multi-Tenant SaaS Platform', [
+    'Engineered a centralized admin platform to manage multiple independent SpiderPOS deployments, each with an isolated Firebase environment',
+    'Implemented dynamic Firebase project handling, secure tenant-aware authentication, and centralized configuration management'
+  ]);
+  addProject('SpiderWeighbridge – Industrial Weighing & ERP Automation', [
+    'Built a Flutter desktop application communicating directly with electronic weighbridge scales via serial port for real-time weight capture',
+    'Integrated RTSP IP cameras for automatic vehicle image capture, improving auditability and reducing manual verification',
+    'Designed a Firebase-based real-time command bridge between the Rails ERP and the desktop app, automating end-to-end gatepass generation'
+  ]);
+  addProject('Spider POS – Multi-Store POS System', [
+    'Built a scalable POS platform covering sales, inventory, accounting, and multi-store operations with role-based access (Admin, Manager, Till)',
+    'Designed an offline-first architecture using SQLite and Firebase, enabling uninterrupted operations in low-connectivity environments',
+    'Implemented dynamic feature flags and store-level inventory tracking across multi-warehouse deployments'
+  ]);
+  addProject('Spider POS Admin Mobile App – Business Intelligence Dashboard', [
+    'Built a mobile companion app giving business owners tenant-based access to sales reports and analytics via subdomain, username, and password authentication',
+    'Enabled remote monitoring of store performance without requiring access to desktop systems'
+  ]);
+  addProject('Tailor Book – Offline-First Shop Management App', [
+    'Developed a Flutter + Firestore platform for tailoring businesses to manage customers, measurements, employees, and orders',
+    'Designed a custom synchronization validation layer on top of Firebase offline persistence, using ownership metadata to reject unauthorized offline writes from removed employees',
+    'Integrated WhatsApp communication and push notifications to automate operations'
+  ]);
+  addProject('Appex Trading Global – Enterprise ERP Platform', [
+    'Built Flutter modules for accounts & finance, sales, purchasing, order processing, and customer complaints for a trading and distribution business',
+    'Implemented role-based access control and authentication workflows integrated with an existing Ruby on Rails backend'
+  ]);
+  addProject('Appex Field Force – Healthcare Lead Management System', [
+    'Built an offline-first field automation app for healthcare sales representatives to log hospital and clinic visits and track follow-ups',
+    'Integrated GPS-based location verification and image-upload evidence capture to authenticate field activity and improve lead accuracy',
+    'Integrated with existing backend APIs to synchronize visit and lead data once connectivity was restored'
+  ]);
+  addProject('Bento Delivaz – Multi-Vendor Food Delivery Platform', [
+    'Developed customer, vendor, rider, and admin applications for a complete food delivery ecosystem integrated with a Ruby on Rails backend',
+    'Implemented real-time rider location tracking and Google Maps integration across the platform',
+    'Built order-tracking and status-management workflows connecting customers, vendors, and riders in real time'
+  ]);
+  addProject('Gujarat Chamber of Commerce App (GTCCI)', [
+    'Built cross-platform app to digitize membership management and communications',
+    'Developed membership lifecycle system: registration, approval, renewal tracking',
+    'Implemented real-time notifications and announcements using Firebase, improving operational efficiency'
+  ]);
+
+  addEducation(
+    'Bachelor of Science in Information Technology (Hons.)',
+    'National College of Business Administration & Economics',
+    'Graduated: 2023'
+  );
+  addEducation(
+    'Diploma of Associate Engineer (Instrumentation & Control)',
+    'Government Swedish Pakistani College of Technology',
+    'Graduated: 2019'
+  );
+
+  addCertification('Google Data Analytics Certificate', 'Google', 'Issued Jul 2026', 'https://www.linkedin.com/safety/go/?url=https%3A%2F%2Fwww%2Ecredly%2Ecom%2Fbadges%2F7396a54d-ae46-4080-a4ec-8263a3914b3c%2Flinked_in_profile&urlhash=NA5p&mt=x110n8VmcfIfm8pSztNVXQaYXfqSIqxI3j6Eldm5Lp4KSicbpHnhqPz6fAaalPNz_SM8i6iO0wYP7TCefCul19Dh-mnu&isSdui=true');
+  addCertification('Certificate of Completion: AI Fluency Framework & Foundations', 'Anthropic', 'Issued Jun 2026', 'https://www.claudeusercontent.com/?domain=claude.ai&parentOrigin=https%3A%2F%2Fclaude.ai&errorReportingMode=parent&formattedSpreadsheets=true&routeHandlerPdf=true#');
+
+  addSkillRow('AI & Automation Engineering', 'AI Agent Workflows, LLM Integration (Claude, OpenAI), n8n, Make, Zapier, Prompt Engineering, Autonomous Workflow Design');
+  addSkillRow('Programming & Frameworks', 'JavaScript, TypeScript, Next.js, React, Ruby on Rails, Flutter, Dart, Python (FastAPI)');
+  addSkillRow('State Management & Client-Side Architecture', 'Zustand, Provider, GetX, RiverPod');
+  addSkillRow('Backend & Databases', 'Firebase, PostgreSQL, MongoDB, REST APIs, GraphQL');
+  addSkillRow('Architecture & Systems', 'Real-Time & Collaborative Systems, Multi-Tenant Architecture, Role-Based Access Control, Offline-First Systems');
+  addSkillRow('Tools & DevOps', 'Git, GitLab CI/CD, Postman, Linux, Docker, VS Code, Figma');
+  addSkillRow('Additional Expertise / Integrations', 'Payment Gateway Integration (Paystack, JazzCash, Easypaisa), Push Notifications, Google Maps API');
+</script>
+
+</body>
+</html>
