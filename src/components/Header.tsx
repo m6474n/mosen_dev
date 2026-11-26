@@ -45,14 +45,14 @@ const megaCategories: MegaCategory[] = [
       {
         name: 'ClipForge AI Clipper',
         desc: 'Offline local whisper transcription & reframing',
-        href: '/resources',
+        href: '/resources/clipforge',
         icon: Bot,
         tag: 'AI',
       },
       {
         name: 'Kroma Browser Engine',
         desc: 'Concurrent Chrome profile manager & scheduler',
-        href: '/resources',
+        href: '/resources/kroma',
         icon: Workflow,
         tag: 'AUTO',
       },
@@ -95,7 +95,7 @@ const megaCategories: MegaCategory[] = [
       {
         name: 'YouTube Stream Downloader',
         desc: 'yt-dlp 4K/1080p merging & MP3 audio extractor',
-        href: '/resources',
+        href: '/resources/youtube-video-downloader',
         icon: Terminal,
         tag: 'TOOL',
       },
@@ -306,7 +306,7 @@ export default function Header() {
                     {resources.slice(0, 3).map((res) => (
                       <Link
                         key={res.id}
-                        href="/resources"
+                        href={`/resources/${res.id}`}
                         onClick={() => setResourcesOpen(false)}
                         className="group flex items-start gap-3 p-2.5 rounded-2xl transition-all duration-200 hover:bg-neutral-900/[0.04] border border-transparent hover:border-neutral-200/60"
                       >
